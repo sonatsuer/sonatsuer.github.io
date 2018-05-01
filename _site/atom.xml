@@ -4,7 +4,7 @@
  <title>The blog of Matt Swanson</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-05-01T23:29:23+03:00</updated>
+ <updated>2018-05-01T23:41:44+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Matt Swanson</name>
@@ -96,6 +96,8 @@ iPhone try-hard jean shorts.&lt;/p&gt;
   &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;other&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;crap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\alpha^2&lt;/script&gt;
 </content>
  </entry>
  

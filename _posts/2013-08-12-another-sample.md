@@ -42,3 +42,5 @@ class User < ActiveRecord::Base
 end
 
 {% endhighlight %}
+
+$$ \alpha^2 $$
