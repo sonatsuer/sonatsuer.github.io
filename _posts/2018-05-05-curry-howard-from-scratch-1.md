@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Curry-Howard Corespondence From Scratch (Part 1 of 2)
+title: Curry-Howard Correspondence From Scratch (Part 1 of 2)
 categories:
 - curry-howard
 ---

@@ -4,7 +4,7 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-05-20T00:38:35+03:00</updated>
+ <updated>2018-05-20T00:40:12+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
@@ -99,7 +99,7 @@ given by that language \(K\).&lt;/p&gt;
  </entry>
  
  <entry>
-   <title>Curry-Howard Corespondence From Scratch (Part 2 of 2)</title>
+   <title>Curry-Howard Correspondence From Scratch (Part 2 of 2)</title>
    <link href="http://localhost:4000/curry-howard/2018/05/14/curry-howard-from-scratch-2.html"/>
    <updated>2018-05-14T00:00:00+03:00</updated>
    <id>http://localhost:4000/curry-howard/2018/05/14/curry-howard-from-scratch-2</id>
@@ -316,7 +316,7 @@ of the iceberg.&lt;/p&gt;
  </entry>
  
  <entry>
-   <title>Curry-Howard Corespondence From Scratch (Part 1 of 2)</title>
+   <title>Curry-Howard Correspondence From Scratch (Part 1 of 2)</title>
    <link href="http://localhost:4000/curry-howard/2018/05/05/curry-howard-from-scratch-1.html"/>
    <updated>2018-05-05T00:00:00+03:00</updated>
    <id>http://localhost:4000/curry-howard/2018/05/05/curry-howard-from-scratch-1</id>
