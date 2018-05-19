@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
  
  <title>The blog of Sonat Süer</title>
- <link href="http://example.com/atom.xml" rel="self"/>
- <link href="http://example.com"/>
- <updated>2018-05-14T18:56:40+03:00</updated>
- <id>http://example.com</id>
+ <link href="http://localhost:4000/atom.xml" rel="self"/>
+ <link href="http://localhost:4000"/>
+ <updated>2018-05-20T00:38:35+03:00</updated>
+ <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
    <email></email>
@@ -13,10 +13,96 @@
 
  
  <entry>
+   <title>Kolmogorov Complexity (Part 1 of 2)</title>
+   <link href="http://localhost:4000/kolmogorov-complexity/2018/05/20/kolmogorov-complexity-1.html"/>
+   <updated>2018-05-20T00:38:35+03:00</updated>
+   <id>http://localhost:4000/kolmogorov-complexity/2018/05/20/kolmogorov-complexity-1</id>
+   <content type="html">&lt;h1 id=&quot;a-mandatory-example&quot;&gt;A Mandatory Example&lt;/h1&gt;
+
+&lt;p&gt;Consider the following two binary strings:
+\begin{align}
+&amp;amp;\texttt{0101010101010101010101010101010},\newline
+&amp;amp;\texttt{1100100100001111110110101010001}.
+\end{align}&lt;/p&gt;
+
+&lt;p&gt;Which one do you think is easier to remember? Most people would say that the first one, because
+there is an obvious and simple rule/method to generate it. So, instead of remembering the string,
+we can remember the rule. One can also say that the first string is sşmple while the second one is
+complex. Kolmogorov complexity is based on this idea.&lt;/p&gt;
+
+&lt;p&gt;Let us semi-formalize it. First let us fix a Turing complete programming language. I will not define what a programming
+language &lt;em&gt;is&lt;/em&gt; or &lt;em&gt;should be&lt;/em&gt; and, frankly, be somewhat vague about it. Hence the prefix &lt;em&gt;semi&lt;/em&gt; in front of
+&lt;em&gt;formalize&lt;/em&gt;. Though I will make a few assumptions. Our programs in pur programming language will be strings
+from from a fixed alphabet \(\mathcal{L}\), say, containing ASCII or UTF-8. I will also assume that each program
+accepts strings from \(\mathcal{L}\) as input and produce strings from \(\mathcal{L}\) as output. So,
+in particular, we can give a program to another program as input or a program may produce a program. For ease
+of reading, I will use \(\texttt{this font}\) when writing a string from \(\mathcal{L}\).&lt;/p&gt;
+
+&lt;p&gt;One technical assumtion which will be important later is that our program will use decimal representation
+for natural numbers. Actually pretty much any positional system would do, but for the sake of definiteness
+I will stick with decimal.&lt;/p&gt;
+
+&lt;p&gt;When I write a program, I will use some sort of pseudocode hoping that there is no ambiguity. Also I will
+not exclude partial programs which corresponds do partial functions. For insance
+\begin{align}
+&amp;amp;\texttt{accept x as input}\newline
+&amp;amp;\texttt{while 1 == 1}\newline
+&amp;amp;\;\;\;\texttt{do nothing}\newline
+&amp;amp;\texttt{return x}
+\end{align}
+is a valid program even though it does not produce any result as it is always stuck in the while loop.&lt;/p&gt;
+
+&lt;p&gt;Now we can define the Kolmogorov complexity of a string from \(\mathcal{L}\): Let \(\sigma\) be a string
+from \(\mathcal{L}\). The Kolmgorov complexity of \(\sigma\) is the length of the shortest program which
+generates \(\sigma\) on any input. It is denoted by \(K(\sigma)\).&lt;/p&gt;
+
+&lt;h1 id=&quot;how-canonical-is-this-definition&quot;&gt;How canonical is this definition?&lt;/h1&gt;
+
+&lt;p&gt;The definition seems very intuitive, especially after the mandatory example. However, there is something fishy here.
+We made several arbitrary choices yet we called \(K(\sigma)\) &lt;em&gt;the&lt;/em&gt; Kolmogorov complexity of \(\sigma\). It should
+be clear that it is easier to generate certain strings in some langugaes than others. Indeed, the second string in our
+example is just the first few digits of the binary expansion of \(\pi\) so it can be easier to generate in a language
+designed for numerical computations.&lt;/p&gt;
+
+&lt;p&gt;Actually, for any string \(\sigma\), we can very well imagine a programming language which has \(\sigma\) as a built-in
+constant. Thus the Kolmogorov complexity of a single string seems to very heavily depend on our language of choice. So what
+happens if we change our programming language? Does this mean that our notion is arbitrary?&lt;/p&gt;
+
+&lt;p&gt;Fortunately, no. Let us consider two notions of complexity \(K_1\), \(K_2\) corresponding
+to two different programming languages \(L_1\) and \(L_2\), respectively. Since \(L_1\) is Turing complete, we can write a
+&lt;em&gt;compiler&lt;/em&gt; for \(L_2\) in \(L_1\). In other words, \(L_1\) can simulate \(L_2\). Let \(\sigma\) be a string and
+let \(n=K_2(\sigma)\). Then there is a program \(p\) in the language \(L_2\) which witnesses the fact that \(n=K_2(\sigma)\).
+That is, \(p\) has length \(n\) and \(p\) generates \(\sigma\). Now consider the (description of a) program in \(L_1\):
+Simulate \(p\). The length of this program will be \(n + c\) for some \(c\) becuse the program contains the string \(p\) and
+\(p\) has length \(n\). The part corresponding to \(c\) is the part that simulates \(L_2\) and it does not depend on \(\sigma\).
+By construction, “Simulate \(p\)” generates \(\sigma\), thus
+\[
+  K_1(\sigma)\leq n + c = K_2(\sigma) + c.
+\]
+We proved that there is a constant \(c\) such that \(K_1(\sigma)\leq K_2(\sigma) + c\) for all \(\sigma\). By stmmetry,
+there is a \(c’\) such that \(K_2(\sigma)\leq K_1(\sigma) + c’\) for all \(\sigma\). Combining these two we obtain
+\[
+  |K_1(\sigma) - K_2(\sigma)| &amp;lt; {\rm max}\{c, c’\}.
+\]
+This shows that if we consider an infinite family of strings and consider the asymptotic behaviour of Kolmogorov complexity
+on that family, then the programming language we choose does not matter. Obviously, this does not imply that this asymptotic
+behaviour is easy to determine.&lt;/p&gt;
+
+&lt;p&gt;From now on we will stick with a fixed but not explicitely determined choice of language and denote the complexity function
+given by that language \(K\).&lt;/p&gt;
+
+&lt;h1 id=&quot;berry-paradox&quot;&gt;Berry Paradox&lt;/h1&gt;
+
+&lt;h1 id=&quot;an-incomputability-result&quot;&gt;An Incomputability Result&lt;/h1&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
    <title>Curry-Howard Corespondence From Scratch (Part 2 of 2)</title>
-   <link href="http://example.com/curry-howard/2018/05/14/curry-howard-from-scratch-2.html"/>
+   <link href="http://localhost:4000/curry-howard/2018/05/14/curry-howard-from-scratch-2.html"/>
    <updated>2018-05-14T00:00:00+03:00</updated>
-   <id>http://example.com/curry-howard/2018/05/14/curry-howard-from-scratch-2</id>
+   <id>http://localhost:4000/curry-howard/2018/05/14/curry-howard-from-scratch-2</id>
    <content type="html">&lt;h1 id=&quot;simply-typed-lambda-calculus&quot;&gt;Simply Typed Lambda Calculus&lt;/h1&gt;
 
 &lt;p&gt;In the first post we constructed a formal theory of propositions but left the
@@ -231,9 +317,9 @@ of the iceberg.&lt;/p&gt;
  
  <entry>
    <title>Curry-Howard Corespondence From Scratch (Part 1 of 2)</title>
-   <link href="http://example.com/curry-howard/2018/05/05/curry-howard-from-scratch-1.html"/>
+   <link href="http://localhost:4000/curry-howard/2018/05/05/curry-howard-from-scratch-1.html"/>
    <updated>2018-05-05T00:00:00+03:00</updated>
-   <id>http://example.com/curry-howard/2018/05/05/curry-howard-from-scratch-1</id>
+   <id>http://localhost:4000/curry-howard/2018/05/05/curry-howard-from-scratch-1</id>
    <content type="html">&lt;h1 id=&quot;function-sets&quot;&gt;Function Sets&lt;/h1&gt;
 
 &lt;p&gt;Suppose we have two sets \(X\) and \(Y\). Can we name a function from \(X\) to \(Y\) without
