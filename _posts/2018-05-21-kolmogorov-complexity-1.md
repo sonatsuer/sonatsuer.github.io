@@ -161,10 +161,10 @@ Now for each \\(n\\) we can construct a program \\(\tau_n\\) as follows:
 \end{align}
 
 Clearly \\(\tau_n\\) ignores the input and behaves like \\(\tau\\) with input \\(\ulcorner n\urcorner\\). Moreover
-\\(\ell(\tau_n) = \log_{10}(n) + c\\) for some constant \\(c\\). Thus, for a sufficiently large \\(k\\) we have \\(\ell(\tau_k) < k\\).
+\\(\ell(\tau_n) = \lfloor\log_{10}(n)\rfloor + c\\) for some constant \\(c\\). Thus, for a sufficiently large \\(k\\) we have \\(\ell(\tau_k) < k\\).
 
 Let \\(\omega\\) be the string produced by \\(\\tau\\) on an input \\(\ulcorner k \urcorner\\) satisfying \\(\ell(\tau_k) < k\\). Here comes the finishing blow: By the construction of \\(\tau\\), we have \\(K(\omega)\geq k\\). On the other hand \\(\tau_k\\) also produces \\(\omega\\) (on any input) therefore we must have \\(K(\omega)\leq \ell(\tau_k)\\). But these two inequalities imply that \\(k \leq \ell(\tau_k)\\). Contradiction!
 
-Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practise. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.
+Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practice. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.
 
 
