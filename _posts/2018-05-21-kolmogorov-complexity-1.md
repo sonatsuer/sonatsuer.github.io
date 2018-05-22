@@ -80,7 +80,7 @@ From now on we will stick with a fixed but not explicitely determined choice of 
 given by that language by \\(K\\).
 
 At this point I would compute the Kolmogorov complexity of some concrete strings (or infinite families of strings) but it is tricky.
-We can always give an upper bound for Kolmogorov complexity by explicitely constructing a program and measuring its length
+We can always give an upper bound for Kolmogorov complexity by explicitly constructing a program and measuring its length
 but the tricky part is to show that no shorter program generates the same string. Actually, the problem is so difficult that
 there is no general solution. To put it more concretely, the function  \\(K\\) is not computable. The aim of this post is to
 give a proof of this result.
