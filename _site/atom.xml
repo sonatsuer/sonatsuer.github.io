@@ -4,13 +4,158 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-05-21T04:25:19+03:00</updated>
+ <updated>2018-06-15T00:51:48+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Kolmogorov Complexity (Part 2 of 2)</title>
+   <link href="http://localhost:4000/kolmogorov-complexity/2018/06/14/kolmogorov-complexity-2.html"/>
+   <updated>2018-06-14T00:00:00+03:00</updated>
+   <id>http://localhost:4000/kolmogorov-complexity/2018/06/14/kolmogorov-complexity-2</id>
+   <content type="html">&lt;h1 id=&quot;a-crash-course-in-logic&quot;&gt;A Crash Course in Logic&lt;/h1&gt;
+
+&lt;p&gt;In this post we wil apply th Kolmogorov complexity to logic. To be more precise, we will answer to classical questions about foundations
+of mathematics. But first, let’s clarify what we mean by foundations.&lt;/p&gt;
+
+&lt;p&gt;For simplicity and definiteness we will stick with set theory (with first order logic) as our foundational theory.
+The idea is to express &lt;em&gt;every&lt;/em&gt; notion we use in mathematics in terms of sets using a formal language. Our formal language will have only two
+primitive notions, namely equality, which we will denote by \(=\) and membership, which we will denote by \(\in\). Both equality and
+memebership will be binary relations on sets.&lt;/p&gt;
+
+&lt;p&gt;Other than these two, we will have the following symbols in our language:
+\[
+  \forall,\, \exists,\, \wedge,\, \vee,\, \neg,\, \rightarrow,\, \leftrightarrow,\, (,\, ),\, x,\, ‘.
+\]&lt;/p&gt;
+
+&lt;p&gt;The last symbol, namely \(‘\) is used to obtain an unbounded number of variables from the single variable symbol \(x\)
+as follows:
+\[
+  x’,\, x’’\, x’’’\, x’’’’\, x’’’’’\, x’’’’’’\, \ldots
+\]
+However, for ease of reading, we will use lower case Roman letters such as \(x,y,z,t,\ldots\) instead of \(x’,\, x’’\, x’’’,\ldots\) The point
+here is that even though our alphabet has finitely many symbols, we can talk about infinitely many variables.&lt;/p&gt;
+
+&lt;p&gt;When we talk about sets, we will use only &lt;em&gt;meaningful&lt;/em&gt; or well formed strings in these symbols. I will not define what exactly well formed means but
+you can assume that a well formed formula is a string in our symbols which can be parsed according to some grammar. Intuitively, strings like
+\[
+  \forall )( \rightarrow xx \;\;\text{ or }\;\; ‘‘\vee x \wedge
+\]
+are not well formed but
+\[
+  \forall x \forall y (( \forall t (t\in x)\leftrightarrow (t\in y)) \leftrightarrow x = y)
+\]
+is well formed. Actually this second formula says that two sets are equal if and only if they have the same elements. Note that menaingful
+does not mean true. For instance
+\[
+  \exists x\forall y (y\in x)
+\]
+is meaningfull and says that there is set which contains all sets. However, it is not true in most set theories.&lt;/p&gt;
+
+&lt;p&gt;One important property of well formed formulas is that there is an algorithm which can decide whether an arbitrary string is well formed
+or not.&lt;/p&gt;
+
+&lt;p&gt;We want to be able to prove statements about mathematical using our language. After all, this is supposed to be a foundational theory. Since
+we have statements, namely the well formed formulas, only two pieces are missing now: assumptions (or axioms) and a notion of proof.&lt;/p&gt;
+
+&lt;p&gt;Again for definiteness, we will work with the axioms of ZFC (Zermalo-Frenkel-Choice) set theory. The actual axioms are not important but you can look
+them up if you are curious. The important fact about the axioms is the following: There is an algorithm which can decide whether an arbitrary string
+is an axiom.&lt;/p&gt;
+
+&lt;p&gt;Finally a proof of a well formed formula \(varphi\) is simply a sequence of well formed formulas \(\varphi_1,\varphi_2,\ldots,\varphi_n\) such that
+\(\varphi_n = \varphi\) and each \(\varphi_i\) is either an axiom or it is obtained from earlier elements in the sequence using deduction rules.
+Deduction rules here are rules like “from \(\varphi\rightarrow\psi\) and \(\varphi\) deduce \(\psi\)”. You guessed it, the actual rules are not
+importatnt but the important fact about proofs is that there is algorithm which can decide whether an arbitrary sequence of strings is a proof or not.&lt;/p&gt;
+
+&lt;p&gt;A theorem of ZFC is a well formed formula which has a proof. Now you might think that there is an algorithm which can decide whether an arbitrary string is a theorem of ZFC. However, as we will see soon, this is not true. The best you can do is to &lt;em&gt;enumerate&lt;/em&gt; all theorems of ZFC. In other words
+there is an algorithm which generates an infinite list containing &lt;em&gt;all&lt;/em&gt; theorems of ZFC. You can probably guess the algorithm: Generate all finite
+sequences of well formed formulas in, say, lexicographic ordering. If the sequence happens to be a proof, add the proven formula to the list.&lt;/p&gt;
+
+&lt;p&gt;If you have not heard of recursively enumerable sets before, you might want to think about why this is weaker than having an alogorithm which can
+decide whether an arbitrary string is a theorem.&lt;/p&gt;
+
+&lt;h1 id=&quot;chaitins-incompleteness-theorem&quot;&gt;Chaitin’s Incompleteness Theorem&lt;/h1&gt;
+&lt;p&gt;At this point, you might ask the following question: We have only talked about sets so far but we were looking for a foundational theory
+for all of mathemtaics. Is this really enough? The answer is yes. This may look strange because it seems that there objects in mathematics which are
+clearly not sets. For instance \(\pi\) is not a set, it is a number. The trick is that \(pi\), and all mathematical objects for that matter, can
+be &lt;em&gt;encoded&lt;/em&gt; as sets.&lt;/p&gt;
+
+&lt;p&gt;Here are a few examples to give you an idea. We can define
+\[
+  0 = \emptyset,\; 1 = \{0\},\; 2 = \{0,1\},\; 3 = \{0,1,2\},\ldots
+\]
+So a natural number is the set of smaller natural numbers. For two sets \(x\) and \(y\) we can define
+\[
+  (x,y) = \{ \{x\}, \{x,y\}\}
+\]
+and prove that this actually works like an ordered pair (Exercise: Do it!). Once you have ordered pairs, you can have Cartesian products, relations and
+functions etc.&lt;/p&gt;
+
+&lt;p&gt;From now on I will assume that we agreed on encodings of all the notions in mathematics as sets. Note that notions like well formed formula, proof and
+algorithm are also encoded in this way. So ZFC is capable of talking about Kolmogorov complexity, or even itself.&lt;/p&gt;
+
+&lt;p&gt;Here comes the big theorem of this post. Recall that \(K\) denotes the Kolmogorov complexity.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;There is a constant \(L\) such that for no \(\sigma\), the statement \(K(\sigma) &amp;gt; L\) is a theorem of ZFC.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Suppose not. Then for any natural number \(n\) there is a \(\sigma_n\) such that \(K(\sigma_n)\ &amp;gt; n\) is a theorem of ZFC. This implies that
+there is a computable function \(f\) such that for each natural number \(n\) the inequality \(K(f(n)) &amp;gt; n\) is a theorem of ZFC. Indeed,
+given any \(n\), using the fact that theorems of ZFC are enumerable, search for a theorem of the form \(K(\sigma) &amp;gt; n\). By assumption this
+search will end even though the list is infinite. Define \(f(n)\) to be the first such \(\sigma\) you find. But this is the first step in
+the argument which we proves the incomputability of \(K\) in the previous post! You can simply copy the rest of the proof here.&lt;/p&gt;
+
+&lt;p&gt;Let us stop here and look at what we have proved. In ZFC, there is an upper bound on the &lt;em&gt;provable&lt;/em&gt; Kolmogorov complexity. However, there is
+no upper bound on Kolmogorov complexity! Therefore there are some true statemets of the form \(K(\sigma) &amp;gt; k\) which are not theorems of ZFC.
+This means that ZFC is incomplete, in the sense that it cannot capture all true statemets. This is Chaitin’s version of Gödel’s first incompleteness
+theorem.&lt;/p&gt;
+
+&lt;h1 id=&quot;gödels-second-incompleteness-theorem&quot;&gt;Gödel’s Second Incompleteness Theorem&lt;/h1&gt;
+&lt;p&gt;We have been making an implicit assumtion about our foundational theory, namely that it was consistent. In other words, we assumed that no
+contradiction is a theorem of ZFC. A contraiction is a vacuously false statment like \(\exists x (\neg x = x)\), by the way. This is equivalent to
+assuming that not all well formed formulas are theorems of ZFC as everything can be deduced from a contradiction. Oviously, this is a must have
+for a foundational theory.&lt;/p&gt;
+
+&lt;p&gt;Recall that ZFC can prove statements about itself. So wouldn’t it be nice to actaully have a proof of this assumption in ZFC? This would be proving the consistency of our foundational theory within the theory itself, showing that the theory is self sufficient. Certainly Hilbert wanted to do it.
+However his efforts were crashed by, Gödel who proved that no sufficiently rich theory can prove its own consistency. Here sufficiently rich roughly
+means strong enough to interpret arithmetic. Now we will give a modern proof of this theorem using Kolmogorov complexity. The proof is due to Shira
+Kritchman and Ran Raz.&lt;/p&gt;
+
+&lt;p&gt;Their proof is loosely based on the surprise examination paradox:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In your introduction to logic class, you announce that the students will have an exam next week, but they will not
+know the exact day of the exam. So the exam cannot be on Friday because otherwise, the students will know that the exam
+will be on Friday after not having an exam on Thursday. Similarly the exam cannot be on Thursday, Wednesday, Tuesday
+or Monday.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Let \(L\) be as in Chaitin’s theorem. Let \(\ell = c^{L + 1}\) where \(c\geq 2\) is the number of symbols we use in our fixed
+programming language. Define
+\[
+  \mathcal{K} = \{\sigma\, \colon K(\sigma) &amp;gt; L,\, \ell(\sigma) \leq \ell \}
+  \;\;\text{ and }\;\;
+  k = |\mathcal{K}|
+\]
+The number \(k\) will roughly correspond to the day on which the exam will take place counted from the end of the week. Clearly \(k\geq 1\) as
+there are less than \(\ell\) many programs of size \(L\). Moreover, this observation is also a theorem of ZFC as it is simple counting.&lt;/p&gt;
+
+&lt;p&gt;Now let us prove that \(k \geq 2\). Suppose not. Then \(k=1\). Let \(\sigma_0\) be the unique element of \(\mathcal{K}\). Using the fact that the theorems of ZFC are enumerable, look for proofs of statements of the form \(K(\sigma) \leq L\) for \(\ell(\sigma) \leq \ell\). By assumption, for all \(\sigma\not=\sigma_0\) we have such a proof. So when we have \(\ell - 1\) proofs, the remaining string should be \(\sigma_0\) which has
+to have complexity greater than \(L\). But we just proved, in ZFC, that a certain string has complexity greater than \(L\). This contradicts the choice of \(L\).&lt;/p&gt;
+
+&lt;p&gt;Now let us prove that \(k \geq 3\). Suppose not. Then \(k = 2\). Let \(\sigma_0, \sigma_1\) be the only elements of \(\mathcal{K}\). Using the
+fact that the theorems of ZFC are enumerable, look for proofs of statements of the form \(K(\sigma) \leq L\) for \(\ell(\sigma) \leq \ell\). By assumption, for all \(\sigma\not=\sigma_0, \sigma_1\) we have such a proof. So when we have \(\ell - 2\) proofs, the remaining two strings should
+be \(\sigma_0\) and \(\sigma_1 \) which have to have complexity greater than \(L\). But we just proved, in ZFC, that a certain string has complexity greater than \(L\). This contradicts the choice of \(L\).&lt;/p&gt;
+
+&lt;p&gt;Now let us prove that \(m \geq 4\)\ldots Well, you see the pattern. Using this method we can exhaust all possible values for \(k\) and obtain a
+contradiction. So assuming that ZFC can prove its consistency leads to a contrdiction.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Kolmogorov Complexity (Part 1 of 2)</title>
@@ -173,11 +318,11 @@ input is \(\ulcorner n \urcorner\).&lt;/p&gt;
 \end{align}&lt;/p&gt;
 
 &lt;p&gt;Clearly \(\tau_n\) ignores the input and behaves like \(\tau\) with input \(\ulcorner n\urcorner\). Moreover
-\(\ell(\tau_n) = \log_{10}(n) + c\) for some constant \(c\). Thus, for a sufficiently large \(k\) we have \(\ell(\tau_k) &amp;lt; k\).&lt;/p&gt;
+\(\ell(\tau_n) = \lfloor\log_{10}(n)\rfloor + c\) for some constant \(c\). Thus, for a sufficiently large \(k\) we have \(\ell(\tau_k) &amp;lt; k\).&lt;/p&gt;
 
 &lt;p&gt;Let \(\omega\) be the string produced by \(\tau\) on an input \(\ulcorner k \urcorner\) satisfying \(\ell(\tau_k) &amp;lt; k\). Here comes the finishing blow: By the construction of \(\tau\), we have \(K(\omega)\geq k\). On the other hand \(\tau_k\) also produces \(\omega\) (on any input) therefore we must have \(K(\omega)\leq \ell(\tau_k)\). But these two inequalities imply that \(k \leq \ell(\tau_k)\). Contradiction!&lt;/p&gt;
 
-&lt;p&gt;Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practise. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.&lt;/p&gt;
+&lt;p&gt;Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practice. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.&lt;/p&gt;
 
 </content>
  </entry>

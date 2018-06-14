@@ -238,11 +238,11 @@ input is \(\ulcorner n \urcorner\).</p>
 \end{align}</p>
 
 <p>Clearly \(\tau_n\) ignores the input and behaves like \(\tau\) with input \(\ulcorner n\urcorner\). Moreover
-\(\ell(\tau_n) = \log_{10}(n) + c\) for some constant \(c\). Thus, for a sufficiently large \(k\) we have \(\ell(\tau_k) &lt; k\).</p>
+\(\ell(\tau_n) = \lfloor\log_{10}(n)\rfloor + c\) for some constant \(c\). Thus, for a sufficiently large \(k\) we have \(\ell(\tau_k) &lt; k\).</p>
 
 <p>Let \(\omega\) be the string produced by \(\tau\) on an input \(\ulcorner k \urcorner\) satisfying \(\ell(\tau_k) &lt; k\). Here comes the finishing blow: By the construction of \(\tau\), we have \(K(\omega)\geq k\). On the other hand \(\tau_k\) also produces \(\omega\) (on any input) therefore we must have \(K(\omega)\leq \ell(\tau_k)\). But these two inequalities imply that \(k \leq \ell(\tau_k)\). Contradiction!</p>
 
-<p>Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practise. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.</p>
+<p>Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practice. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.</p>
 
 
 </div>
@@ -250,6 +250,10 @@ input is \(\ulcorner n \urcorner\).</p>
 <div id="related">
   <h3>Related Posts</h3>
   <ul class="posts">
+    
+    <li>
+      <span>14 Jun 2018 &raquo;</span> <a href="/kolmogorov-complexity/2018/06/14/kolmogorov-complexity-2.html">Kolmogorov Complexity (Part 2 of 2)</a>
+    </li>
     
     <li>
       <span>14 May 2018 &raquo;</span> <a href="/curry-howard/2018/05/14/curry-howard-from-scratch-2.html">Curry-Howard Correspondence From Scratch (Part 2 of 2)</a>
