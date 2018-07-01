@@ -4,13 +4,129 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-06-15T00:51:48+03:00</updated>
+ <updated>2018-07-01T23:12:33+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Self Aware Programs</title>
+   <link href="http://localhost:4000/recursion-theorem/2018/07/01/self-aware-programs.html"/>
+   <updated>2018-07-01T23:12:33+03:00</updated>
+   <id>http://localhost:4000/recursion-theorem/2018/07/01/self-aware-programs</id>
+   <content type="html">&lt;h1 id=&quot;a-classical-exercise&quot;&gt;A Classical Exercise&lt;/h1&gt;
+
+&lt;p&gt;A computer program which produces its own source code is called a quine, named after the logician Willard Van Orman Quine.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Exercise:&lt;/strong&gt; Write a quine in your favourite programming language.&lt;/p&gt;
+
+&lt;p&gt;If you haven’t solved this exercise before, I urge you to stop right now and give it a try.&lt;/p&gt;
+
+&lt;p&gt;To give you an idea of why this is an interesting problem, let us try to solve it in a naive way. Instead of using an actual programming language
+I will use pseudocode to keep things simple.&lt;/p&gt;
+
+&lt;p&gt;The obvious candidate of a quine is&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Print your own source code
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This looks like cheating but actually there are languages which allow this. For instance&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;10 List
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;is a valid GWBasic program which, when run, prints &lt;code class=&quot;highlighter-rouge&quot;&gt;10 List&lt;/code&gt; on the screen. Actually, in GWBasic, &lt;em&gt;any&lt;/em&gt; code which starts with &lt;code class=&quot;highlighter-rouge&quot;&gt;10 List&lt;/code&gt;
+is a quine.&lt;/p&gt;
+
+&lt;p&gt;So to make things less trivial and more generic, let us restrict ourselves to text manipulations. In this case, the first candidate is&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Print &quot;Print&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The output of this code is simply &lt;code class=&quot;highlighter-rouge&quot;&gt;Print&lt;/code&gt;. So it doesn’t work. Seeing this, you may try&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Print &quot;Print &quot;Print&quot;&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This time the output is &lt;code class=&quot;highlighter-rouge&quot;&gt;Print &quot;Print&quot;&lt;/code&gt;. Failed again. Actaully, any code of the form &lt;code class=&quot;highlighter-rouge&quot;&gt;Print &quot;&amp;lt;any kind of fixed text&amp;gt;&quot;&lt;/code&gt; will fail
+as the source code is strictly longer than the text it prints. Now here is an idea to circumvent this: We can use the the given text, or its parts, more than once!
+So let us try a program like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;&amp;lt;there is going to be a text here&amp;gt;&quot;
+&amp;lt;there are going to be commands here explaining what to do with A&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As we will construct the source code using the parts of the text A, the first line of the code should be a part of A. So our program should look like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;Let A be the following text:
+&amp;lt;there are going to be more lines here&amp;gt;&quot;
+&amp;lt;there are going to be commands here explaining what to do with A&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Of course, we will print the first line. Thus we should have a program like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;Let A be the following text:
+&amp;lt;there are going to be more lines here&amp;gt;&quot;
+Print the first line of A
+&amp;lt;there are going to be more commands here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Obviously the command &lt;code class=&quot;highlighter-rouge&quot;&gt;Print the first line of A&lt;/code&gt; should appear somewhere in A. So let’s add it to A to obtain&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;Let A be the following text:
+Print the first line of A
+&amp;lt;there are going to be more lines here&amp;gt;&quot;
+Print the first line of A
+&amp;lt;there are going to be more commands here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now the second printing command should print what comes after the first line. But this is simply the text A in quotation. Therefore we should have&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;Let A be the following text:
+Print the first line of A
+&amp;lt;there are going to be more lines here&amp;gt;&quot;
+Print the first line of A
+Print A in quotation
+&amp;lt;there are going to be more commands here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Again these commands should appear in A. So we have&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;Let A be the following text:
+Print the first line of A
+Print A in quotaion
+&amp;lt;there are going to be more lines here&amp;gt;&quot;
+Print the first line of A
+Print A in quotation
+&amp;lt;there are going to be more commands here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that, up untill now, all the steps we took were pretty much forced. The final step will be a little different and require a tid bit of creativity.
+Here is our finished quine:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
+&quot;Let A be the following text:
+Print the first line of A
+Print A in quotaion
+Print A except for its first line
+Print the first line of A
+Print A in quotation
+Print A except for its first line
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As an exercise, you may translate this quine into a real programming language. Evene though the quine has the essential idea, you may still need to deal with a few details such as escaping quotation marks.&lt;/p&gt;
+
+&lt;p&gt;Now this was fun, bu also ad-hoc. Can write quines in &lt;em&gt;all&lt;/em&gt; programming languages? The answer is yes for all Turing complete languages and this follows from one of the most fundamental results in recursion theory, the Kleene’s recursion theorem.&lt;/p&gt;
+
+&lt;h1 id=&quot;kleenes-recursion-theorem&quot;&gt;Kleene’s Recursion Theorem&lt;/h1&gt;
+
+&lt;h1 id=&quot;unsolvable-problems&quot;&gt;Unsolvable Problems&lt;/h1&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Kolmogorov Complexity (Part 2 of 2)</title>
