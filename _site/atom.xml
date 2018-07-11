@@ -4,7 +4,7 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-07-08T22:45:44+03:00</updated>
+ <updated>2018-07-11T23:12:56+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
@@ -14,9 +14,9 @@
  
  <entry>
    <title>Self Aware Programs</title>
-   <link href="http://localhost:4000/recursion-theorem/2018/07/08/self-aware-programs.html"/>
-   <updated>2018-07-08T22:45:44+03:00</updated>
-   <id>http://localhost:4000/recursion-theorem/2018/07/08/self-aware-programs</id>
+   <link href="http://localhost:4000/recursion-theorem/2018/07/11/self-aware-programs.html"/>
+   <updated>2018-07-11T00:00:00+03:00</updated>
+   <id>http://localhost:4000/recursion-theorem/2018/07/11/self-aware-programs</id>
    <content type="html">&lt;h1 id=&quot;a-classical-exercise&quot;&gt;A Classical Exercise&lt;/h1&gt;
 
 &lt;p&gt;A computer program which produces its own source code is called a quine, named after the logician Willard Van Orman Quine.&lt;/p&gt;
@@ -227,6 +227,79 @@ and apply the recursion theorem.&lt;/p&gt;
 \(\mathcal{C}(2)\) which asks for its own source code as input from the user. The recurion theorem takes care of the rest. From now on, I will freely use a subroutine &lt;code class=&quot;highlighter-rouge&quot;&gt;access your own code&lt;/code&gt; and assume that you can implement it using the recursion theorem.&lt;/p&gt;
 
 &lt;h1 id=&quot;unsolvable-problems&quot;&gt;Unsolvable Problems&lt;/h1&gt;
+
+&lt;p&gt;Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraf of &lt;a href=&quot;https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html&quot;&gt;Kolmogorov Complexity (1/2)&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;As a warmup exercise, let us prove the unsolvability of the halting problem using the recursion theorem. Of course there is a much simpler proof via diagonalization but, as I said, this is a warmup exercise. Suppose that the halting problem &lt;em&gt;is&lt;/em&gt; solvable. This means that the function defined by
+\[
+  f(c, x) =
+  \begin{cases}
+  \text{yes, }\, \text{if $c$ is in $\mathcal{C}(1)$ and $f_c(x)$ is defined} \newline
+  \text{no, }\, \text{otherwise}
+  \end{cases}
+\]
+is computable. Now consider the following algorithm:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ask for a value from the user and store it as X
+Access your own code and call it S
+if f(S, X) = no
+  print &quot;I am not supposed to halt!&quot;
+  Halt
+if f(S, X) = yes
+  print &quot;I am supposed to halt!&quot;
+  loop forever
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This program looks at its code, and sees —using the function \(f\)— whether it will halt, and then does exactly the opposite. So it halts if and only if it does not halt! Contradiction.&lt;/p&gt;
+
+&lt;p&gt;Before proving another impossibility result, let we will prove a fixed point version the recursion theorem, sometimes called the second recursion theorem.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Theorem:&lt;/strong&gt; Let \(g\) be a total computable function with a single variable such that \(g(c)\in\mathcal{C}(1)\) for all \(c\in\mathcal{C}(1)\). Then there is a \(S\in\mathcal{C}(1)\) such that \(f_S = f_{g(S)}\).&lt;/p&gt;
+
+&lt;p&gt;Such an \(S\) is called a fixed point of \(g\).&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Proof:&lt;/strong&gt; Consider the following code:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ask for a value from the user and store it as X
+Access your own code and call it S
+Simulate g(S) running on input X
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Let us call this code &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt;, just like the program itself does. Now for any given &lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, if we run &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt; on input &lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, we get what &lt;code class=&quot;highlighter-rouge&quot;&gt;g(S)&lt;/code&gt; does on input &lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;. But this simply means that on any
+&lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, the codes &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;g(S)&lt;/code&gt; have the same behaviour. So we are done. \(\square\)&lt;/p&gt;
+
+&lt;p&gt;Now we can prove a classical result due to Henry Gordon Rice.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Theorem:&lt;/strong&gt; Let \(\mathcal{A}\) be a decidable subset of \(\mathcal{C}(1)\) such that \(\mathcal{A}\not= \emptyset, \mathcal{C}(1)\). Then there are \(a,b\in\mathcal{C}(1)\) such that \(a\in \mathcal{A}\), \(b\in \mathcal{C}(1)\setminus\mathcal{A}\) and \(f_a = f_b\).&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Proof:&lt;/strong&gt; Fix \(a’\in \mathcal{A}\), \(b’\in \mathcal{C}(1)\setminus\mathcal{A}\). Define
+\[
+  g(c) =
+  \begin{cases}
+  a’\text{ if } c\in\mathcal{A} \newline
+  b’\text{ if } c\not\in\mathcal{A}
+  \end{cases}
+\]
+As \(\mathcal{A}\) is decidable, \(g\) is computable. Let \(c\) be a fixed point of \(g\). Then \(f_c = f_{g(c)}\). Morover, by construction, \(c\) and \(g(c)\) cannot be both in \(\mathcal{A}\). This finishes the proof. \(\square\)&lt;/p&gt;
+
+&lt;p&gt;This is a remarkable theorem, because it says that there is no decidable semantic property! For instance the following sets are all undecidable:
+\[
+  \begin{align}
+  &amp;amp; \{c\in\mathcal{C}(1) | \text{domain of $f_c$ has 73 elements} \}, \newline
+  &amp;amp; \{c\in\mathcal{C}(1) | \text{$f_c$ is total} \}, \newline
+  &amp;amp; \{c\in\mathcal{C}(1) | \text{$f_c$ turns an even-length string to an odd-length string} \}, \newline
+  &amp;amp; \{c\in\mathcal{C}(1) | \text{$f_c$ is constant} \}, \newline
+  &amp;amp; \{c\in\mathcal{C}(1) | \text{$f_c(x)$ has the characters a and 7 for all $x$} \}, \newline
+  &amp;amp; \{c\in\mathcal{C}(1) | \text{$f_c(x)$ is longer than $x$ for all $x$} \}, \newline
+  &amp;amp; \ldots
+  \end{align}
+\]&lt;/p&gt;
+
+&lt;p&gt;For our final example, we need a definition. Call an element \(c\in\mathcal{C}(1)\) minimal if for any shorter \(c’\in\mathcal{C}(1)\) we have \(f_c \not= f_{c’}\). It is not difficult to prove that minimality is not a decidable property. I will leave the details to you.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; Again, suppose that minimality &lt;em&gt;is&lt;/em&gt; decidable and consider the following code:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ask for a value from the user and store it as X
+Access your own code and call it S
+Construct a minimal M longer than S and call it W
+Simulate W running on input X
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </content>
  </entry>
  

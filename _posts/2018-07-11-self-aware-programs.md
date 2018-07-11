@@ -229,3 +229,79 @@ The pattern here is clear: If you want to find a code in \\(\mathcal{C}(1)\\) wh
 \\(\mathcal{C}(2)\\) which asks for its own source code as input from the user. The recurion theorem takes care of the rest. From now on, I will freely use a subroutine `access your own code` and assume that you can implement it using the recursion theorem.
 
 # Unsolvable Problems
+
+Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraf of [Kolmogorov Complexity (1/2)](https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html))
+
+As a warmup exercise, let us prove the unsolvability of the halting problem using the recursion theorem. Of course there is a much simpler proof via diagonalization but, as I said, this is a warmup exercise. Suppose that the halting problem *is* solvable. This means that the function defined by
+\\[
+  f(c, x) =
+  \begin{cases}
+  \text{yes, }\, \text{if $c$ is in $\mathcal{C}(1)$ and $f_c(x)$ is defined} \newline
+  \text{no, }\, \text{otherwise}
+  \end{cases}
+\\]
+is computable. Now consider the following algorithm:
+```
+Ask for a value from the user and store it as X
+Access your own code and call it S
+if f(S, X) = no
+  print "I am not supposed to halt!"
+  Halt
+if f(S, X) = yes
+  print "I am supposed to halt!"
+  loop forever
+```
+
+This program looks at its code, and sees ---using the function \\(f\\)--- whether it will halt, and then does exactly the opposite. So it halts if and only if it does not halt! Contradiction.
+
+Before proving another impossibility result, let we will prove a fixed point version the recursion theorem, sometimes called the second recursion theorem.
+
+**Theorem:** Let \\(g\\) be a total computable function with a single variable such that \\(g(c)\in\mathcal{C}(1)\\) for all \\(c\in\mathcal{C}(1)\\). Then there is a \\(S\in\mathcal{C}(1)\\) such that \\(f_S = f_{g(S)}\\).
+
+Such an \\(S\\) is called a fixed point of \\(g\\).
+
+**Proof:** Consider the following code:
+```
+Ask for a value from the user and store it as X
+Access your own code and call it S
+Simulate g(S) running on input X
+```
+Let us call this code `S`, just like the program itself does. Now for any given `X`, if we run `S` on input `X`, we get what `g(S)` does on input `X`. But this simply means that on any
+`X`, the codes `S` and `g(S)` have the same behaviour. So we are done. \\(\square\\)
+
+Now we can prove a classical result due to Henry Gordon Rice.
+
+**Theorem:** Let \\(\mathcal{A}\\) be a decidable subset of \\(\mathcal{C}(1)\\) such that \\(\mathcal{A}\not= \emptyset, \mathcal{C}(1)\\). Then there are \\(a,b\in\mathcal{C}(1)\\) such that \\(a\in \mathcal{A}\\), \\(b\in \mathcal{C}(1)\setminus\mathcal{A}\\) and \\(f_a = f_b\\).
+
+**Proof:** Fix \\(a'\in \mathcal{A}\\), \\(b'\in \mathcal{C}(1)\setminus\mathcal{A}\\). Define
+\\[
+  g(c) =
+  \begin{cases}
+  a'\text{ if } c\in\mathcal{A} \newline
+  b'\text{ if } c\not\in\mathcal{A}
+  \end{cases}
+\\]
+As \\(\mathcal{A}\\) is decidable, \\(g\\) is computable. Let \\(c\\) be a fixed point of \\(g\\). Then \\(f_c = f_{g(c)}\\). Morover, by construction, \\(c\\) and \\(g(c)\\) cannot be both in \\(\mathcal{A}\\). This finishes the proof. \\(\square\\)
+
+This is a remarkable theorem, because it says that there is no decidable semantic property! For instance the following sets are all undecidable:
+\\[
+  \begin{align}
+  & \\{c\in\mathcal{C}(1) | \text{domain of $f_c$ has 73 elements} \\}, \newline
+  & \\{c\in\mathcal{C}(1) | \text{$f_c$ is total} \\}, \newline
+  & \\{c\in\mathcal{C}(1) | \text{$f_c$ turns an even-length string to an odd-length string} \\}, \newline
+  & \\{c\in\mathcal{C}(1) | \text{$f_c$ is constant} \\}, \newline
+  & \\{c\in\mathcal{C}(1) | \text{$f_c(x)$ has the characters a and 7 for all $x$} \\}, \newline
+  & \\{c\in\mathcal{C}(1) | \text{$f_c(x)$ is longer than $x$ for all $x$} \\}, \newline
+  & \ldots
+  \end{align}
+\\]
+
+For our final example, we need a definition. Call an element \\(c\in\mathcal{C}(1)\\) minimal if for any shorter \\(c'\in\mathcal{C}(1)\\) we have \\(f_c \not= f_{c'}\\). It is not difficult to prove that minimality is not a decidable property. I will leave the details to you.
+
+*Hint:* Again, suppose that minimality *is* decidable and consider the following code:
+```
+Ask for a value from the user and store it as X
+Access your own code and call it S
+Construct a minimal M longer than S and call it W
+Simulate W running on input X
+```
