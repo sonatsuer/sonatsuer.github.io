@@ -9,7 +9,7 @@ categories:
 
 A computer program which produces its own source code is called a quine, named after the logician Willard Van Orman Quine.
 
-**Exercise:** Write a quine in your favourite programming language.
+**Exercise:** Write a quine in your favorite programming language.
 
 If you haven't solved this exercise before, I urge you to stop right now and give it a try.
 
@@ -41,7 +41,7 @@ The output of this code is simply `Print`. So it doesn't work. Seeing this, you 
 Print "Print "Print""
 ```
 
-This time the output is `Print "Print"`. Failed again. Actaully, any code of the form `Print "<any kind of fixed text>"` will fail
+This time the output is `Print "Print"`. Failed again. Actually, any code of the form `Print "<any kind of fixed text>"` will fail
 as the source code is strictly longer than the text it prints. Now here is an idea to circumvent this: We can use the the given text, or its parts, more than once!
 So let us try a program like this:
 ```
@@ -96,21 +96,21 @@ Again these commands should appear in A. So we have
 Let A be the following text:
 "Let A be the following text:
 Print the first line of A
-Print A in quotaion
+Print A in quotation
 <there are going to be more lines here>"
 Print the first line of A
 Print A in quotation
 <there are going to be more commands here>
 ```
 
-Note that, up untill now, all the steps we took were pretty much forced. The final step will be a little different and require a tid bit of creativity.
+Note that, up until now, all the steps we took were pretty much forced. The final step will be a little different and require a tid bit of creativity.
 Here is our finished quine:
 
 ```
 Let A be the following text:
 "Let A be the following text:
 Print the first line of A
-Print A in quotaion
+Print A in quotation
 Print A except for its first line"
 Print the first line of A
 Print A in quotation
@@ -129,13 +129,13 @@ Now this was fun, bu also ad-hoc. The natural question to ask here whether there
 
 I want to work with a Turing complete programming language. Luckily, what we need is essentially what I described in the first section of
 [Kolmogorov Complexity (1/2)](https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html). The differences
-are that we do not need \\(\mathcal{L}\\) to contain UTF-8 characters and we do not need an assumtion on the way we represent natural numbers.
+are that we do not need \\(\mathcal{L}\\) to contain UTF-8 characters and we do not need an assumption on the way we represent natural numbers.
 
 Let \\(\mathcal{M}\\) be the set of all strings from \\(\mathcal{L}\\) and let \\(\mathcal{C}(n)\\) be the set of all source codes
 expecting \\(n\\) inputs, where \\(n\\) is a natural number. Then, for each \\(c\in\mathcal{C}(n)\\), we have a partial function \\(f_c\\) from
 \\(\mathcal{M}^n\\) to \\(\mathcal{M}\\), which is simply the partial function computed by the source code \\(c\\). These functions are called the computable partial functions.
 
-Let us start with a simple but usefull lemma.
+Let us start with a simple but useful lemma.
 
 **Lemma:** There is a computable function \\(s\\) such that for any \\(x\in\mathcal{M}\\) and \\(c\in\mathcal{C}(2)\\) we have
 \\(s(c,x)\in\mathcal{C}(1)\\) and
@@ -159,7 +159,7 @@ In other words, it should hard-code the value \\(x\\). It is not difficult to im
 
 Now we can prove the recursion theorem.
 
-**Theprem (Kleene):** Let \\(f(x,y)\\) be a partial two-variable computable function. Then there is a \\(c\in\mathcal{C}(1)\\) such that
+**Theorem (Kleene):** Let \\(f(x,y)\\) be a partial two-variable computable function. Then there is a \\(c\in\mathcal{C}(1)\\) such that
 \\[
   f(c,y) = f_c(y)
 \\]
@@ -171,7 +171,7 @@ by the lemma, we already have something close, namely
   f(x,y) = f_a(x,y) = f_{s(a,x)}(y).
 \\]
 So, if we could find a solution for \\(x = s(a,x)\\), then we would be done. However, in this equation, we have some control over \\(x\\) but
-the other parameter \\(a\\) is very heavily contsrined since \\(f = f_a\\).
+the other parameter \\(a\\) is very heavily constrained since \\(f = f_a\\).
 
 Now comes the brilliant idea: instead of working with \\(x\\)
 let us work with a computable function of \\(x\\). Consider \\(f(g(x),y)\\) for a not yet determined computable function. As both \\(f\\)
@@ -226,11 +226,11 @@ Let
 and apply the recursion theorem.
 
 The pattern here is clear: If you want to find a code in \\(\mathcal{C}(1)\\) which accesses its own source code, just write a code in
-\\(\mathcal{C}(2)\\) which asks for its own source code as input from the user. The recurion theorem takes care of the rest. From now on, I will freely use a subroutine `access your own code` and assume that you can implement it using the recursion theorem.
+\\(\mathcal{C}(2)\\) which asks for its own source code as input from the user. The recursion theorem takes care of the rest. From now on, I will freely use a subroutine `access your own code` and assume that you can implement it using the recursion theorem.
 
 # Unsolvable Problems
 
-Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraf of [Kolmogorov Complexity (1/2)](https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html))
+Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraph of [Kolmogorov Complexity (1/2)](https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html))
 
 As a warmup exercise, let us prove the unsolvability of the halting problem using the recursion theorem. Of course there is a much simpler proof via diagonalization but, as I said, this is a warmup exercise. Suppose that the halting problem *is* solvable. This means that the function defined by
 \\[
@@ -267,7 +267,7 @@ Access your own code and call it S
 Simulate g(S) running on input X
 ```
 Let us call this code `S`, just like the program itself does. Now for any given `X`, if we run `S` on input `X`, we get what `g(S)` does on input `X`. But this simply means that on any
-`X`, the codes `S` and `g(S)` have the same behaviour. So we are done. \\(\square\\)
+`X`, the codes `S` and `g(S)` have the same behavior. So we are done. \\(\square\\)
 
 Now we can prove a classical result due to Henry Gordon Rice.
 
@@ -281,7 +281,7 @@ Now we can prove a classical result due to Henry Gordon Rice.
   b'\text{ if } c\not\in\mathcal{A}
   \end{cases}
 \\]
-As \\(\mathcal{A}\\) is decidable, \\(g\\) is computable. Let \\(c\\) be a fixed point of \\(g\\). Then \\(f_c = f_{g(c)}\\). Morover, by construction, \\(c\\) and \\(g(c)\\) cannot be both in \\(\mathcal{A}\\). This finishes the proof. \\(\square\\)
+As \\(\mathcal{A}\\) is decidable, \\(g\\) is computable. Let \\(c\\) be a fixed point of \\(g\\). Then \\(f_c = f_{g(c)}\\). Moreover, by construction, \\(c\\) and \\(g(c)\\) cannot be both in \\(\mathcal{A}\\). This finishes the proof. \\(\square\\)
 
 This is a remarkable theorem, because it says that there is no decidable semantic property! For instance the following sets are all undecidable:
 \\[

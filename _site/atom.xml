@@ -4,7 +4,7 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-07-23T22:15:07+03:00</updated>
+ <updated>2018-07-23T22:19:21+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
@@ -247,7 +247,7 @@ This was just one idea and its generalizations. Here is an incomplete list of ot
 
 &lt;p&gt;A computer program which produces its own source code is called a quine, named after the logician Willard Van Orman Quine.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Exercise:&lt;/strong&gt; Write a quine in your favourite programming language.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Exercise:&lt;/strong&gt; Write a quine in your favorite programming language.&lt;/p&gt;
 
 &lt;p&gt;If you haven’t solved this exercise before, I urge you to stop right now and give it a try.&lt;/p&gt;
 
@@ -275,7 +275,7 @@ is a quine.&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Print &quot;Print &quot;Print&quot;&quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;This time the output is &lt;code class=&quot;highlighter-rouge&quot;&gt;Print &quot;Print&quot;&lt;/code&gt;. Failed again. Actaully, any code of the form &lt;code class=&quot;highlighter-rouge&quot;&gt;Print &quot;&amp;lt;any kind of fixed text&amp;gt;&quot;&lt;/code&gt; will fail
+&lt;p&gt;This time the output is &lt;code class=&quot;highlighter-rouge&quot;&gt;Print &quot;Print&quot;&lt;/code&gt;. Failed again. Actually, any code of the form &lt;code class=&quot;highlighter-rouge&quot;&gt;Print &quot;&amp;lt;any kind of fixed text&amp;gt;&quot;&lt;/code&gt; will fail
 as the source code is strictly longer than the text it prints. Now here is an idea to circumvent this: We can use the the given text, or its parts, more than once!
 So let us try a program like this:&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
@@ -324,20 +324,20 @@ Print A in quotation
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
 &quot;Let A be the following text:
 Print the first line of A
-Print A in quotaion
+Print A in quotation
 &amp;lt;there are going to be more lines here&amp;gt;&quot;
 Print the first line of A
 Print A in quotation
 &amp;lt;there are going to be more commands here&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Note that, up untill now, all the steps we took were pretty much forced. The final step will be a little different and require a tid bit of creativity.
+&lt;p&gt;Note that, up until now, all the steps we took were pretty much forced. The final step will be a little different and require a tid bit of creativity.
 Here is our finished quine:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Let A be the following text:
 &quot;Let A be the following text:
 Print the first line of A
-Print A in quotaion
+Print A in quotation
 Print A except for its first line&quot;
 Print the first line of A
 Print A in quotation
@@ -355,13 +355,13 @@ Print A except for its first line
 
 &lt;p&gt;I want to work with a Turing complete programming language. Luckily, what we need is essentially what I described in the first section of
 &lt;a href=&quot;https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html&quot;&gt;Kolmogorov Complexity (1/2)&lt;/a&gt;. The differences
-are that we do not need \(\mathcal{L}\) to contain UTF-8 characters and we do not need an assumtion on the way we represent natural numbers.&lt;/p&gt;
+are that we do not need \(\mathcal{L}\) to contain UTF-8 characters and we do not need an assumption on the way we represent natural numbers.&lt;/p&gt;
 
 &lt;p&gt;Let \(\mathcal{M}\) be the set of all strings from \(\mathcal{L}\) and let \(\mathcal{C}(n)\) be the set of all source codes
 expecting \(n\) inputs, where \(n\) is a natural number. Then, for each \(c\in\mathcal{C}(n)\), we have a partial function \(f_c\) from
 \(\mathcal{M}^n\) to \(\mathcal{M}\), which is simply the partial function computed by the source code \(c\). These functions are called the computable partial functions.&lt;/p&gt;
 
-&lt;p&gt;Let us start with a simple but usefull lemma.&lt;/p&gt;
+&lt;p&gt;Let us start with a simple but useful lemma.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Lemma:&lt;/strong&gt; There is a computable function \(s\) such that for any \(x\in\mathcal{M}\) and \(c\in\mathcal{C}(2)\) we have
 \(s(c,x)\in\mathcal{C}(1)\) and
@@ -383,7 +383,7 @@ Ask for a value from the user and store it as B
 
 &lt;p&gt;Now we can prove the recursion theorem.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Theprem (Kleene):&lt;/strong&gt; Let \(f(x,y)\) be a partial two-variable computable function. Then there is a \(c\in\mathcal{C}(1)\) such that
+&lt;p&gt;&lt;strong&gt;Theorem (Kleene):&lt;/strong&gt; Let \(f(x,y)\) be a partial two-variable computable function. Then there is a \(c\in\mathcal{C}(1)\) such that
 \[
   f(c,y) = f_c(y)
 \]
@@ -395,7 +395,7 @@ by the lemma, we already have something close, namely
   f(x,y) = f_a(x,y) = f_{s(a,x)}(y).
 \]
 So, if we could find a solution for \(x = s(a,x)\), then we would be done. However, in this equation, we have some control over \(x\) but
-the other parameter \(a\) is very heavily contsrined since \(f = f_a\).&lt;/p&gt;
+the other parameter \(a\) is very heavily constrained since \(f = f_a\).&lt;/p&gt;
 
 &lt;p&gt;Now comes the brilliant idea: instead of working with \(x\)
 let us work with a computable function of \(x\). Consider \(f(g(x),y)\) for a not yet determined computable function. As both \(f\)
@@ -450,11 +450,11 @@ Let
 and apply the recursion theorem.&lt;/p&gt;
 
 &lt;p&gt;The pattern here is clear: If you want to find a code in \(\mathcal{C}(1)\) which accesses its own source code, just write a code in
-\(\mathcal{C}(2)\) which asks for its own source code as input from the user. The recurion theorem takes care of the rest. From now on, I will freely use a subroutine &lt;code class=&quot;highlighter-rouge&quot;&gt;access your own code&lt;/code&gt; and assume that you can implement it using the recursion theorem.&lt;/p&gt;
+\(\mathcal{C}(2)\) which asks for its own source code as input from the user. The recursion theorem takes care of the rest. From now on, I will freely use a subroutine &lt;code class=&quot;highlighter-rouge&quot;&gt;access your own code&lt;/code&gt; and assume that you can implement it using the recursion theorem.&lt;/p&gt;
 
 &lt;h1 id=&quot;unsolvable-problems&quot;&gt;Unsolvable Problems&lt;/h1&gt;
 
-&lt;p&gt;Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraf of &lt;a href=&quot;https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html&quot;&gt;Kolmogorov Complexity (1/2)&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraph of &lt;a href=&quot;https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html&quot;&gt;Kolmogorov Complexity (1/2)&lt;/a&gt;)&lt;/p&gt;
 
 &lt;p&gt;As a warmup exercise, let us prove the unsolvability of the halting problem using the recursion theorem. Of course there is a much simpler proof via diagonalization but, as I said, this is a warmup exercise. Suppose that the halting problem &lt;em&gt;is&lt;/em&gt; solvable. This means that the function defined by
 \[
@@ -489,7 +489,7 @@ Access your own code and call it S
 Simulate g(S) running on input X
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;Let us call this code &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt;, just like the program itself does. Now for any given &lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, if we run &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt; on input &lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, we get what &lt;code class=&quot;highlighter-rouge&quot;&gt;g(S)&lt;/code&gt; does on input &lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;. But this simply means that on any
-&lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, the codes &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;g(S)&lt;/code&gt; have the same behaviour. So we are done. \(\square\)&lt;/p&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;X&lt;/code&gt;, the codes &lt;code class=&quot;highlighter-rouge&quot;&gt;S&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;g(S)&lt;/code&gt; have the same behavior. So we are done. \(\square\)&lt;/p&gt;
 
 &lt;p&gt;Now we can prove a classical result due to Henry Gordon Rice.&lt;/p&gt;
 
@@ -503,7 +503,7 @@ Simulate g(S) running on input X
   b’\text{ if } c\not\in\mathcal{A}
   \end{cases}
 \]
-As \(\mathcal{A}\) is decidable, \(g\) is computable. Let \(c\) be a fixed point of \(g\). Then \(f_c = f_{g(c)}\). Morover, by construction, \(c\) and \(g(c)\) cannot be both in \(\mathcal{A}\). This finishes the proof. \(\square\)&lt;/p&gt;
+As \(\mathcal{A}\) is decidable, \(g\) is computable. Let \(c\) be a fixed point of \(g\). Then \(f_c = f_{g(c)}\). Moreover, by construction, \(c\) and \(g(c)\) cannot be both in \(\mathcal{A}\). This finishes the proof. \(\square\)&lt;/p&gt;
 
 &lt;p&gt;This is a remarkable theorem, because it says that there is no decidable semantic property! For instance the following sets are all undecidable:
 \[
