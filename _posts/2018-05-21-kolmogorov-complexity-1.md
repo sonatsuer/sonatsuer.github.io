@@ -26,12 +26,12 @@ accepts strings from \\(\mathcal{L}\\) as input and produce strings from \\(\mat
 in particular, we can give a program to another program as input or a program may produce a program. For ease
 of reading, I will use \\(\texttt{this font}\\) when writing a string from \\(\mathcal{L}\\).
 
-One technical assumtion which will be important later is that our programs will use decimal representation
+One technical assumption which will be important later is that our programs will use decimal representation
 for natural numbers. Actually pretty much any positional system would do, but for the sake of definiteness
 I will stick with decimal.
 
 When I write a program, I will use some sort of pseudocode hoping that there is no ambiguity. Also I will
-not exclude partial programs which corresponds do partial functions. For insance
+not exclude partial programs which corresponds do partial functions. For instance
 \begin{align}
 &\texttt{accept x as input}\newline
 &\texttt{while 1 == 1}\newline
@@ -41,14 +41,14 @@ not exclude partial programs which corresponds do partial functions. For insance
 is a valid program even though it does not produce any result as it is always stuck in the while loop.
 
 Now we can define the Kolmogorov complexity of a string from \\(\mathcal{L}\\): Let \\(\sigma\\) be a string
-from \\(\mathcal{L}\\). The Kolmgorov complexity of \\(\sigma\\) is the length of the shortest program which
+from \\(\mathcal{L}\\). The Kolmogorov complexity of \\(\sigma\\) is the length of the shortest program which
 generates \\(\sigma\\) on any input. It is denoted by \\(K(\sigma)\\).
 
 # How canonical is this definition?
 
 The definition seems very intuitive, especially after the mandatory example. However, there is something fishy here.
 We made several arbitrary choices yet we called \\(K(\sigma)\\) *the* Kolmogorov complexity of \\(\sigma\\). It should
-be clear that it is easier to generate certain strings in some langugaes than others. Indeed, the second string in our
+be clear that it is easier to generate certain strings in some languages than others. Indeed, the second string in our
 example is just the first few digits of the binary expansion of \\(\pi\\) so it can be easier to generate in a language
 designed for numerical computations.
 
@@ -61,7 +61,7 @@ to two different programming languages \\(L_1\\) and \\(L_2\\), respectively. Si
 *compiler* for \\(L_2\\) in \\(L_1\\). In other words, \\(L_1\\) can simulate \\(L_2\\). Let \\(\sigma\\) be a string and
 let \\(n=K_2(\sigma)\\). Then there is a program \\(p\\) in the language \\(L_2\\) which witnesses the fact that \\(n=K_2(\sigma)\\).
 That is, \\(p\\) has length \\(n\\) and \\(p\\) generates \\(\sigma\\). Now consider the following (description of a) program in \\(L_1\\):
-Simulate \\(p\\). The length of this program will be \\(n + c\\) for some \\(c\\) becuse the program contains the string \\(p\\) and
+Simulate \\(p\\). The length of this program will be \\(n + c\\) for some \\(c\\) because the program contains the string \\(p\\) and
 \\(p\\) has length \\(n\\). The part corresponding to \\(c\\) is the part that simulates \\(L_2\\) and it does not depend on \\(\sigma\\).
 By construction, "Simulate \\(p\\)" generates \\(\sigma\\), thus
 \\[
@@ -72,15 +72,15 @@ there is a \\(c'\\) such that \\(K_2(\sigma)\leq K_1(\sigma) + c'\\) for all \\(
 \\[
   |K_1(\sigma) - K_2(\sigma)| < {\rm max}\\{c, c'\\}.
 \\]
-This shows that if we consider an infinite family of strings and consider the asymptotic behaviour of Kolmogorov complexity
+This shows that if we consider an infinite family of strings and consider the asymptotic behavior of Kolmogorov complexity
 on that family, then the programming language we choose does not matter. Obviously, this does not imply that this asymptotic
-behaviour is easy to determine.
+behavior is easy to determine.
 
-From now on we will stick with a fixed but not explicitely determined choice of language and denote the complexity function
+From now on we will stick with a fixed but not explicitly determined choice of language and denote the complexity function
 given by that language by \\(K\\).
 
 At this point I would compute the Kolmogorov complexity of some concrete strings (or infinite families of strings) but it is tricky.
-We can always give an upper bound for Kolmogorov complexity by explicitely constructing a program and measuring its length
+We can always give an upper bound for Kolmogorov complexity by explicitly constructing a program and measuring its length
 but the tricky part is to show that no shorter program generates the same string. Actually, the problem is so difficult that
 there is no general solution. To put it more concretely, the function  \\(K\\) is not computable. The aim of this post is to
 give a proof of this result.
@@ -165,6 +165,6 @@ Clearly \\(\tau_n\\) ignores the input and behaves like \\(\tau\\) with input \\
 
 Let \\(\omega\\) be the string produced by \\(\\tau\\) on an input \\(\ulcorner k \urcorner\\) satisfying \\(\ell(\tau_k) < k\\). Here comes the finishing blow: By the construction of \\(\tau\\), we have \\(K(\omega)\geq k\\). On the other hand \\(\tau_k\\) also produces \\(\omega\\) (on any input) therefore we must have \\(K(\omega)\leq \ell(\tau_k)\\). But these two inequalities imply that \\(k \leq \ell(\tau_k)\\). Contradiction!
 
-Let us summarize what we did: We defined a not exctly canonical notion of complexity which is impossible to compute in practice. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.
+Let us summarize what we did: We defined a not exactly canonical notion of complexity which is impossible to compute in practice. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the forthcoming post on Kolmogorov complexity.
 
 
