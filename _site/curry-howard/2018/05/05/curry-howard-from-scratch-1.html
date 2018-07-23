@@ -142,12 +142,12 @@ From which sets can we name specific elements? We will give a rather surprising 
 but bear with me. I promise this is going somewhere.</p>
 
 <p>In this section we will develop a modest theory of propositions. We are not going to define <em>what</em> a proposition is,
-but intuitively, we will think of propositions as judgements. The central notion in our theory will be that of proof,
+but intuitively, we will think of propositions as judgments. The central notion in our theory will be that of proof,
 or rather the “proves” relation which we will denote by \(\vdash\). The proves relation will be a relation
 between proposition sets, which we will call assumption sets, and propositions. If \(\Gamma\) is a set of
-propositions and \(p\) is a propositon we will write \(\Gamma\vdash p\) to denote \(\Gamma\) proves \(p\).</p>
+propositions and \(p\) is a proposition we will write \(\Gamma\vdash p\) to denote \(\Gamma\) proves \(p\).</p>
 
-<p>Now we will list the properties we want \(\vdash\) to satisy. These properties will be our deduction rules. For
+<p>Now we will list the properties we want \(\vdash\) to satisfy. These properties will be our deduction rules. For
 ease of notation we will abbreviate \(\Gamma\cup\{p\}\) as  \(\Gamma,p\) and \(\Gamma\cup\{p,q\}\) as \(\Gamma,p,q\).
 We will also write \(\vdash p\) instead of \(\emptyset\vdash p\).</p>
 
@@ -159,7 +159,7 @@ We will call this the rule \(A\).</p>
 
 <p>For the other deduction rules, we need to define how we can construct new propositions from old ones. There are
 several ways to do it. We can use conjunctions, disjunctions, negations, implications etc. For the sake of this post, we
-will only work with implication. If \(p\) and \(q\) are two propositions then we define a new propositon \(p\to q\)
+will only work with implication. If \(p\) and \(q\) are two propositions then we define a new proposition \(p\to q\)
 and read it as “\(p\) implies \(q\)”. Obviously this is a completely formal definition.</p>
 
 <p>Now we can introduce more deduction rules. The next rule is the famous <em>modus ponens</em> rule. It says
@@ -178,16 +178,16 @@ with \(p\) then using only \(\Gamma\) one can prove \(p\to q\). More formally
 \]
 We will call this the rule \(C\).</p>
 
-<p>Our propositional logic with the rules \(A\), \(B\) and \(C\) is called the implicational fragment of the intutionistic propositional
+<p>Our propositional logic with the rules \(A\), \(B\) and \(C\) is called the implicational fragment of the intuitionistic propositional
 logic and sometimes denoted by \({\rm IP}(\to)\). So what can we deduce in \({\rm IP}(\to)\)? Let us look at a few examples.</p>
 
 <p>First of all, by \(A\), we have \(p\vdash p\). So, by \(C\), we deduce \(\vdash p\to p\). On the other hand we should not have
-\(\vdash p\to q\) because it is absurd to expect an arbitrary propositon to imply an arbitrary proposition. Actually
+\(\vdash p\to q\) because it is absurd to expect an arbitrary proposition to imply an arbitrary proposition. Actually
 it is not difficult to prove that we cannot deduce \(\vdash p\to q\) in \({\rm IP}(\to)\) but we will mostly rely on intuitive arguments.</p>
 
 <p>Here is another example. By \(A\), we have \(p,q\vdash p\). By \(C\), we deduce \(p\vdash q\to p\). Using \(C\) once more we obtain
 \(\vdash p\to (q\to p)\). If we start with \(p,q\vdash q\) in the previous argument we obtain \(\vdash p\to (q\to q)\).
-On the other hand we should not be able to deduce \(\vdash p \to (p\to q)\). Becasue assuming \(p\) holds, we cannot
+On the other hand we should not be able to deduce \(\vdash p \to (p\to q)\). Because assuming \(p\) holds, we cannot
 say that \(p\) implies an arbitrary \(y\).</p>
 
 <p>Note that we have not used the rule \(B\) yet. So let us look at an example involving that rule. Let
@@ -206,7 +206,7 @@ Now using the rule \(C\) twice we get
    (p \to (q \to r)) \to ((p \to q) \to (p \to r)).
 \]</p>
 
-<p>Now let us list the propositions we were able to prove with an empty assumtion set:</p>
+<p>Now let us list the propositions we were able to prove with an empty assumption set:</p>
 
 <p>\begin{align}
 &amp; p \to p, \newline
@@ -235,15 +235,15 @@ propositions. In the next post, we will see that this is not a coincidence.</p>
   <ul class="posts">
     
     <li>
+      <span>23 Jul 2018 &raquo;</span> <a href="/evangelism/2018/07/23/invitation.html">An Invitation to Functional Programming (For Mathematicians)</a>
+    </li>
+    
+    <li>
       <span>11 Jul 2018 &raquo;</span> <a href="/recursion-theorem/2018/07/11/self-aware-programs.html">Self Aware Programs</a>
     </li>
     
     <li>
       <span>14 Jun 2018 &raquo;</span> <a href="/kolmogorov-complexity/2018/06/14/kolmogorov-complexity-2.html">Kolmogorov Complexity (Part 2 of 2)</a>
-    </li>
-    
-    <li>
-      <span>21 May 2018 &raquo;</span> <a href="/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html">Kolmogorov Complexity (Part 1 of 2)</a>
     </li>
     
   </ul>

@@ -65,12 +65,12 @@ After function sets, the title may remind you of the Monty Python Movie *And Now
 but bear with me. I promise this is going somewhere.
 
 In this section we will develop a modest theory of propositions. We are not going to define *what* a proposition is,
-but intuitively, we will think of propositions as judgements. The central notion in our theory will be that of proof,
+but intuitively, we will think of propositions as judgments. The central notion in our theory will be that of proof,
 or rather the "proves" relation which we will denote by \\(\vdash\\). The proves relation will be a relation
 between proposition sets, which we will call assumption sets, and propositions. If \\(\Gamma\\) is a set of
-propositions and \\(p\\) is a propositon we will write \\(\Gamma\vdash p\\) to denote \\(\Gamma\\) proves \\(p\\).
+propositions and \\(p\\) is a proposition we will write \\(\Gamma\vdash p\\) to denote \\(\Gamma\\) proves \\(p\\).
 
-Now we will list the properties we want \\(\vdash\\) to satisy. These properties will be our deduction rules. For
+Now we will list the properties we want \\(\vdash\\) to satisfy. These properties will be our deduction rules. For
 ease of notation we will abbreviate \\(\Gamma\cup\\{p\\}\\) as  \\(\Gamma,p\\) and \\(\Gamma\cup\\{p,q\\}\\) as \\(\Gamma,p,q\\).
 We will also write \\(\vdash p\\) instead of \\(\emptyset\vdash p\\).
 
@@ -82,7 +82,7 @@ We will call this the rule \\(A\\).
 
 For the other deduction rules, we need to define how we can construct new propositions from old ones. There are
 several ways to do it. We can use conjunctions, disjunctions, negations, implications etc. For the sake of this post, we
-will only work with implication. If \\(p\\) and \\(q\\) are two propositions then we define a new propositon \\(p\to q\\)
+will only work with implication. If \\(p\\) and \\(q\\) are two propositions then we define a new proposition \\(p\to q\\)
 and read it as "\\(p\\) implies \\(q\\)". Obviously this is a completely formal definition.
 
 Now we can introduce more deduction rules. The next rule is the famous *modus ponens* rule. It says
@@ -101,16 +101,16 @@ with \\(p\\) then using only \\(\Gamma\\) one can prove \\(p\to q\\). More forma
 \\]
 We will call this the rule \\(C\\).
 
-Our propositional logic with the rules \\(A\\), \\(B\\) and \\(C\\) is called the implicational fragment of the intutionistic propositional
+Our propositional logic with the rules \\(A\\), \\(B\\) and \\(C\\) is called the implicational fragment of the intuitionistic propositional
 logic and sometimes denoted by \\({\rm IP}(\to)\\). So what can we deduce in \\({\rm IP}(\to)\\)? Let us look at a few examples.
 
 First of all, by \\(A\\), we have \\(p\vdash p\\). So, by \\(C\\), we deduce \\(\vdash p\to p\\). On the other hand we should not have
-\\(\vdash p\to q\\) because it is absurd to expect an arbitrary propositon to imply an arbitrary proposition. Actually
+\\(\vdash p\to q\\) because it is absurd to expect an arbitrary proposition to imply an arbitrary proposition. Actually
 it is not difficult to prove that we cannot deduce \\(\vdash p\to q\\) in \\({\rm IP}(\to)\\) but we will mostly rely on intuitive arguments.
 
 Here is another example. By \\(A\\), we have \\(p,q\vdash p\\). By \\(C\\), we deduce \\(p\vdash q\to p\\). Using \\(C\\) once more we obtain
 \\(\vdash p\to (q\to p)\\). If we start with \\(p,q\vdash q\\) in the previous argument we obtain \\(\vdash p\to (q\to q)\\).
-On the other hand we should not be able to deduce \\(\vdash p \to (p\to q)\\). Becasue assuming \\(p\\) holds, we cannot
+On the other hand we should not be able to deduce \\(\vdash p \to (p\to q)\\). Because assuming \\(p\\) holds, we cannot
 say that \\(p\\) implies an arbitrary \\(y\\).
 
 Note that we have not used the rule \\(B\\) yet. So let us look at an example involving that rule. Let
@@ -129,7 +129,7 @@ As an exercise, prove that
    (p \to (q \to r)) \to ((p \to q) \to (p \to r)).
 \\]
 
-Now let us list the propositions we were able to prove with an empty assumtion set:
+Now let us list the propositions we were able to prove with an empty assumption set:
 
 \begin{align}
 & p \to p, \newline
