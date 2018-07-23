@@ -4,7 +4,7 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-07-23T22:19:21+03:00</updated>
+ <updated>2018-07-23T23:08:36+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
@@ -15,7 +15,7 @@
  <entry>
    <title>An Invitation to Functional Programming (For Mathematicians)</title>
    <link href="http://localhost:4000/evangelism/2018/07/23/invitation.html"/>
-   <updated>2018-07-23T21:39:30+03:00</updated>
+   <updated>2018-07-23T00:00:00+03:00</updated>
    <id>http://localhost:4000/evangelism/2018/07/23/invitation</id>
    <content type="html">&lt;p&gt;(This post is based on two talks I gave at the mathematics departments of Bilkent University and METU.)&lt;/p&gt;
 
@@ -28,9 +28,9 @@
 
 &lt;p&gt;This should be very appealing to mathematicians. The reason is that choosing pure –i.e. mathematical– functions as a foundation means that programs are &lt;em&gt;algebraic&lt;/em&gt; objects. Computation is literally simplification of algebraic expressions.&lt;/p&gt;
 
-&lt;p&gt;This paradigm is very intuitive from the point of view of a mathematician. For instance, we can use &lt;em&gt;substituition of equals for equals principle&lt;/em&gt;, a principle we learn in primary school, as a way to reason bout programs. This is also very useful from the point of view of a programmer. It even has a fancy name in computer science. It is called &lt;em&gt;referential transparency&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;This paradigm is very intuitive from the point of view of a mathematician. For instance, we can use &lt;em&gt;substitution of equals for equals principle&lt;/em&gt;, a principle we learn in primary school, as a way to reason bout programs. This is also very useful from the point of view of a programmer. It even has a fancy name in computer science. It is called &lt;em&gt;referential transparency&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;However, somewhat surprisingly, functional programming is considered difficult by a lot of programmers. Personally, I think programmers find it difficult because first they need to &lt;em&gt;unlearn&lt;/em&gt; an entire paradigm which they have been using for years. This is where the mathematicians have the advantage. A mathematician only needs to &lt;em&gt;learn&lt;/em&gt; the specifics of a programming language based on ideas with which he/she is already familiar. Learning is gnerally easier than unlearning.&lt;/p&gt;
+&lt;p&gt;However, somewhat surprisingly, functional programming is considered difficult by a lot of programmers. Personally, I think programmers find it difficult because to be productive in a purely functional language, first they need to &lt;em&gt;unlearn&lt;/em&gt; an entire paradigm which they have been using for years. This is where the mathematicians have the advantage. A mathematician only needs to &lt;em&gt;learn&lt;/em&gt; the specifics of a programming language based on ideas with which he/she is already familiar. Learning is generally easier than unlearning.&lt;/p&gt;
 
 &lt;p&gt;In this post, I will try to lure you, my dear mathematician, into functional programming.&lt;/p&gt;
 
@@ -63,7 +63,7 @@
              = 1 : (2 : (3 : (4 : [])))
              = [1,2,3,4]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Note the simialarity between this calculation and the calculations you do in algebra.&lt;/p&gt;
+&lt;p&gt;Note the similarity between this calculation and the calculations you do in algebra.&lt;/p&gt;
 
 &lt;h1 id=&quot;our-first-program-in-haskell&quot;&gt;Our First Program in Haskell&lt;/h1&gt;
 
@@ -73,7 +73,7 @@ naiveReverse (x : xs) = naiveReverse xs ++ [x]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;This looks like a (recursive) mathematical definition but it is actually valid Haskell code. As an exercise you may want to show that &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse [1,2,3] = [3,2,1]&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;Our program solves the problem of inveting a list, however we call it the naive reverse for a reason. It is not very efficient. First, note that the computation of &lt;code class=&quot;highlighter-rouge&quot;&gt;xs ++ ys&lt;/code&gt; requires length of &lt;code class=&quot;highlighter-rouge&quot;&gt;xs&lt;/code&gt; many applications of &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; operation. This causes the computtaion to &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse xs&lt;/code&gt; to require \(\frac{1}{2}n(n-1)\) applications of the operation &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; where \(n\) is the length of &lt;code class=&quot;highlighter-rouge&quot;&gt;xs&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Our program solves the problem of inverting a list, however we call it the naive reverse for a reason. It is not very efficient. First, note that the computation of &lt;code class=&quot;highlighter-rouge&quot;&gt;xs ++ ys&lt;/code&gt; requires length of &lt;code class=&quot;highlighter-rouge&quot;&gt;xs&lt;/code&gt; many applications of &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; operation. This causes the computation to &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse xs&lt;/code&gt; to require \(\frac{1}{2}n(n-1)\) applications of the operation &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; where \(n\) is the length of &lt;code class=&quot;highlighter-rouge&quot;&gt;xs&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;We can easily prove this by induction on \(n\). Base case is trivial. Suppose the statement holds for \(n\). Let &lt;code class=&quot;highlighter-rouge&quot;&gt;xs&lt;/code&gt; be of length \(n\). Then, for any &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; we have
 \[
@@ -81,160 +81,55 @@ naiveReverse (x : xs) = naiveReverse xs ++ [x]
 \]
 As &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse xs&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;xs&lt;/code&gt; has the same length, namely \(n\), computation of &lt;code class=&quot;highlighter-rouge&quot;&gt;++&lt;/code&gt; takes \(n\) applications of the &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; operation. On the other hand, by induction hypothesis, &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse xs&lt;/code&gt; requires \(\frac{1}{2}n(n-1)\) applications. Adding these two yields \(\frac{1}{2}n(n+1)\), which is what we want.&lt;/p&gt;
 
-&lt;p&gt;So the complexity of &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse&lt;/code&gt; is quadratic as a function of the input length because &lt;code class=&quot;highlighter-rouge&quot;&gt;++&lt;/code&gt; is expensive. There is a very similar situation in mathematics with an elegant solution: multiplication is expensive, however one can use logarithms to turn multiplication into addition, do the additon and come back with exponentiaiton. This is why logarithm tables were used before computers.&lt;/p&gt;
+&lt;p&gt;So the complexity of &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse&lt;/code&gt; is quadratic as a function of the input length because &lt;code class=&quot;highlighter-rouge&quot;&gt;++&lt;/code&gt; is expensive. There is a very similar situation in mathematics with an elegant solution: multiplication is expensive, however one can use logarithms to turn multiplication into addition, do the addition and come back with exponentiation. This is why logarithm tables were used before computers.&lt;/p&gt;
 
 &lt;p&gt;We will use the same trick to optimize &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse&lt;/code&gt;, that is, we will change the underlying monoid using a homomorphism.&lt;/p&gt;
 
 &lt;h1 id=&quot;algebra-refresher&quot;&gt;Algebra Refresher&lt;/h1&gt;
 &lt;p&gt;Recall that a monoid is a triple \((M, \cdot, 1_M)\) where \(\cdot\) is a binary associative operation on \(M\) and \(1_M\) is the identity element of \(\cdot\).&lt;/p&gt;
 
-&lt;p&gt;Here are a few examples:
-\begin{enumerate}
-	\onslide&amp;lt;2-&amp;gt;{\item For any set $S$, the set of self maps of $S$, denoted by ${\rm End}(S)$ is a monoid under composition. The identity is the identity function.}
-	\onslide&amp;lt;3-&amp;gt;{\item For any set $S$, the set of finite sequences with elements from $S$ form a monoid under concatenation. The identity is the empty list. (Actually this is called the free monoid generated by $S$.)}
-\end{enumerate}
-\end{frame}&lt;/p&gt;
+&lt;p&gt;Here are a few examples. For any set \(S\), the set of self maps of \(S\), denoted by \({\rm End}(S)\) is a monoid under composition. The identity is the identity function. For any set \(S\), the set of finite sequences with elements from \(S\) form a monoid under concatenation. The identity is the empty list. This is called the free monoid generated by \(S\).&lt;/p&gt;
 
-&lt;p&gt;A monoid homomorphism from \((M, \cdot, 1_M)\) to \((N, \circ, 1_N)\) is a function \(\varphi : M \to N\) such that
-\begin{frame}
-\frametitle{Algebra refresher: Cayley representation theorem}
-\begin{theorem}{\bfseries Cayley} A monoid with underlying set $S$ can be embedded in ${\rm End}(S)$.
-\pause
-\begin{proof}
-One can easily check that $\mathcal{C}(s)=\lambda_s$ where $\lambda_s(x)= s * x$ is such an embedding.
-\end{proof}
-\end{theorem}
-\vspace*{1em}
-\pause&lt;/p&gt;
+&lt;p&gt;A monoid homomorphism from \((M, \cdot, 1_M)\) to \((N, \star, 1_N)\) is a function \(\varphi : M \to N\) such that \(\varphi(1_M) = 1_N\) and
+\(\varphi(x\cdot y) = \varphi(x)\star\varphi(y)\).&lt;/p&gt;
 
-&lt;p&gt;Note that if a function $f$ is in the image of $\mathcal{C}$ then one can recover the element it came from by applying $f$ to the identity of the monoid.&lt;/p&gt;
+&lt;p&gt;The Cayley representation theorem, which is taught in every every abstract algebra course, says that the map \(\mathcal{C} : M\to {\rm End}(M)\) defined by \(\varphi(m)(n) = m \cdot n \) is an injective monoid homomorphism, i.e. a monoid embedding. Note that if a function \(f\) is in the image of \(\mathcal{C}\) then one can recover the element it came from by applying \(f\) to the identity of the monoid.&lt;/p&gt;
 
-&lt;p&gt;\end{frame}&lt;/p&gt;
+&lt;p&gt;Using the Cayley representation theorem, we can push the problem of computing inverses to the monoid \({\rm End}([a])\). (Note how I mixed the Haskell notation and standard mathematical notation.) The advantage is that in \({\rm End}([a])\), the monoidal operation, namely function composition, is very cheap. To be more precise, it requires constant time because the composition of two functions is left untouched until someone tries to apply it to a value. However, the notion of reverting only makes sense in \([a]\) and not in \({\rm End}([a])\). So we need to embed only the concatenation part of the problem into \({\rm End}([a])\).&lt;/p&gt;
 
-&lt;p&gt;\begin{frame}
-\frametitle{Pushing the problem to ${\rm End}([a])$}
-In ${\rm End}([a])$, the monoidal operation, namely function composition, is very cheap. To be more precise, it requires constant time because the composition of two functions is left untouched untill someone tries to apply it to a value.
-\vspace*{1em}
-\pause&lt;/p&gt;
+&lt;p&gt;Here is the solution as valid Haskell code:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;type End s = s -&amp;gt; s
 
-&lt;p&gt;However, the notion of reverting only makes sense in $[a]$ and not in ${\rm End}([a])$. So we need to embed only the concatenation part of the problem into ${\rm End}([a])$.
-\vspace*{1em}
-\pause&lt;/p&gt;
-
-&lt;p&gt;The inverse of $xs$ is given by $f\, xs\, []$ where $f$ is defined by
-[
-f\, [] = id
-\;\;\;\text{ and }\;\;\;\;
-f\, (x : xs) = f\, xs \circ \mathcal{C}([x]).
-]
-\end{frame}&lt;/p&gt;
-
-&lt;p&gt;\begin{frame}[fragile]
-\frametitle{Haskell Implementation}
-\begin{verbatim}
-type End s = s -&amp;gt; s&lt;/p&gt;
-
-&lt;p&gt;singleton :: a -&amp;gt; End [a]
-singleton x = f where f y = x : y&lt;/p&gt;
-
-&lt;p&gt;cayleyReverse :: [a] -&amp;gt; End [a]
-cayleyReverse [] = id
-cayleyReverse (x : xs) = cayleyReverse xs . singleton x&lt;/p&gt;
-
-&lt;p&gt;naiveReverse :: [a] -&amp;gt; [a]
+naiveReverse :: [a] -&amp;gt; [a]
 naiveReverse [] = []
-naiveReverse (x : xs) = naiveReverse xs ++ [x]&lt;/p&gt;
+naiveReverse (x : xs) = naiveReverse xs ++ [x]
 
-&lt;p&gt;betterReverse :: [a] -&amp;gt; [a]
+singleton :: a -&amp;gt; End [a]
+singleton x = f where f y = x : y
+
+cayleyReverse :: [a] -&amp;gt; End [a]
+cayleyReverse [] = id
+cayleyReverse (x : xs) = cayleyReverse xs . singleton x
+
+betterReverse :: [a] -&amp;gt; [a]
 betterReverse xs = cayleyReverse xs []
-\end{verbatim}
-\end{frame}&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;\section{Sketch of a Vast Generalization}
-\begin{frame}
-\frametitle{Monoid Objects in a Category}
-We will port our method to different domains using category theory.&lt;/p&gt;
-
-&lt;p&gt;\pause
-First, we need to translate our notions to category theory. Effectively, this means expressing \emph{everything} in terms of functions and their compositions.&lt;/p&gt;
-
-&lt;p&gt;We need
-\begin{itemize}
-	\onslide&amp;lt;3-&amp;gt;{\item Elements (using terminal objects)}
-	\onslide&amp;lt;4-&amp;gt;{\item Products (expressing Cartesian product as a categorical limit)}
-	\onslide&amp;lt;5-&amp;gt;{\item Monoids (using the ``associativity’’ of Cartesian products)}
-\end{itemize}&lt;/p&gt;
-
-&lt;p&gt;\onslide&amp;lt;6-&amp;gt;{
-Now a monoid is a set $M$ together with two functions $*\colon M\times M\to M$ and $e\colon 1\to M$ satisfying the associativity and identitiy rules.
-}
-\vspace{1em}&lt;/p&gt;
-
-&lt;p&gt;\onslide&amp;lt;7-&amp;gt;{
-The associativity rule of a monoid $M$ can be expressed by saying that the two functions
-[
-&lt;em&gt;\, \circ \, (id \times\,&lt;/em&gt;)
-\;\;\;\text{ and }\;\;\;
-&lt;em&gt;\,\circ \, (&lt;/em&gt;\times id) \circ \alpha
-]
-from $M\times(M\times M)$ to $M$ are equal. (Here $\alpha (x,(y, z)) = ((x,y),z))$.)
-}&lt;/p&gt;
-
-&lt;p&gt;\onslide&amp;lt;8-&amp;gt;{
-\vspace{1em}
-Exercise: Express the identity rule.}
-\end{frame}&lt;/p&gt;
-
-&lt;p&gt;\begin{frame}
-\frametitle{Monoid Objects in a Monoidal Category}
-This is where the hand-waving starts. For actual definition you may use Wikipedia.
-\vspace{1em}&lt;/p&gt;
-
-&lt;p&gt;\pause
-First, let us forget about sets and functions and work with an arbitrary category. This means that we work with abstract objects and abstract ``maps’’ between them. The composition $f \circ g$ is defined only when the codomain of $g$ coincides with the domain of $f$. The only assumption about this abstract composition is associativty.
-\vspace{1em}&lt;/p&gt;
-
-&lt;p&gt;\pause
-Let us also forget about Cartesians product and work with an arbitrary monoidal structure. This means that we have a binary construction on our objects with a function like $\alpha$ –and a little bit more.
-\vspace{1em}&lt;/p&gt;
-
-&lt;p&gt;\pause
-It turns out that the notion of a monoid can be expressed in any category with a monoidal structure. If your category is the category of sets and functions between them and the monoidal structure is the Cartesian product then you recover the original notion.
-\vspace{1em}&lt;/p&gt;
-
-&lt;p&gt;\end{frame}&lt;/p&gt;
-
-&lt;p&gt;\begin{frame}
-\frametitle{Examples: Applicatives, Monads and Arrows}
-But is this generalization useful?
-\pause You bet! Here are some examples.
-\begin{itemize}
-	\onslide&amp;lt;2-&amp;gt;{\item Let $Hask$ be the category of types in Haskell with functions definable in Haskell and pairing (or product) as the monoidal structure. (From a strict point of view, this is not true but good enough to snatch ideas from category theory.) Then for any $a$, $[a]$ and $End\, a$ are monoids.}
-	\onslide&amp;lt;3-&amp;gt;{\item Consider endofunctors of $Hask$ with composition as the monoidal structure. Then the monoids are called the monads. The Cayley representation in this context is acalled the codensity monad transformation for historical reasons.}
-	\onslide&amp;lt;4-&amp;gt;{\item In the category of endofunctors of $Hask$ with Day convolution as the monoidal structure the monoids are called the applicatives.}
-	\onslide&amp;lt;5-&amp;gt;{\item In the category of profunctors with profunctor tensor as the monoidal structure the monoids are called the weak arrows.
-	\item \ldots}
-\end{itemize}
-\end{frame}&lt;/p&gt;
-
-&lt;p&gt;\begin{frame}
-\frametitle{Tip of the iceberg}
-This was just one idea and its generalizations. Here is an incomplete list of other relevant pure mathematical notions, each of which could be the topic of a different talk:
-\begin{itemize}
-	\item Free constructions (free monads, free applicatives, etc.)
-	\onslide&amp;lt;2-&amp;gt;{\item Categorical duality (comonds, cofree constructions etc.)}
-	\onslide&amp;lt;3-&amp;gt;{\item Functors (adjointness and representability)}
-	\onslide&amp;lt;4-&amp;gt;{\item Categories as databases (AQL and functorial migration)}
-	\onslide&amp;lt;5-&amp;gt;{\item Curry-Howard correspondence
-	\item \ldots}
-\end{itemize}
-\onslide&amp;lt;5-&amp;gt;{A lot of exciting things are happenning here!}
-\end{frame}&lt;/p&gt;
+&lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;cayleyReverse&lt;/code&gt; is obtained from &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse&lt;/code&gt; in a mechanical way replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;++&lt;/code&gt; by &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;[x]&lt;/code&gt; by &lt;code class=&quot;highlighter-rouge&quot;&gt;singleton x&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h1 id=&quot;final-remarks&quot;&gt;Final Remarks&lt;/h1&gt;
-&lt;p&gt;There is nothing more practical than a good theory.&lt;/p&gt;
 
-&lt;p&gt;In theory, there is no difference between theory and practise. In practise, there is.&lt;/p&gt;
+&lt;p&gt;This idea can be vastly generalized, if you know some category theory. Instead of monoids you can work with monoid objects in certain monoidal categories and transfer this optimization technique to different contexts. If you are interested in the details, you may have a look at &lt;em&gt;Notions of Computation as Monoids&lt;/em&gt; by Exequiel Rivas and Mauro Jaskelioff.&lt;/p&gt;
+
+&lt;p&gt;In the beginning, I said that I will try to lure you into functional programming. And the picture I tried to draw can be summarized by the famous motto:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;There is nothing more practical than a good theory.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;However, if you are really considering a career change like I did, there is another motto you should know about:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;In theory, there is no difference between theory and practice. In practice, there is.&lt;/p&gt;
+&lt;/blockquote&gt;
 </content>
  </entry>
  
