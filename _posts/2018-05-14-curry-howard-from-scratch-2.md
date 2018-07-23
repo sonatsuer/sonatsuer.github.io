@@ -11,17 +11,17 @@ In the first post we constructed a formal theory of propositions but left the
 notion of *naming a specific element* from a function set vague. Now we are going to fix that.
 
 Our central notion will be that of a *lambda term*. As we want to define a formal theory we will
-not define what a lambda term is and focus on how to construct new lamda terms from old ones. Intuitively
-though, we will think of lamnda terms as function prototypes.
+not define what a lambda term is and focus on how to construct new lambda terms from old ones. Intuitively
+though, we will think of lambda terms as function prototypes.
 
 First we need variables. We will assume that we have an infinite set of variables and denote
 variables by lower case letters from the Latin alphabet. Each variable will also be a lambda term.
-Other than that, therer will be two ways to construct a lambda term. First, if \\(M\\) and \\(N\\) are
+Other than that, there will be two ways to construct a lambda term. First, if \\(M\\) and \\(N\\) are
 lambda terms then so is \\(MN\\). We will think of \\(MN\\) as \\(M\\) applied to \\(N\\). Second,
-if \\(x\\) is a vaiable and \\(M\\) is a lamda term than so is \\(\lambda x.M\\). Intuiitively
+if \\(x\\) is a variable and \\(M\\) is a lambda term than so is \\(\lambda x.M\\). Intuitively
 \\(\lambda x.M\\) will mean \\(x\mapsto M(x)\\). This will be clearer when we start using lambda terms.
 
-Let us look at a few examples. The follwoing are all lambda terms constructed using varibales only:
+Let us look at a few examples. The following are all lambda terms constructed using variables only:
 \\[
   x,\; xy,\; xx,\; x(yz),\; (xy)z,\; (xx)x,\; (xy)(x(yz)).
 \\]
@@ -30,7 +30,7 @@ Of course we can also use \\(\lambda\\):
   \lambda x.x,\; \lambda y. y,\; \lambda x. y,\; \lambda y. (\lambda x. (yx))),\;
   (\lambda x. (xy))(\lambda y. x).
 \\]
-To reduce the number of bracktes we will give application higher prority than \\(\lambda\\).
+To reduce the number of brackets we will give application higher priority than \\(\lambda\\).
 So, for instance, the expression \\(\lambda x. yz\\) will stand for \\(\lambda x. (yz)\\) rather than
 \\((\lambda x. y)z\\).
 
@@ -56,12 +56,12 @@ formally but it is slightly messy. Therefore we will not do it here and instead 
 term, each \\(\lambda\\) will use a different variable. So, for instance, we will avoid using the last lambda term
 in the list above since \\(\lambda z\\) appears twice in it.
 
-Now comes the more interesting properties of eqaulity. We define
+Now comes the more interesting properties of equality. We define
 \\[
   (\lambda x. M)N = M[x:= N].
 \\]
 Here \\(M\\) is a lambda term and \\( M[x:= N]\\) stands for the lambda term obtained from \\(M\\) by replacing each
-occurance of \\(x\\) by \\(N\\). For instance
+occurrence of \\(x\\) by \\(N\\). For instance
 \\[
   (\lambda x. x) N = x[x := N] = N.
 \\]
@@ -73,7 +73,7 @@ So \\(\lambda x. x\\) does behave like identity. Here is another example:
 &= \lambda x. x.
 \end{align}
 
-Finally, let us express the functions \\(C\\) and \\(E\\) we defined in the previos post as lambda terms. By definition
+Finally, let us express the functions \\(C\\) and \\(E\\) we defined in the previous post as lambda terms. By definition
 \\(C_x(y)=x\\) so \\(C_x = \lambda y. x\\). If we view \\(C_x\\)  as a function of \\(x\\) then we get
 \\[
   C = \lambda x. (\lambda y. x).
@@ -84,17 +84,17 @@ Again by definition we have \\(E_x(f) = f(x)\\) so \\(E_x = \lambda f. f x\\). T
 \\]
 
 What we defined so far is called the *untyped lambda calculus*. Even though it gives us a formal theory of
-functions, it is not enough for our purposses as we also need function sets. To be able to talk about some
+functions, it is not enough for our purposes as we also need function sets. To be able to talk about some
 sort of function sets, we will introduce the notion of *type* into our theory.
 
 The definition of a type is going to be very simple: if \\(\alpha\\) and  \\(\beta\\) are types then so is
 \\(\alpha\to\beta\\). Note that, formally speaking, there is no difference between types and propositions we defined in the
-previous post. On the other hand, while a propositon has the connotation of a judgement, a type will be
+previous post. On the other hand, while a proposition has the connotation of a judgement, a type will be
 more like function sets.
 
 Now we will define our typing relation between lambda terms and types. If a lambda term \\(M\\) is related to the type
 \\(\tau\\) then we will say that \\(M\\) is of type \\(\tau\\) and denote it by \\(M\colon\tau\\). We will call
-a statemnt like \\(M\colon\tau\\) a type assignment. A context will simply be a set of type assignments. Our typing system
+a statement like \\(M\colon\tau\\) a type assignment. A context will simply be a set of type assignments. Our typing system
 will consist of rules, which given a context, allows us to derive type assignments. If a context \\(\Gamma\\) allows us
 to derive an assignment \\(M\colon\tau\\) we will denote it by \\(\Gamma\vdash M\colon\tau\\). Note that we are overloading
 the symbol \\(\vdash\\) here.
@@ -103,7 +103,7 @@ Here is the first rule. Let \\(\Gamma\\) be a context, then
 \\[
   \Gamma,x\colon\tau\vdash x\colon\tau\
 \\]
-So, if the type of varible \\(x\\) is \\(\tau\\) in a given context, then we can derive the assignment \\(x\colon\tau\\)
+So, if the type of variable \\(x\\) is \\(\tau\\) in a given context, then we can derive the assignment \\(x\colon\tau\\)
 in that context. Let us call this the rule \\(A^\to\\).
 
 Here is the second rule:
@@ -168,10 +168,10 @@ Finally, I present you the Curry-Howard Correspondence for \\({\rm IP}(\to)\\) a
 
 If \\(\Gamma\vdash M:\varphi\\) then \\(|\Gamma|\vdash\varphi\\). Conversely, if \\(|\Gamma|\vdash\varphi\\) then
 there is a lambda term \\(M\\) such that \\(\Delta\vdash M:\varphi\\) where \\(\Delta=\\{x_\psi:\psi\;|\; \psi\in\Gamma\\}\\).
-To paraphrase it as a slogan, if we view types as propositions, provoable propositions are precisley the types of
+To paraphrase it as a slogan, if we view types as propositions, provable propositions are precisely the types of
 lambda terms.
 
-Even this modest version of the Curry-Howard corrrespondence is beautiful and surprising. One wonders if it is possible to
+Even this modest version of the Curry-Howard correspondence is beautiful and surprising. One wonders if it is possible to
 generalize it. Actually, there is a very natural direction of generalization. We know that \\({\rm IP}(\to)\\) is a restricted version
 of a more general logic, namely the full intuitionistic propositional logic. So we can try to generalize the theorem
 to different logics. However, it is not clear how to generalize \\(\lambda^\to\\), especially if you have not seen lambda calculus
@@ -187,7 +187,7 @@ of a natural number \\(n\\) is
   \ulcorner n \urcorner = \lambda s. (\lambda z. s^n z).
 \\]
 As you can check easily, \\(\vdash \ulcorner n \urcorner : \texttt{Nat}\\). We can also define basic operations on \\(\texttt{Nat}\\).
-For instnce if
+For instance if
 \\[
   A_+ = \lambda x. (\lambda y. (\lambda s. (\lambda z. (xs)((ys)z))))
 \\]

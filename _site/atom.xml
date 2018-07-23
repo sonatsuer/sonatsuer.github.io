@@ -4,7 +4,7 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-07-23T22:01:36+03:00</updated>
+ <updated>2018-07-23T22:07:04+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
@@ -855,17 +855,17 @@ input is \(\ulcorner n \urcorner\).&lt;/p&gt;
 notion of &lt;em&gt;naming a specific element&lt;/em&gt; from a function set vague. Now we are going to fix that.&lt;/p&gt;
 
 &lt;p&gt;Our central notion will be that of a &lt;em&gt;lambda term&lt;/em&gt;. As we want to define a formal theory we will
-not define what a lambda term is and focus on how to construct new lamda terms from old ones. Intuitively
-though, we will think of lamnda terms as function prototypes.&lt;/p&gt;
+not define what a lambda term is and focus on how to construct new lambda terms from old ones. Intuitively
+though, we will think of lambda terms as function prototypes.&lt;/p&gt;
 
 &lt;p&gt;First we need variables. We will assume that we have an infinite set of variables and denote
 variables by lower case letters from the Latin alphabet. Each variable will also be a lambda term.
-Other than that, therer will be two ways to construct a lambda term. First, if \(M\) and \(N\) are
+Other than that, there will be two ways to construct a lambda term. First, if \(M\) and \(N\) are
 lambda terms then so is \(MN\). We will think of \(MN\) as \(M\) applied to \(N\). Second,
-if \(x\) is a vaiable and \(M\) is a lamda term than so is \(\lambda x.M\). Intuiitively
+if \(x\) is a variable and \(M\) is a lambda term than so is \(\lambda x.M\). Intuitively
 \(\lambda x.M\) will mean \(x\mapsto M(x)\). This will be clearer when we start using lambda terms.&lt;/p&gt;
 
-&lt;p&gt;Let us look at a few examples. The follwoing are all lambda terms constructed using varibales only:
+&lt;p&gt;Let us look at a few examples. The following are all lambda terms constructed using variables only:
 \[
   x,\; xy,\; xx,\; x(yz),\; (xy)z,\; (xx)x,\; (xy)(x(yz)).
 \]
@@ -874,7 +874,7 @@ Of course we can also use \(\lambda\):
   \lambda x.x,\; \lambda y. y,\; \lambda x. y,\; \lambda y. (\lambda x. (yx))),\;
   (\lambda x. (xy))(\lambda y. x).
 \]
-To reduce the number of bracktes we will give application higher prority than \(\lambda\).
+To reduce the number of brackets we will give application higher priority than \(\lambda\).
 So, for instance, the expression \(\lambda x. yz\) will stand for \(\lambda x. (yz)\) rather than
 \((\lambda x. y)z\).&lt;/p&gt;
 
@@ -900,12 +900,12 @@ formally but it is slightly messy. Therefore we will not do it here and instead 
 term, each \(\lambda\) will use a different variable. So, for instance, we will avoid using the last lambda term
 in the list above since \(\lambda z\) appears twice in it.&lt;/p&gt;
 
-&lt;p&gt;Now comes the more interesting properties of eqaulity. We define
+&lt;p&gt;Now comes the more interesting properties of equality. We define
 \[
   (\lambda x. M)N = M[x:= N].
 \]
 Here \(M\) is a lambda term and \( M[x:= N]\) stands for the lambda term obtained from \(M\) by replacing each
-occurance of \(x\) by \(N\). For instance
+occurrence of \(x\) by \(N\). For instance
 \[
   (\lambda x. x) N = x[x := N] = N.
 \]
@@ -917,7 +917,7 @@ So \(\lambda x. x\) does behave like identity. Here is another example:
 &amp;amp;= \lambda x. x.
 \end{align}&lt;/p&gt;
 
-&lt;p&gt;Finally, let us express the functions \(C\) and \(E\) we defined in the previos post as lambda terms. By definition
+&lt;p&gt;Finally, let us express the functions \(C\) and \(E\) we defined in the previous post as lambda terms. By definition
 \(C_x(y)=x\) so \(C_x = \lambda y. x\). If we view \(C_x\)  as a function of \(x\) then we get
 \[
   C = \lambda x. (\lambda y. x).
@@ -928,17 +928,17 @@ Again by definition we have \(E_x(f) = f(x)\) so \(E_x = \lambda f. f x\). There
 \]&lt;/p&gt;
 
 &lt;p&gt;What we defined so far is called the &lt;em&gt;untyped lambda calculus&lt;/em&gt;. Even though it gives us a formal theory of
-functions, it is not enough for our purposses as we also need function sets. To be able to talk about some
+functions, it is not enough for our purposes as we also need function sets. To be able to talk about some
 sort of function sets, we will introduce the notion of &lt;em&gt;type&lt;/em&gt; into our theory.&lt;/p&gt;
 
 &lt;p&gt;The definition of a type is going to be very simple: if \(\alpha\) and  \(\beta\) are types then so is
 \(\alpha\to\beta\). Note that, formally speaking, there is no difference between types and propositions we defined in the
-previous post. On the other hand, while a propositon has the connotation of a judgement, a type will be
+previous post. On the other hand, while a proposition has the connotation of a judgement, a type will be
 more like function sets.&lt;/p&gt;
 
 &lt;p&gt;Now we will define our typing relation between lambda terms and types. If a lambda term \(M\) is related to the type
 \(\tau\) then we will say that \(M\) is of type \(\tau\) and denote it by \(M\colon\tau\). We will call
-a statemnt like \(M\colon\tau\) a type assignment. A context will simply be a set of type assignments. Our typing system
+a statement like \(M\colon\tau\) a type assignment. A context will simply be a set of type assignments. Our typing system
 will consist of rules, which given a context, allows us to derive type assignments. If a context \(\Gamma\) allows us
 to derive an assignment \(M\colon\tau\) we will denote it by \(\Gamma\vdash M\colon\tau\). Note that we are overloading
 the symbol \(\vdash\) here.&lt;/p&gt;
@@ -947,7 +947,7 @@ the symbol \(\vdash\) here.&lt;/p&gt;
 \[
   \Gamma,x\colon\tau\vdash x\colon\tau\
 \]
-So, if the type of varible \(x\) is \(\tau\) in a given context, then we can derive the assignment \(x\colon\tau\)
+So, if the type of variable \(x\) is \(\tau\) in a given context, then we can derive the assignment \(x\colon\tau\)
 in that context. Let us call this the rule \(A^\to\).&lt;/p&gt;
 
 &lt;p&gt;Here is the second rule:
@@ -1012,10 +1012,10 @@ appearing in \(\Gamma\).&lt;/p&gt;
 
 &lt;p&gt;If \(\Gamma\vdash M:\varphi\) then \(|\Gamma|\vdash\varphi\). Conversely, if \(|\Gamma|\vdash\varphi\) then
 there is a lambda term \(M\) such that \(\Delta\vdash M:\varphi\) where \(\Delta=\{x_\psi:\psi\;|\; \psi\in\Gamma\}\).
-To paraphrase it as a slogan, if we view types as propositions, provoable propositions are precisley the types of
+To paraphrase it as a slogan, if we view types as propositions, provable propositions are precisely the types of
 lambda terms.&lt;/p&gt;
 
-&lt;p&gt;Even this modest version of the Curry-Howard corrrespondence is beautiful and surprising. One wonders if it is possible to
+&lt;p&gt;Even this modest version of the Curry-Howard correspondence is beautiful and surprising. One wonders if it is possible to
 generalize it. Actually, there is a very natural direction of generalization. We know that \({\rm IP}(\to)\) is a restricted version
 of a more general logic, namely the full intuitionistic propositional logic. So we can try to generalize the theorem
 to different logics. However, it is not clear how to generalize \(\lambda^\to\), especially if you have not seen lambda calculus
@@ -1031,7 +1031,7 @@ of a natural number \(n\) is
   \ulcorner n \urcorner = \lambda s. (\lambda z. s^n z).
 \]
 As you can check easily, \(\vdash \ulcorner n \urcorner : \texttt{Nat}\). We can also define basic operations on \(\texttt{Nat}\).
-For instnce if
+For instance if
 \[
   A_+ = \lambda x. (\lambda y. (\lambda s. (\lambda z. (xs)((ys)z))))
 \]
