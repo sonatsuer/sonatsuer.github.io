@@ -13,7 +13,7 @@ of mathematics. But first, let's clarify what we mean by foundations.
 For simplicity and definiteness we will stick with set theory (with first order logic) as our foundational theory.
 The idea is to express *every* notion we use in mathematics in terms of sets using a formal language. Our formal language will have only two
 primitive notions, namely equality, which we will denote by \\(=\\) and membership, which we will denote by \\(\in\\). Both equality and
-memebership will be binary relations on sets.
+membership will be binary relations on sets.
 
 Other than these two, we will have the following symbols in our language:
 \\[
@@ -37,12 +37,12 @@ are not well formed but
 \\[
   \forall x \forall y (( \forall t (t\in x)\leftrightarrow (t\in y)) \leftrightarrow x = y)
 \\]
-is well formed. Actually this second formula says that two sets are equal if and only if they have the same elements. Note that menaingful
+is well formed. Actually this second formula says that two sets are equal if and only if they have the same elements. Note that meaningful
 does not mean true. For instance
 \\[
   \exists x\forall y (y\in x)
 \\]
-is meaningfull and says that there is set which contains all sets. However, it is not true in most set theories.
+is meaningful and says that there is set which contains all sets. However, it is not true in most set theories.
 
 One important property of well formed formulas is that there is an algorithm which can decide whether an arbitrary string is well formed
 or not.
@@ -57,18 +57,18 @@ is an axiom.
 Finally a proof of a well formed formula \\(varphi\\) is simply a sequence of well formed formulas \\(\varphi_1,\varphi_2,\ldots,\varphi_n\\) such that
 \\(\varphi_n = \varphi\\) and each \\(\varphi_i\\) is either an axiom or it is obtained from earlier elements in the sequence using deduction rules.
 Deduction rules here are rules like "from \\(\varphi\rightarrow\psi\\) and \\(\varphi\\) deduce \\(\psi\\)". You guessed it, the actual rules are not
-importatnt but the important fact about proofs is that there is algorithm which can decide whether an arbitrary sequence of strings is a proof or not.
+important but the important fact about proofs is that there is algorithm which can decide whether an arbitrary sequence of strings is a proof or not.
 
 A theorem of ZFC is a well formed formula which has a proof. Now you might think that there is an algorithm which can decide whether an arbitrary string is a theorem of ZFC. However, as we will see soon, this is not true. The best you can do is to *enumerate* all theorems of ZFC. In other words
 there is an algorithm which generates an infinite list containing *all* theorems of ZFC. You can probably guess the algorithm: Generate all finite
 sequences of well formed formulas in, say, lexicographic ordering. If the sequence happens to be a proof, add the proven formula to the list.
 
-If you have not heard of recursively enumerable sets before, you might want to think about why this is weaker than having an alogorithm which can
+If you have not heard of recursively enumerable sets before, you might want to think about why this is weaker than having an algorithm which can
 decide whether an arbitrary string is a theorem.
 
 # Chaitin's Incompleteness Theorem
 At this point, you might ask the following question: We have only talked about sets so far but we were looking for a foundational theory
-for all of mathemtaics. Is this really enough? The answer is yes. This may look strange because it seems that there objects in mathematics which are
+for all of mathematics. Is this really enough? The answer is yes. This may look strange because it seems that there objects in mathematics which are
 clearly not sets. For instance \\(\pi\\) is not a set, it is a number. The trick is that \\(pi\\), and all mathematical objects for that matter, can
 be *encoded* as sets.
 
@@ -97,17 +97,17 @@ search will end even though the list is infinite. Define \\(f(n)\\) to be the fi
 the argument which we proves the incomputability of \\(K\\) in the previous post! You can simply copy the rest of the proof here.
 
 Let us stop here and look at what we have proved. In ZFC, there is an upper bound on the *provable* Kolmogorov complexity. However, there is
-no upper bound on Kolmogorov complexity! Therefore there are some true statemets of the form \\(K(\sigma) > k\\) which are not theorems of ZFC.
-This means that ZFC is incomplete, in the sense that it cannot capture all true statemets. This is Chaitin's version of Gödel's first incompleteness
+no upper bound on Kolmogorov complexity! Therefore there are some true statements of the form \\(K(\sigma) > k\\) which are not theorems of ZFC.
+This means that ZFC is incomplete, in the sense that it cannot capture all true statements. This is Chaitin's version of Gödel's first incompleteness
 theorem.
 
 # Gödel's Second Incompleteness Theorem
-We have been making an implicit assumtion about our foundational theory, namely that it was consistent. In other words, we assumed that no
-contradiction is a theorem of ZFC. A contraiction is a vacuously false statment like \\(\exists x (\neg x = x)\\), by the way. This is equivalent to
-assuming that not all well formed formulas are theorems of ZFC as everything can be deduced from a contradiction. Oviously, this is a must have
+We have been making an implicit assumption about our foundational theory, namely that it was consistent. In other words, we assumed that no
+contradiction is a theorem of ZFC. A contradiction is a vacuously false statement like \\(\exists x (\neg x = x)\\), by the way. This is equivalent to
+assuming that not all well formed formulas are theorems of ZFC as everything can be deduced from a contradiction. Obviously, this is a must have
 for a foundational theory.
 
-Recall that ZFC can prove statements about itself. So wouldn't it be nice to actaully have a proof of this assumption in ZFC? This would be proving the consistency of our foundational theory within the theory itself, showing that the theory is self sufficient. Certainly Hilbert wanted to do it.
+Recall that ZFC can prove statements about itself. So wouldn't it be nice to actually have a proof of this assumption in ZFC? This would be proving the consistency of our foundational theory within the theory itself, showing that the theory is self sufficient. Certainly Hilbert wanted to do it.
 However his efforts were crashed by, Gödel who proved that no sufficiently rich theory can prove its own consistency. Here sufficiently rich roughly
 means strong enough to interpret arithmetic. Now we will give a modern proof of this theorem using Kolmogorov complexity. The proof is due to Shira
 Kritchman and Ran Raz.
@@ -137,4 +137,4 @@ fact that the theorems of ZFC are enumerable, look for proofs of statements of t
 be \\(\sigma_0\\) and \\(\sigma_1 \\) which have to have complexity greater than \\(L\\). But we just proved, in ZFC, that a certain string has complexity greater than \\(L\\). This contradicts the choice of \\(L\\).
 
 Now let us prove that \\(m \geq 4\\)\ldots Well, you see the pattern. Using this method we can exhaust all possible values for \\(k\\) and obtain a
-contradiction. So assuming that ZFC can prove its consistency leads to a contrdiction.
+contradiction. So assuming that ZFC can prove its consistency leads to a contradiction.
