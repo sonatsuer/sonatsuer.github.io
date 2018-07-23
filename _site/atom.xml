@@ -4,13 +4,28 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-07-23T23:08:36+03:00</updated>
+ <updated>2018-07-23T23:42:02+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Monoid Homomorphisms</title>
+   <link href="http://localhost:4000/higher-algebra/2018/07/23/monoid-homomorphisms.html"/>
+   <updated>2018-07-23T23:42:02+03:00</updated>
+   <id>http://localhost:4000/higher-algebra/2018/07/23/monoid-homomorphisms</id>
+   <content type="html">&lt;h1 id=&quot;good-old-monoids&quot;&gt;Good Old Monoids&lt;/h1&gt;
+
+&lt;h1 id=&quot;categorification&quot;&gt;Categorification&lt;/h1&gt;
+
+&lt;h1 id=&quot;monad-homomorphisms&quot;&gt;Monad Homomorphisms&lt;/h1&gt;
+
+&lt;h1 id=&quot;applicative-homomorphisms&quot;&gt;Applicative Homomorphisms&lt;/h1&gt;
+</content>
+ </entry>
  
  <entry>
    <title>An Invitation to Functional Programming (For Mathematicians)</title>
