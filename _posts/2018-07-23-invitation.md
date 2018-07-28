@@ -86,7 +86,7 @@ The Cayley representation theorem, which is taught in every every abstract algeb
 Using the Cayley representation theorem, we can push the problem of computing inverses to the monoid \\({\rm End}([a])\\). (Note how I mixed the Haskell notation and standard mathematical notation.) The advantage is that in \\({\rm End}([a])\\), the monoidal operation, namely function composition, is very cheap. To be more precise, it requires constant time because the composition of two functions is left untouched until someone tries to apply it to a value. However, the notion of reverting only makes sense in \\([a]\\) and not in \\({\rm End}([a])\\). So we need to embed only the concatenation part of the problem into \\({\rm End}([a])\\).
 
 Here is the solution as valid Haskell code:
-```
+```haskell
 type End s = s -> s
 
 naiveReverse :: [a] -> [a]
