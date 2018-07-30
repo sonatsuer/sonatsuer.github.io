@@ -4,7 +4,7 @@
  <title>The blog of Sonat Süer</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000"/>
- <updated>2018-07-23T23:42:02+03:00</updated>
+ <updated>2018-07-30T00:19:47+03:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Sonat Süer</name>
@@ -13,17 +13,181 @@
 
  
  <entry>
-   <title>Monoid Homomorphisms</title>
-   <link href="http://localhost:4000/higher-algebra/2018/07/23/monoid-homomorphisms.html"/>
-   <updated>2018-07-23T23:42:02+03:00</updated>
-   <id>http://localhost:4000/higher-algebra/2018/07/23/monoid-homomorphisms</id>
-   <content type="html">&lt;h1 id=&quot;good-old-monoids&quot;&gt;Good Old Monoids&lt;/h1&gt;
+   <title>Monoid Homomorphisms (Part 2 of 2)</title>
+   <link href="http://localhost:4000/higher-algebra/2018/07/30/monoid-homomorphisms-2.html"/>
+   <updated>2018-07-30T00:19:46+03:00</updated>
+   <id>http://localhost:4000/higher-algebra/2018/07/30/monoid-homomorphisms-2</id>
+   <content type="html">&lt;h1 id=&quot;applicatives-as-monoid-homomorphisms&quot;&gt;Applicatives As Monoid Homomorphisms&lt;/h1&gt;
+
+&lt;h1 id=&quot;homomorphisms-of-applicatives&quot;&gt;Homomorphisms of Applicatives&lt;/h1&gt;
+
+&lt;h1 id=&quot;new-homomorphism-from-old-ones&quot;&gt;New Homomorphism From Old Ones&lt;/h1&gt;
+
+&lt;h1 id=&quot;final-remarks&quot;&gt;Final Remarks&lt;/h1&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Monoid Homomorphisms (Part 1 of 2)</title>
+   <link href="http://localhost:4000/higher-algebra/2018/07/30/monoid-homomorphisms-1.html"/>
+   <updated>2018-07-30T00:18:13+03:00</updated>
+   <id>http://localhost:4000/higher-algebra/2018/07/30/monoid-homomorphisms-1</id>
+   <content type="html">&lt;h1 id=&quot;abstract-algebra-and-programming&quot;&gt;Abstract Algebra and Programming&lt;/h1&gt;
+
+&lt;p&gt;Haskell community in particular and the functional programming community in general adopted a lot of useful algebraic structures, such as semigroups,monoids, (linear) orders, monads, categories etc. However, in the vast majority of the cases, this adoption has been at the level of of individual objects as opposed to adopting the category they form. People talk about monoids, however you do not hear many programmers talking about the &lt;em&gt;category&lt;/em&gt; of monoids, for instance. Similarly, you do not see many type class instances which use an assumption that a certain map is actually a morphism in some category. One notable exception is Kmett’s monad homomorphism library, which treats monads as a category.&lt;/p&gt;
+
+&lt;p&gt;From an ex-mathematicians point of view, most functional programmers learning category theory seem to have blind spot there. There is this whole genre of categories where objects are &lt;em&gt;sets with extra structure&lt;/em&gt; and morphisms are &lt;em&gt;structure preserving functions&lt;/em&gt;. For the working programmer, a category usually consists of types and functions you can define between them. The extra structure part is completely lost. A function is merely a way to get from type a to type b. It is not seen as a means to carry or translate structure.&lt;/p&gt;
+
+&lt;p&gt;This is not a big loss, of course, because most of the time the category at at hand &lt;em&gt;does&lt;/em&gt; consist of types in a programming language and functions you can define between them. However, I think, the &lt;em&gt;morphisms preserve structure&lt;/em&gt; approach has its use cases.&lt;/p&gt;
+
+&lt;h1 id=&quot;monoids&quot;&gt;Monoids&lt;/h1&gt;
+&lt;p&gt;Let’s look at a concrete example. A monoid is a triple \((M, \star, 1_M)\) where \(M\) is a set, \(\star\) is a binary operation on \(M\) and \(1_M\) is an element of \(M\) subject to the following conditions, called the monoid axioms:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;\(\star\) is associative, i.e. \(x\star(y\star z) = (x\star y) \star z\) for all \(x,y,z\in M\),&lt;/li&gt;
+  &lt;li&gt;\(1_M\) is the identity of the operation \(\star\), i.e. \(1_M\star x = x = x\star 1_M\) for all \(x\in M\).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So monoids are sets with extra structure. Now let us define what it means for a function to preserve this structure. A monoid homomorphism from a monoid \((M,\star, 1_M)\) to \((N, \ast, 1_N)\) is a function \(\varphi : M\to N\) which satisfies&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;\(\varphi(1_M) = 1_N\) and&lt;/li&gt;
+  &lt;li&gt;\(\varphi(x \star y) = \varphi(x) \ast \varphi (y)\).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Note that the definition of monoid homomorphism does not depend on the monoid axioms but only on the operations needed to define a monoid.&lt;/p&gt;
+
+&lt;p&gt;Here are two monoids: \((\mathbb{R}, +, 0)\) and \((\mathbb{R}^{&amp;gt;0}, \cdot, 1)\). And here are two famous monoid homomorphisms: \(\log:\mathbb{R}^{&amp;gt;0}\to\mathbb{R}\) and \(\exp:\mathbb{R}\to\mathbb{R}^{&amp;gt;0}\), which happen to be inverse to each other.&lt;/p&gt;
+
+&lt;p&gt;Now comes the interesting part. Suppose we need to multiply two large numbers, say \(x\) and \(y\). The obvious thing is to use a computer or a calculator. But there is also an outdated alternative: logarithm tables. We simply look up the logarithms of \(x\) and \(y\), add the results, and using the logarithm table (and the fact that \(\log\) is monotone increasing) compute the exponential. More symbolically, we use the following identity:
+\[
+  x\cdot y = \exp ( \log(x) + \log(y)).
+\]
+Let us go over what we did here. We took a &lt;em&gt;computation&lt;/em&gt; in \(\mathbb{R}^{&amp;gt;0}\), namely \(x\cdot y\), and pushed it to \(\mathbb{R}\) using \(\log\). This made the computation easier as addition is easier than multiplication. Then we pushed the result back in \(\mathbb{R}^{&amp;gt;0}\) where we needed it. This idea is very common in mathematics. For instance, Hughes’ difference lists also use monoid homomorphisms. In that case the role of \(\log\) is played by the Cayley representation map. I actually wrote about it &lt;a href=&quot;https://sonatsuer.github.io/evangelism/2018/07/23/invitation.html&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h1 id=&quot;categorification&quot;&gt;Categorification&lt;/h1&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;A monad is just a monoid in the category of endofunctors, what’s the problem?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The problem is that the monoidal structure on the endofunctor category is not specified. Joking aside, it has been almost 10 years since Dan Piponi wrote a blog post titled &lt;a href=&quot;http://blog.sigfpe.com/2008/11/from-monoids-to-monads.html&quot;&gt;From Monoids to Monads&lt;/a&gt;. So I will not explain how the notion of monad is a categorified version of the notion of a monoid. However, mostly to fix notation, I will explain what the notion of the category of monoid objects in an arbitrary monoidal category is.&lt;/p&gt;
+
+&lt;p&gt;Let us start with usual monoids in the category of sets. The first step is to express everything using functions in the point-free style. The binary operation on a monoid is already a function. But how do we talk about the identity element? The idea is to view the identity as a &lt;em&gt;nullary&lt;/em&gt; operation, that is, a function from the zeroth cartesian power of the monoid to itself. The zeroth power of a set is a set with a single element, also known as a singleton. So a nullary operation on a set \(X\) is simply a function from a singleton to \(X\), which is obviously determined by the unique element in its image. This means that we can identify nullary operations on \(X\) with elements of \(X\).&lt;/p&gt;
+
+&lt;p&gt;Now let us rephrase the definition of a monoid without referring to elements. Fix a singleton \(1\). A monoid is a triple \((M, \star, 1_M)\) where \(\star\) and \(1_M\) are binary and nullary operations, respectively, on \(M\) where the following diagrams commute:&lt;/p&gt;
+
+&lt;p&gt;\(
+\newcommand{\ra}[1]{\kern-1.5ex\xrightarrow{\ \ #1\ \ }\phantom{}\kern-1.5ex}
+\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}
+\newcommand{\da}[1]{\bigg\downarrow\raise.5ex\rlap{\scriptstyle#1}}
+\newcommand{\id}{\textrm{id}}
+\)&lt;/p&gt;
+
+&lt;p&gt;\[
+\begin{array}{c}
+1 \times M &amp;amp; \ras{1_M \times \id} &amp;amp; M \times M \newline
+\da{\id} &amp;amp; &amp;amp; \da{\star} \newline
+1 \times M &amp;amp; \ras{\;\;\lambda\;\;} &amp;amp; M, \newline
+\end{array}
+\;\;\;\;\;\;\;\;\;
+\begin{array}{c}
+M \times 1 &amp;amp; \ras{1_M \times \id} &amp;amp; M \times M \newline
+\da{\id} &amp;amp; &amp;amp; \da{\star} \newline
+M \times 1 &amp;amp; \ras{\;\;\rho\;\;} &amp;amp; M \newline
+\end{array}
+\]
+and
+\[
+\begin{array}{c}
+(M \times M) \times M &amp;amp; \ras{\alpha}\;\;\;\; M \times (M\times M)\;\;\;\; \ras{\star} &amp;amp; M \times M \newline
+\da{\star} &amp;amp; &amp;amp; \da{\star} \newline
+M \times M &amp;amp; \ras{\;\;\;\;\;\;\;\;\;\;\;\;\;\;\star\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;} &amp;amp; M. \newline
+\end{array}
+\]&lt;/p&gt;
+
+&lt;p&gt;Here \(\lambda\) and \(\rho\) are projections and \(\alpha((x,y), z) = (x,(y,z))\). A function \(\varphi:M\to N\) is a monoid homomorphism from \((M,\star,1_M)\) to \((N,\ast, 1_N)\) if the following diagrams commute:&lt;/p&gt;
+
+&lt;p&gt;\[
+\begin{array}{c}
+1 &amp;amp; \ras{1_M} &amp;amp; M \newline
+\da{\id} &amp;amp; &amp;amp; \da{\varphi} \newline
+1 &amp;amp; \ras{1_N} &amp;amp; N, \newline
+\end{array}
+\;\;\;\;\;\;\;\;\;
+\begin{array}{c}
+M \times M &amp;amp; \ras{\varphi \times \varphi} &amp;amp; N \times N \newline
+\da{\star} &amp;amp; &amp;amp; \da{\ast} \newline
+M &amp;amp; \ras{\varphi} &amp;amp; N. \newline
+\end{array}
+\]&lt;/p&gt;
+
+&lt;p&gt;This formulation tells us that in any category with finite products we can talk about monoids and monoid homomorphisms. For instance if we replace the category of sets by topological spaces (with continuous maps) we obtain the notion of a topological monoid. We will do something better, though. We will isolate the properties of category theoretic product we needed in the definitions above. This will give us a notion of an abstract product which will yield the notion a  monoidal category.&lt;/p&gt;
+
+&lt;p&gt;Let \(C\) be an arbitrary category. Let \(\otimes\) be our abstract product on \(C\).We want to be able replace every occurrence of \(\times\) above by \(\otimes\). First of all we should have
+\[
+\otimes : C \times C \to C
+\]
+because a product takes two objects and produces one. We also need \(f\otimes g\) where \(f\times g\) is a functor from \(C\times C\) to itself. So let us take \(\otimes\) to be a functor. What else? We need analogues of \(1\), \(\lambda\), \(\rho\) and \(\alpha\).&lt;/p&gt;
+
+&lt;p&gt;In the case of cartesian product, \(1\) is the zeroth power of any object. This is essentially saying that our tensor should have a two sided identity, &lt;em&gt;up to isomorphism&lt;/em&gt;. Now looking at the diagrams above, we see that, \(\lambda\) and \(\rho\) exactly do that. Finally, we need a family of isomorphism
+\[
+  \alpha_{a,b,c} : (a\otimes b)\otimes c\to a\otimes(b\otimes c)
+\]
+natural in \(a\), \(b\) and \(c\).&lt;/p&gt;
+
+&lt;p&gt;It may seem that this is enough, however we also need some coherence conditions. Here is the problem. Obviously
+\[
+  ( a \times (b \times (c \times d))
+  \;\;\text{ and }\;\;
+  (((a \times b) \times c) \times d
+\]
+are isomorphic, naturally in \(a\), \(b\), \(c\) and \(d\), but if we want to construct an actual isomorphism using \(\alpha\) we have, a priori, two choices:
+\[
+\alpha_{a\times b, c, d} \circ \alpha_{a,b,c\times d}
+\]
+and
+\[
+(\id_a \times \alpha_{b,c,d}) \circ \alpha_{a, b\times c, d} \circ (\alpha_{a,b,c}\times \id_z)
+\]
+It happens that these are the same isomorphism but there is nothing guaranteeing that the same will hold for an arbitrary \(\otimes\). We want our isomorphisms to be unique provided that they are constructed from \(\alpha\), \(\lambda\) and \(\rho\). It turns out that this can be achieved by assuming two simple laws, the so called pentagon law –this is actually what we just wrote– and the so called triangle law –a coherence condition regarding the identity. For details, you may have a look at &lt;a href=&quot;https://ncatlab.org/nlab/show/monoidal+category&quot;&gt;nLab&lt;/a&gt;. So a monoidal category is a category with a product satisfying the pentagon and the triangle laws.&lt;/p&gt;
+
+&lt;p&gt;Now if you stop for a second and squint at the screen, you may realize that a monoidal structure is a monoid where operations are defined &lt;em&gt;up to isomorphism&lt;/em&gt;. So the notion of a monoidal category is also a categorification of the notion of a monoid, though in a entirely different direction. But then what is the correct notion of homomorphism here? We’ll see that when we come to applicative functors.&lt;/p&gt;
 
 &lt;h1 id=&quot;monad-homomorphisms&quot;&gt;Monad Homomorphisms&lt;/h1&gt;
+&lt;p&gt;\(\newcommand{\end}[1]{\textrm{End}(#1)}\)
+Given a category \(C\), let \(\end{C}\) be the category of functors from \(C\) to itself where the morphisms are given by natural transformations. Functor composition gives a natural monoidal structure on \(\end{C}\) and the monoidal objects in this category are called, you guessed it, monads.&lt;/p&gt;
 
-&lt;h1 id=&quot;applicative-homomorphisms&quot;&gt;Applicative Homomorphisms&lt;/h1&gt;
+&lt;p&gt;Now let’s look at monad homomorphisms. Here, I will switch to Haskell notation. Whether I can or should switch to Haskell like that is the subject of an entirely different &lt;a href=&quot;http://math.andrej.com/2016/08/06/hask-is-not-a-category/&quot;&gt;discussion&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let us specialize the definition of a homomorphism to our case. Let &lt;code class=&quot;highlighter-rouge&quot;&gt;m&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; be monads. A monad homomorphism is a natural transformation &lt;code class=&quot;highlighter-rouge&quot;&gt;morph :: forall a. m a -&amp;gt; n a&lt;/code&gt; satisfying the following properties:&lt;/p&gt;
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;return&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The second law is equivalent o&lt;/p&gt;
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;morph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;if you are used to thinking in terms of &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&amp;gt;=&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For a list of examples you may have a look at &lt;a href=&quot;https://gist.github.com/ekmett/48f1b578cadeeaeee7a309ec6933d7ec&quot;&gt;this&lt;/a&gt; gist which has cute homomorphisms like &lt;code class=&quot;highlighter-rouge&quot;&gt;readOnly&lt;/code&gt; which is not in &lt;a href=&quot;http://hackage.haskell.org/package/mmorph-1.1.2/docs/Control-Monad-Morph.html&quot;&gt;Control.Monad.Morph&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So what is the merit of knowing that, say &lt;code class=&quot;highlighter-rouge&quot;&gt;lift&lt;/code&gt;, is a monad homomorphism? Well, when you think about it, we use &lt;code class=&quot;highlighter-rouge&quot;&gt;lift&lt;/code&gt; when we are in the wrong monad. That is, we use &lt;code class=&quot;highlighter-rouge&quot;&gt;lift&lt;/code&gt; to get from type a to type b just as I mentioned in the beginning. Indeed, if you have only one monadic value, this is all you can do with &lt;code class=&quot;highlighter-rouge&quot;&gt;lift&lt;/code&gt;. The fact that &lt;code class=&quot;highlighter-rouge&quot;&gt;lift&lt;/code&gt; is a homomorphism becomes useful when we want to lift many values. For instance we have&lt;/p&gt;
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;forM_&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lift&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lift&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forM_&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;mapM_&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lift&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lift&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mapM_&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And since lifting has a cost, the forms on the right hand side are usually more efficient.&lt;/p&gt;
+
+&lt;p&gt;I would like to finish this part by giving an example of a natural transformation which is not a monad homomorphism. Let &lt;code class=&quot;highlighter-rouge&quot;&gt;listToMaybe&lt;/code&gt; be defined by &lt;code class=&quot;highlighter-rouge&quot;&gt;foldr (const . Just) Nothing&lt;/code&gt;. Then &lt;code class=&quot;highlighter-rouge&quot;&gt;listToMaybe&lt;/code&gt; is not a monad homomorphism. Indeed,&lt;/p&gt;
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;listToMaybe&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listToMaybe&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Just&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;but&lt;/p&gt;
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listToMaybe&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listToMaybe&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;$&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listToMaybe&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Nothing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Just&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;join&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Just&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Nothing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Nothing&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;On the other hand, &lt;code class=&quot;highlighter-rouge&quot;&gt;maybeToList&lt;/code&gt; defined by &lt;code class=&quot;highlighter-rouge&quot;&gt;foldr (:) []&lt;/code&gt; &lt;em&gt;is&lt;/em&gt; a monad homomorphism.&lt;/p&gt;
 </content>
  </entry>
  
@@ -113,21 +277,21 @@ As &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse xs&lt;/code&gt; 
 &lt;p&gt;Using the Cayley representation theorem, we can push the problem of computing inverses to the monoid \({\rm End}([a])\). (Note how I mixed the Haskell notation and standard mathematical notation.) The advantage is that in \({\rm End}([a])\), the monoidal operation, namely function composition, is very cheap. To be more precise, it requires constant time because the composition of two functions is left untouched until someone tries to apply it to a value. However, the notion of reverting only makes sense in \([a]\) and not in \({\rm End}([a])\). So we need to embed only the concatenation part of the problem into \({\rm End}([a])\).&lt;/p&gt;
 
 &lt;p&gt;Here is the solution as valid Haskell code:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;type End s = s -&amp;gt; s
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kr&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;End&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;
 
-naiveReverse :: [a] -&amp;gt; [a]
-naiveReverse [] = []
-naiveReverse (x : xs) = naiveReverse xs ++ [x]
+&lt;span class=&quot;n&quot;&gt;naiveReverse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;naiveReverse&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;naiveReverse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;naiveReverse&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 
-singleton :: a -&amp;gt; End [a]
-singleton x = f where f y = x : y
+&lt;span class=&quot;n&quot;&gt;singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;End&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;singleton&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;
 
-cayleyReverse :: [a] -&amp;gt; End [a]
-cayleyReverse [] = id
-cayleyReverse (x : xs) = cayleyReverse xs . singleton x
+&lt;span class=&quot;n&quot;&gt;cayleyReverse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;End&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cayleyReverse&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cayleyReverse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cayleyReverse&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;singleton&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
 
-betterReverse :: [a] -&amp;gt; [a]
-betterReverse xs = cayleyReverse xs []
+&lt;span class=&quot;n&quot;&gt;betterReverse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;betterReverse&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cayleyReverse&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;cayleyReverse&lt;/code&gt; is obtained from &lt;code class=&quot;highlighter-rouge&quot;&gt;naiveReverse&lt;/code&gt; in a mechanical way replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;++&lt;/code&gt; by &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;[x]&lt;/code&gt; by &lt;code class=&quot;highlighter-rouge&quot;&gt;singleton x&lt;/code&gt;.&lt;/p&gt;
