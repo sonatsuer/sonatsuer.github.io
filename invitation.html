@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Blog of S.Süer – An Invitation to Functional Programming (For Mathematicians)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div id="header">
+<h1 class="title">An Invitation to Functional Programming (For Mathematicians)</h1>
+</div>
+<p><em>This post is based on two talks I gave at the mathematics departments of Bilkent University and METU.</em></p>
+<h2 id="functional-programming">Functional Programming</h2>
+<p>Here is the definition of functional programing in Wikipedia:</p>
+<blockquote>
+<p>In computer science, functional programming is a programming paradigm that treats computation as the evaluation of mathematical functions and avoids changing-state and mutable data.</p>
+</blockquote>
+<p>This should be very appealing to mathematicians. The reason is that choosing pure –i.e. mathematical– functions as a foundation means that programs are <em>algebraic</em> objects. Computation is literally simplification of algebraic expressions.</p>
+<p>This paradigm is very intuitive from the point of view of a mathematician. For instance, we can use <em>substitution of equals for equals principle</em>, a principle we learn in primary school, as a way to reason bout programs. This is also very useful from the point of view of a programmer. It even has a fancy name in computer science. It is called <em>referential transparency</em>.</p>
+<p>However, somewhat surprisingly, functional programming is considered difficult by a lot of programmers. Personally, I think programmers find it difficult because to be productive in a purely functional language, first they need to <em>unlearn</em> an entire paradigm which they have been using for years. This is where the mathematicians have the advantage. A mathematician only needs to <em>learn</em> the specifics of a programming language based on ideas with which he/she is already familiar. Learning is generally easier than unlearning.</p>
+<p>In this post, I will try to lure you, my dear mathematician, into functional programming.</p>
+<h2 id="enter-haskell">Enter Haskell</h2>
+<p>We will work out an example of the <em>programs are algebraic objects</em> approach in detail. For that we will use Haskell, an industrial strength pure functional language, named after the mathematician and logician Haskell Curry. This will not be a crash course in Haskell. Instead, I will explain the syntax as we go.</p>
+<p>Like the vast majority of programming languages, Haskell has data structures. One of the most common data structures in Haskell is the list structure. Here is the definition: given a type <code class="sourceCode haskell">a</code>, (like integers, floating point numbers, strings, etc.) we define <code class="sourceCode haskell">[a]</code> by <em>structural recursion</em> as follows:</p>
+<ul>
+<li><code class="sourceCode haskell">[]</code> is a list, it is called the empty list;</li>
+<li>if <code class="sourceCode haskell">x</code> is an element of type <code class="sourceCode haskell">a</code> and <code class="sourceCode haskell">xs</code> is a list of elements of type <code class="sourceCode haskell">a</code> then <code class="sourceCode haskell">x <span class="fu">:</span> xs</code> is also list.</li>
+</ul>
+<p>For instance</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dv">1</span> <span class="fu">:</span> (<span class="dv">2</span> <span class="fu">:</span> (<span class="dv">3</span> <span class="fu">:</span> [])) <span class="fu">=</span> <span class="dv">1</span> <span class="fu">:</span> <span class="dv">2</span> <span class="fu">:</span> <span class="dv">3</span> <span class="fu">:</span> []</code></pre></div>
+<p>is a list of integers. Haskell allows us to express this list as <code class="sourceCode haskell">[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</code>.</p>
+<p>Note that here <code class="sourceCode haskell"><span class="fu">:</span></code> is a actually <em>binary operation</em> and a list actually a <em>term</em>. Now let us define a simple function on lists.</p>
+<p>Let <code class="sourceCode haskell">xs</code> and <code class="sourceCode haskell">ys</code> be two lists (over the same type). We define the concatenation <code class="sourceCode haskell">xs<span class="fu">++</span>ys</code> of <code class="sourceCode haskell">xs</code> and <code class="sourceCode haskell">ys</code> by recursion on the structure of <code class="sourceCode haskell">xs</code> as follows:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[]<span class="fu">++</span>ys <span class="fu">=</span> ys    and    (x <span class="fu">:</span> xs&#39;) <span class="fu">++</span> ys <span class="fu">=</span> x <span class="fu">:</span> (xs&#39; <span class="fu">++</span> ys)<span class="fu">.</span></code></pre></div>
+<p>Let us compute an example:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[<span class="dv">1</span>,<span class="dv">2</span>]<span class="fu">++</span>[<span class="dv">3</span>,<span class="dv">4</span>] <span class="fu">=</span> (<span class="dv">1</span> <span class="fu">:</span> (<span class="dv">2</span> <span class="fu">:</span> [] )) <span class="fu">++</span> (<span class="dv">3</span> <span class="fu">:</span> (<span class="dv">4</span> <span class="fu">:</span> []))
+             <span class="fu">=</span> <span class="dv">1</span> <span class="fu">:</span> (( <span class="dv">2</span> <span class="fu">:</span> []) <span class="fu">++</span> (<span class="dv">3</span> <span class="fu">:</span> (<span class="dv">4</span> <span class="fu">:</span> []))
+             <span class="fu">=</span> <span class="dv">1</span> <span class="fu">:</span> (<span class="dv">2</span> <span class="fu">:</span> ([] <span class="fu">++</span> (<span class="dv">3</span> <span class="fu">:</span> (<span class="dv">4</span> <span class="fu">:</span> [])))
+             <span class="fu">=</span> <span class="dv">1</span> <span class="fu">:</span> (<span class="dv">2</span> <span class="fu">:</span> (<span class="dv">3</span> <span class="fu">:</span> (<span class="dv">4</span> <span class="fu">:</span> [])))
+             <span class="fu">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>]</code></pre></div>
+<p>Note the similarity between this calculation and the calculations you do in algebra.</p>
+<h2 id="our-first-program-in-haskell">Our First Program in Haskell</h2>
+<p>Suppose that we want to devise a function –that is to say, write a program– which produces the reverse of a list. Here is the obvious solution. Given a list <code class="sourceCode haskell">xs</code> let us define <code class="sourceCode haskell">naiveReverse</code> as follows:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">naiveReverse [] <span class="fu">=</span> []
+naiveReverse (x <span class="fu">:</span> xs) <span class="fu">=</span> naiveReverse xs <span class="fu">++</span> [x]</code></pre></div>
+<p>This looks like a (recursive) mathematical definition but it is actually valid Haskell code. As an exercise you may want to show that <code class="sourceCode haskell">naiveReverse [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>] <span class="fu">=</span> [<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>]</code>.</p>
+<p>Our program solves the problem of inverting a list, however we call it the naive reverse for a reason. It is not very efficient. First, note that the computation of <code class="sourceCode haskell">xs <span class="fu">++</span> ys</code> requires length of <code class="sourceCode haskell">xs</code> many applications of <code class="sourceCode haskell"><span class="fu">:</span></code> operation. This causes the computation to <code class="sourceCode haskell">naiveReverse xs</code> to require <span class="math inline">\(\frac{1}{2}n(n-1)\)</span> applications of the operation <code class="sourceCode haskell"><span class="fu">:</span></code> where <span class="math inline">\(n\)</span> is the length of <code class="sourceCode haskell">xs</code>.</p>
+<p>We can easily prove this by induction on <span class="math inline">\(n\)</span>. Base case is trivial. Suppose the statement holds for <span class="math inline">\(n\)</span>. Let <code class="sourceCode haskell">xs</code> be of length <span class="math inline">\(n\)</span>. Then, for any <code class="sourceCode haskell">x</code> we have <span class="math display">\[
+{\rm naiveReverse}\, (x : xs) = {\rm naiveReverse}\, xs ++ [x].
+\]</span> As <code class="sourceCode haskell">naiveReverse xs</code> and <code class="sourceCode haskell">xs</code> has the same length, namely <span class="math inline">\(n\)</span>, computation of <code class="sourceCode haskell"><span class="fu">++</span></code> takes <span class="math inline">\(n\)</span> applications of the <code class="sourceCode haskell"><span class="fu">:</span></code> operation. On the other hand, by induction hypothesis, <code class="sourceCode haskell">naiveReverse xs</code> requires <span class="math inline">\(\frac{1}{2}n(n-1)\)</span> applications. Adding these two yields <span class="math inline">\(\frac{1}{2}n(n+1)\)</span>, which is what we want.</p>
+<p>So the complexity of <code class="sourceCode haskell">naiveReverse</code> is quadratic as a function of the input length because <code class="sourceCode haskell"><span class="fu">++</span></code> is expensive. There is a very similar situation in mathematics with an elegant solution: multiplication is expensive, however one can use logarithms to turn multiplication into addition, do the addition and come back with exponentiation. This is why logarithm tables were used before computers.</p>
+<p>We will use the same trick to optimize <code>naiveReverse</code>, that is, we will change the underlying monoid using a homomorphism.</p>
+<h2 id="algebra-refresher">Algebra Refresher</h2>
+<p>Recall that a monoid is a triple <span class="math inline">\((M, \cdot, 1_M)\)</span> where <span class="math inline">\(\cdot\)</span> is a binary associative operation on <span class="math inline">\(M\)</span> and <span class="math inline">\(1_M\)</span> is the identity element of <span class="math inline">\(\cdot\)</span>.</p>
+<p>Here are a few examples. For any set <span class="math inline">\(S\)</span>, the set of self maps of <span class="math inline">\(S\)</span>, denoted by <span class="math inline">\({\rm End}(S)\)</span> is a monoid under composition. The identity is the identity function. For any set <span class="math inline">\(S\)</span>, the set of finite sequences with elements from <span class="math inline">\(S\)</span> form a monoid under concatenation. The identity is the empty list. This is called the free monoid generated by <span class="math inline">\(S\)</span>.</p>
+<p>A monoid homomorphism from <span class="math inline">\((M, \cdot, 1_M)\)</span> to <span class="math inline">\((N, \star, 1_N)\)</span> is a function <span class="math inline">\(\varphi : M \to N\)</span> such that <span class="math inline">\(\varphi(1_M) = 1_N\)</span> and <span class="math inline">\(\varphi(x\cdot y) = \varphi(x)\star\varphi(y)\)</span>.</p>
+<p>The Cayley representation theorem, which is taught in every every abstract algebra course, says that the map <span class="math inline">\(\mathcal{C} : M\to {\rm End}(M)\)</span> defined by $(m)(n) = m n $ is an injective monoid homomorphism, i.e. a monoid embedding. Note that if a function <span class="math inline">\(f\)</span> is in the image of <span class="math inline">\(\mathcal{C}\)</span> then one can recover the element it came from by applying <span class="math inline">\(f\)</span> to the identity of the monoid.</p>
+<p>Using the Cayley representation theorem, we can push the problem of computing inverses to the monoid <span class="math inline">\({\rm End}([a])\)</span>. (Note how I mixed the Haskell notation and standard mathematical notation.) The advantage is that in <span class="math inline">\({\rm End}([a])\)</span>, the monoidal operation, namely function composition, is very cheap. To be more precise, it requires constant time because the composition of two functions is left untouched until someone tries to apply it to a value. However, the notion of reverting only makes sense in <span class="math inline">\([a]\)</span> and not in <span class="math inline">\({\rm End}([a])\)</span>. So we need to embed only the concatenation part of the problem into <span class="math inline">\({\rm End}([a])\)</span>.</p>
+<p>Here is the solution as valid Haskell code:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">End</span> s <span class="fu">=</span> s <span class="ot">-&gt;</span> s
+
+<span class="ot">naiveReverse ::</span> [a] <span class="ot">-&gt;</span> [a]
+naiveReverse [] <span class="fu">=</span> []
+naiveReverse (x <span class="fu">:</span> xs) <span class="fu">=</span> naiveReverse xs <span class="fu">++</span> [x]
+
+<span class="ot">singleton ::</span> a <span class="ot">-&gt;</span> <span class="dt">End</span> [a]
+singleton x <span class="fu">=</span> f <span class="kw">where</span> f y <span class="fu">=</span> x <span class="fu">:</span> y
+
+<span class="ot">cayleyReverse ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">End</span> [a]
+cayleyReverse [] <span class="fu">=</span> id
+cayleyReverse (x <span class="fu">:</span> xs) <span class="fu">=</span> cayleyReverse xs <span class="fu">.</span> singleton x
+
+<span class="ot">betterReverse ::</span> [a] <span class="ot">-&gt;</span> [a]
+betterReverse xs <span class="fu">=</span> cayleyReverse xs []</code></pre></div>
+<p>Note that <code class="sourceCode haskell">cayleyReverse</code> is obtained from <code class="sourceCode haskell">naiveReverse</code> in a mechanical way replacing <code class="sourceCode haskell"><span class="fu">++</span></code> by <code class="sourceCode haskell">{<span class="fu">.</span>haskell}<span class="fu">.</span></code> and <code class="sourceCode haskell">[x]</code> by <code class="sourceCode haskell">singleton x</code>.</p>
+<h2 id="final-remarks">Final Remarks</h2>
+<p>This idea can be vastly generalized, if you know some category theory. Instead of monoids you can work with monoid objects in certain monoidal categories and transfer this optimization technique to different contexts. If you are interested in the details, you may have a look at <em>Notions of Computation as Monoids</em> by Exequiel Rivas and Mauro Jaskelioff.</p>
+<p>In the beginning, I said that I will try to lure you into functional programming. And the picture I tried to draw can be summarized by the famous motto:</p>
+<blockquote>
+<p>There is nothing more practical than a good theory.</p>
+</blockquote>
+<p>However, if you are really considering a career change like I did, there is another motto you should know about:</p>
+<blockquote>
+<p>In theory, there is no difference between theory and practice. In practice, there is.</p>
+</blockquote>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-2020 <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>

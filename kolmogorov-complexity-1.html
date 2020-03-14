@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Blog of S.Süer – Kolmogorov Complexity (1 of 2)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div id="header">
+<h1 class="title">Kolmogorov Complexity (1 of 2)</h1>
+</div>
+<h2 id="a-mandatory-example">A Mandatory Example</h2>
+Consider the following two binary strings:
+<span class="math display">\[\begin{align}
+&amp;\texttt{0101010101010101010101010101010},\newline
+&amp;\texttt{1100100100001111110110101010001}.
+\end{align}\]</span>
+<p>Which one do you think is easier to remember? Most people would say that the first one, because there is an obvious and simple rule/method to generate it. So, instead of remembering the string, we can remember the rule. One can also say that the first string is simple while the second one is complex. Kolmogorov complexity is a quantified version of this intuitive notion.</p>
+<p>Let us semi-formalize it. First let us fix a Turing complete programming language. I will not define what a programming language <em>is</em> or <em>should be</em> and, frankly, be somewhat vague about it. Hence the prefix <em>semi</em> in front of <em>formalize</em>. Though I will make a few assumptions. Programs in our programming language will be strings from from a fixed alphabet <span class="math inline">\(\mathcal{L}\)</span>, say, containing ASCII or UTF-8. I will also assume that each program accepts strings from <span class="math inline">\(\mathcal{L}\)</span> as input and produce strings from <span class="math inline">\(\mathcal{L}\)</span> as output. So, in particular, we can give a program to another program as input or a program may produce a program. For ease of reading, I will use <span class="math inline">\(\texttt{this font}\)</span> when writing a string from <span class="math inline">\(\mathcal{L}\)</span>.</p>
+<p>One technical assumption which will be important later is that our programs will use decimal representation for natural numbers. Actually pretty much any positional system would do, but for the sake of definiteness I will stick with decimal.</p>
+When I write a program, I will use some sort of pseudocode hoping that there is no ambiguity. Also I will not exclude partial programs which corresponds do partial functions. For instance
+<span class="math display">\[\begin{align}
+&amp;\texttt{accept x as input}\newline
+&amp;\texttt{while 1 == 1}\newline
+&amp;\;\;\;\texttt{do nothing}\newline
+&amp;\texttt{return x}
+\end{align}\]</span>
+<p>is a valid program even though it does not produce any result as it is always stuck in the while loop.</p>
+<p>Now we can define the Kolmogorov complexity of a string from <span class="math inline">\(\mathcal{L}\)</span>: Let <span class="math inline">\(\sigma\)</span> be a string from <span class="math inline">\(\mathcal{L}\)</span>. The Kolmogorov complexity of <span class="math inline">\(\sigma\)</span> is the length of the shortest program which generates <span class="math inline">\(\sigma\)</span> on any input. It is denoted by <span class="math inline">\(K(\sigma)\)</span>.</p>
+<h2 id="how-canonical-is-this-definition">How canonical is this definition?</h2>
+<p>The definition seems very intuitive, especially after the mandatory example. However, there is something fishy here. We made several arbitrary choices yet we called <span class="math inline">\(K(\sigma)\)</span> <em>the</em> Kolmogorov complexity of <span class="math inline">\(\sigma\)</span>. It should be clear that it is easier to generate certain strings in some languages than others. Indeed, the second string in our example is just the first few digits of the binary expansion of <span class="math inline">\(\pi\)</span> so it can be easier to generate in a language designed for numerical computations.</p>
+<p>Even worse, for any string <span class="math inline">\(\sigma\)</span>, we can very well imagine a programming language which has <span class="math inline">\(\sigma\)</span> as a built-in constant. Thus the Kolmogorov complexity of a single string seems to very heavily depend on our language of choice. So does this mean that our definition of <span class="math inline">\(K\)</span> is arbitrary? What happens if we change our programming language?</p>
+<p>Let us consider two notions of complexity <span class="math inline">\(K_1\)</span>, <span class="math inline">\(K_2\)</span> corresponding to two different programming languages <span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span>, respectively. Since <span class="math inline">\(L_1\)</span> is Turing complete, we can write a <em>compiler</em> for <span class="math inline">\(L_2\)</span> in <span class="math inline">\(L_1\)</span>. In other words, <span class="math inline">\(L_1\)</span> can simulate <span class="math inline">\(L_2\)</span>. Let <span class="math inline">\(\sigma\)</span> be a string and let <span class="math inline">\(n=K_2(\sigma)\)</span>. Then there is a program <span class="math inline">\(p\)</span> in the language <span class="math inline">\(L_2\)</span> which witnesses the fact that <span class="math inline">\(n=K_2(\sigma)\)</span>. That is, <span class="math inline">\(p\)</span> has length <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span> generates <span class="math inline">\(\sigma\)</span>. Now consider the following (description of a) program in <span class="math inline">\(L_1\)</span>: Simulate <span class="math inline">\(p\)</span>. The length of this program will be <span class="math inline">\(n + c\)</span> for some <span class="math inline">\(c\)</span> because the program contains the string <span class="math inline">\(p\)</span> and <span class="math inline">\(p\)</span> has length <span class="math inline">\(n\)</span>. The part corresponding to <span class="math inline">\(c\)</span> is the part that simulates <span class="math inline">\(L_2\)</span> and it does not depend on <span class="math inline">\(\sigma\)</span>. By construction, “Simulate <span class="math inline">\(p\)</span>” generates <span class="math inline">\(\sigma\)</span>, thus <span class="math display">\[
+  K_1(\sigma)\leq n + c = K_2(\sigma) + c.
+\]</span> We proved that there is a constant <span class="math inline">\(c\)</span> such that <span class="math inline">\(K_1(\sigma)\leq K_2(\sigma) + c\)</span> for all <span class="math inline">\(\sigma\)</span>. By symmetry, there is a <span class="math inline">\(c&#39;\)</span> such that <span class="math inline">\(K_2(\sigma)\leq K_1(\sigma) + c&#39;\)</span> for all <span class="math inline">\(\sigma\)</span>. Combining these two we obtain <span class="math display">\[
+  |K_1(\sigma) - K_2(\sigma)| &lt; {\rm max}\{c, c&#39;\}.
+\]</span> This shows that if we consider an infinite family of strings and consider the asymptotic behavior of Kolmogorov complexity on that family, then the programming language we choose does not matter. Obviously, this does not imply that this asymptotic behavior is easy to determine.</p>
+<p>From now on we will stick with a fixed but not explicitly determined choice of language and denote the complexity function given by that language by <span class="math inline">\(K\)</span>.</p>
+<p>At this point I would compute the Kolmogorov complexity of some concrete strings (or infinite families of strings) but it is tricky. We can always give an upper bound for Kolmogorov complexity by explicitly constructing a program and measuring its length but the tricky part is to show that no shorter program generates the same string. Actually, the problem is so difficult that there is no general solution. To put it more concretely, the function <span class="math inline">\(K\)</span> is not computable. The aim of this post is to give a proof of this result.</p>
+<h2 id="berry-paradox">Berry Paradox</h2>
+<p>Before moving on to the actual proof, let us see the underlying idea of the proof in a linguistic context. Let us consider the following description of a number:</p>
+<span class="math display">\[\begin{align}
+&amp;\texttt{the least natural number that cannot be}\newline
+&amp;\texttt{described in English by less than 88 characters}
+\end{align}\]</span>
+<p>Let <span class="math inline">\(n\)</span> be the natural number defined by this description. But this description itself has only 87 characters, counting spaces and digits, so <span class="math inline">\(n\)</span> has a description with only 87 characters. Contradiction! This argument is known as the Berry paradox. I will not go into a linguistic or philosophical debate here, there is already a substantial body of literature on the topic.</p>
+<p>Now note that if we start with the following description, we cannot really say much about the number it describes, nevertheless, we do not end up with a paradox either:</p>
+<span class="math display">\[\begin{align}
+&amp;\texttt{the least natural number that cannot be}\newline
+&amp;\texttt{described in English by less than 75 characters}
+\end{align}\]</span>
+<p>Thus the number in the description is not arbitrary. Here is a natural question: What values of <span class="math inline">\(n\)</span> give rise to the Berry paradox? To answer that question we will make the number <span class="math inline">\(n\)</span> a parameter. For a natural number <span class="math inline">\(n\)</span> let <span class="math inline">\(\ulcorner n \urcorner\)</span> be the decimal expression of <span class="math inline">\(n\)</span> as a string. So, for instance <span class="math inline">\(\ulcorner 234 \urcorner = \texttt{234}\)</span>, <span class="math inline">\(\ulcorner 0 \urcorner = \texttt{0}\)</span>, etc. Now define <span class="math inline">\(\Delta(n)\)</span> be</p>
+<span class="math display">\[\begin{align}
+&amp;\texttt{the least natural number that cannot be}\newline
+&amp;\texttt{described in English by less than $\ulcorner n \urcorner$ characters}
+\end{align}\]</span>
+<p>Clearly a positive natural number <span class="math inline">\(n\)</span> gives rise to the Berry paradox if <span class="math inline">\(\ell(\Delta(n)) &lt; n\)</span> where <span class="math inline">\(\ell(\sigma)\)</span> denotes the length of <span class="math inline">\(\sigma\)</span>. Note that <span class="math display">\[
+  \ell(\Delta(n)) = 85 + \ell(\ulcorner n \urcorner) = 85 + 1 + \lfloor \log_{10} n \rfloor.
+\]</span> because <span class="math inline">\(\ell(\ulcorner n \urcorner)\)</span> is simply the number of digits of <span class="math inline">\(n\)</span>. So the inequality we should solve is <span class="math display">\[
+  86 + \lfloor \log_{10} n  \rfloor &lt; n.
+\]</span> We can of course find the exact solution set of this inequality but what is more interesting is that we can immediately tell that there are solutions. The reason is that the left hand side grows logartihmically and the right hand side grows linearly and hence the right hand side should dominate the left hand side for all sufficiently large values of <span class="math inline">\(n\)</span>. Even better, if we change the phrasing of the condition or express it in a different language such as french, we would need to solve the equation <span class="math inline">\(c + \lfloor \log_{10} n \rfloor &lt; n\)</span> for some constant <span class="math inline">\(c\)</span> and, by the same argument, we would have a solution. Thus the Berry paradox is about exploiting the fact that our measure of complexity can be referred to in a not so complex way. Note that if we were to use the unary system instead of decimal, that is if we expressed <span class="math inline">\(n\)</span> as <span class="math inline">\(n\)</span>-many <span class="math inline">\(\texttt{1}\)</span>’s, then we would have <span class="math inline">\(\ell(\Delta(n))=c + n\)</span> for some <span class="math inline">\(n\)</span> and the Berry paradox would not come up.</p>
+<h2 id="an-incomputability-result">An Incomputability Result</h2>
+<p>Here is the theorem we: There is no computer program which takes <span class="math inline">\(\sigma\)</span> as input and produces <span class="math inline">\(\ulcorner K(\sigma) \urcorner\)</span> as output. For the proof, we will mimic the Berry paradox.</p>
+Suppose that there <em>is</em> such a program <span class="math inline">\(p\)</span>. We will obtain a contradiction. Consider the following program:
+<span class="math display">\[\begin{align}
+&amp;\texttt{accept n as input}\newline
+&amp;\texttt{if n does not represent a natural number then halt}\newline
+&amp;\texttt{set x to be the first string in alphabetical order}\newline
+&amp;\texttt{while the Kolmogorov complexity of x is less than n}\newline
+&amp;\;\;\;\texttt{replace x by the next string in alphabetical order}\newline
+&amp;\texttt{return x}
+\end{align}\]</span>
+<p>Note that we use <span class="math inline">\(p\)</span> to check the condition in the while loop. Also note that the while loop is never stuck because there is no bound on the Kolmogorov complexity. So this program produces a string of complexity grater than <span class="math inline">\(n\)</span> if its input is <span class="math inline">\(\ulcorner n \urcorner\)</span>.</p>
+<p>Now for each <span class="math inline">\(n\)</span> we can construct a program <span class="math inline">\(\tau_n\)</span> as follows:</p>
+<span class="math display">\[\begin{align}
+&amp;\texttt{accept u as input}\newline
+&amp;\texttt{set x to be the first string in alphabetical order}\newline
+&amp;\texttt{while the Kolmogorov complexity of x is less than $\ulcorner n\urcorner$}\newline
+&amp;\;\;\;\texttt{replace x by the next string in alphabetical order}\newline
+&amp;\texttt{return x}
+\end{align}\]</span>
+<p>Clearly <span class="math inline">\(\tau_n\)</span> ignores the input and behaves like <span class="math inline">\(\tau\)</span> with input <span class="math inline">\(\ulcorner n\urcorner\)</span>. Moreover <span class="math inline">\(\ell(\tau_n) = \lfloor\log_{10}(n)\rfloor + c\)</span> for some constant <span class="math inline">\(c\)</span>. Thus, for a sufficiently large <span class="math inline">\(k\)</span> we have <span class="math inline">\(\ell(\tau_k) &lt; k\)</span>.</p>
+<p>Let <span class="math inline">\(\omega\)</span> be the string produced by <span class="math inline">\(\tau\)</span> on an input <span class="math inline">\(\ulcorner k \urcorner\)</span> satisfying <span class="math inline">\(\ell(\tau_k) &lt; k\)</span>. Here comes the finishing blow: By the construction of <span class="math inline">\(\tau\)</span>, we have <span class="math inline">\(K(\omega)\geq k\)</span>. On the other hand <span class="math inline">\(\tau_k\)</span> also produces <span class="math inline">\(\omega\)</span> (on any input) therefore we must have <span class="math inline">\(K(\omega)\leq \ell(\tau_k)\)</span>. But these two inequalities imply that <span class="math inline">\(k \leq \ell(\tau_k)\)</span>. Contradiction!</p>
+<p>Let us summarize what we did: We defined a not exactly canonical notion of complexity which is impossible to compute in practice. So what can we even do with it? Well, mathematical logic of course! This will be the topic of the <a href="kolmogorov-complexity-2.html">forthcoming post</a> on Kolmogorov complexity.</p>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-2020 <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>

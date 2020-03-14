@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Blog of S.Süer – Monoid Homomorphisms (2 of 2)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div id="header">
+<h1 class="title">Monoid Homomorphisms (2 of 2)</h1>
+</div>
+<h2 id="applicatives-as-monoid-homomorphisms">Applicatives As Monoid Homomorphisms</h2>
+<p>In the last post I mentioned that a monoidal structure is actually a categorification of the notion of a monoid. In accordance with the main theme of these posts, we should ask the following question: What is a homomorphism between monoidal structures?</p>
+<p>Let us take two monoidal categories <span class="math inline">\(\mathcal{C}\)</span> and <span class="math inline">\(\mathcal{D}\)</span>. The naive definition of a homomorphism of monoidal structures from <span class="math inline">\(\mathcal{C}\)</span> to <span class="math inline">\(\mathcal{D}\)</span> is a functor <span class="math inline">\(F:\mathcal{C}\to\mathcal{D}\)</span> satisfying <span class="math inline">\(F(1)=1\)</span> and <span class="math inline">\(F(a\otimes b) = F(a)\otimes F(b)\)</span>. The problem here is that two things are <em>very rarely</em> equal. In a categorical concept, the relevant concept is isomorphism. However, even isomorphism can be a too strong requirement. Existence of a morphism is often enough to obtain a useful concept. Here is the weakened version of a monoidal homomorphism, also know as a lax monoidal functor: a functor <span class="math inline">\(F:\mathcal{C}\to\mathcal{D}\)</span> is called a lax monoidal functor if there are a morphism <span class="math inline">\(\epsilon : 1 \to F(1)\)</span> and a natural transformation <span class="math inline">\(\mu_{x,y}: F(a)\otimes F(b) \to F(a\otimes b)\)</span>, of course, with respect to some coherence conditions. You may have a look at <a href="https://ncatlab.org/nlab/show/monoidal+functor">nLab</a> for the full definition. One can also define co-lax monoidal functors by reversing the arrows.</p>
+<p>I will give one obscure and one famous example from Haskell. The obscure example is the <em>Decisive</em> typeclass that I have seen only once. Decisive functors are co-lax monoidal (endo)functors with respect to the sum. The other is, as you can guess from the title of this subsection, the Applicative typecalss. I will not go into the details as it is well documented, say, in <a href="https://wiki.haskell.org/Typeclassopedia##Alternative_formulation">Typeclassopedia</a>.</p>
+<p>So what? The api given by directly translating the definition is awkward as opposed the standard api which lets you do things like</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">curriedFunctionWithManyInputs <span class="fu">&lt;$&gt;</span> a <span class="fu">&lt;*&gt;</span> b <span class="fu">&lt;*&gt;</span> c <span class="fu">&lt;*&gt;</span> d <span class="fu">&lt;*&gt;</span> e <span class="fu">&lt;*&gt;</span> f <span class="fu">&lt;*&gt;</span> g</code></pre></div>
+<p>What did we gain here? The point is that your relationship with code is not limited to <em>typing</em> it. Occasionally, you find yourself reasoning about code or even imagining code, possibly in an imaginary language! To know that applicative functors are actually homomorphisms offers the kind of wisdom you need when you are not necessarily in front of a keyboard. For instance, we have monad transformers but we do not have applicative transformers because the composition of applicative functors is already applicative, drum roll here, because composition of structure preserving maps is again structure preserving.</p>
+<h2 id="homomorphisms-of-applicatives">Homomorphisms of Applicatives</h2>
+<blockquote>
+<p>Day convolution is just the categorification of the notion of a convolution on a free <span class="math inline">\(R\)</span>-algebra on a monoid where <span class="math inline">\(R\)</span> is a commutative unital ring, what’s the problem?</p>
+</blockquote>
+<p>Well, at this point, I could vomit my <em>déformation professionnelle</em> in your general direction to explain what that means… But I won’t, at least not in this post. I will only say that there is a general way of viewing lax monoidal functors as monoid objects in a monoidal category where Day convolution gives the underlying monoidal structure. I will also practice something I do not usually preach: I will work with an implementation of Day convolution in Haskell instead of working with the specification.</p>
+<p>I will borrow the definitions/implementations from <a href="https://hackage.haskell.org/package/contravariant-0.6.1/docs/Data-Functor-Day.html">Data.Functor.Day</a> with minor modifications.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> (<span class="fu">~&gt;</span>) f g <span class="fu">=</span> forall x <span class="fu">.</span> f x <span class="ot">-&gt;</span> g x
+
+<span class="kw">data</span> <span class="dt">Day</span> f g x <span class="fu">=</span> forall a b <span class="fu">.</span> <span class="dt">Day</span> (f a) (g b) (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> x)
+
+<span class="co">-- The identity is the identity functor</span>
+<span class="co">-- This corresponds to the &#39;multiplication&#39; of the monoidal structure.</span>
+<span class="ot">dap ::</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> <span class="dt">Day</span> f f <span class="fu">~&gt;</span> f
+dap (<span class="dt">Day</span> fa fb op) <span class="fu">=</span> liftA2 op fa fb
+
+<span class="co">-- These functions are used to map over components.</span>
+<span class="ot">trans1 ::</span> (f <span class="fu">~&gt;</span> g) <span class="ot">-&gt;</span> <span class="dt">Day</span> f h <span class="fu">~&gt;</span> <span class="dt">Day</span> g h
+trans1 fg (<span class="dt">Day</span> fb hc op) <span class="fu">=</span> <span class="dt">Day</span> (fg fb) hc op
+
+<span class="ot">trans2 ::</span> (g <span class="fu">~&gt;</span> h) <span class="ot">-&gt;</span> <span class="dt">Day</span> f g <span class="fu">~&gt;</span> <span class="dt">Day</span> f h
+trans2 gh (<span class="dt">Day</span> fb gc op) <span class="fu">=</span> <span class="dt">Day</span> fb (gh gc) op
+
+<span class="ot">transBoth ::</span> (f1 <span class="fu">~&gt;</span> f2) <span class="ot">-&gt;</span> (g1 <span class="fu">~&gt;</span> g2) <span class="ot">-&gt;</span> <span class="dt">Day</span> f1 g1 <span class="fu">~&gt;</span> <span class="dt">Day</span> f2 g2
+transBoth morph1 morph22 <span class="fu">=</span> trans1 morph1 <span class="fu">.</span> trans2 morph2</code></pre></div>
+<p>Now suppose <code class="sourceCode haskell">f</code> and <code class="sourceCode haskell">g</code> are two applicative functors (viewed as monoid objects) and</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">morph ::</span> f <span class="fu">~&gt;</span> g</code></pre></div>
+<p>is a homomorpism from <code class="sourceCode haskell">f</code> to <code class="sourceCode haskell">g</code>. Then we must have</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  dap <span class="fu">$</span> transBoth morph morph <span class="fu">$</span> <span class="dt">Day</span> fa fb op
+<span class="fu">=</span> morph <span class="fu">$</span> dap <span class="fu">$</span> <span class="dt">Day</span> fa fb op</code></pre></div>
+<p>Simplifying yields</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 op (morph fa) (morph fb)
+<span class="fu">=</span> morph <span class="fu">$</span> liftA2 op fa fb</code></pre></div>
+<p>Since this holds for any <code class="sourceCode haskell">op</code>, it also holds for <code class="sourceCode haskell">(,)</code>. So we get the even simpler form</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 (,) (morph fa) (morph fb)
+<span class="fu">=</span> morph <span class="fu">$</span> liftA2 (,) fa fb</code></pre></div>
+<p>Note that we can actually recover the previous equation by mapping <code class="sourceCode haskell">uncurry op</code> to both sides. So we can use the last equation together with</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">morph <span class="fu">.</span> pure <span class="fu">=</span> pure</code></pre></div>
+<p>to define applicative-viewed-as-a-monoid homomorphisms. This is a little bit disappointing because we just reinvented the notion of a monoidal natural transformation. On the other hand we learned that monoidal natural transformations can be seen as monoid object morphisms. This is a neat fact and it allows us, for instance, to transfer homomorphism related concepts to applicative functors. Cayley representation is one of them. Have a look at <em>Notions of Computation as Monoids</em> by Rivas and Jaskelioff for details.</p>
+<p>Let us look at a few concrete examples. Let <code class="sourceCode haskell">f</code> be <code class="sourceCode haskell"><span class="dt">Maybe</span></code> and <code class="sourceCode haskell">g</code> be <code class="sourceCode haskell">[]</code>. Consider <code class="sourceCode haskell">maybeToList</code> from the first part. I claim that <code class="sourceCode haskell">maybetoList</code> is an applicative homomorphism. Clearly</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">maybeToList <span class="fu">$</span> pure x <span class="fu">=</span> maybeToList <span class="fu">$</span> <span class="dt">Just</span> x <span class="fu">=</span> [x] <span class="fu">=</span> pure x</code></pre></div>
+<p>We also need to verify the following equality:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 (,) (maybeToList fa) (maybeToList fb)
+<span class="fu">=</span> maybeToList <span class="fu">$</span> liftA2 (,) fa fb</code></pre></div>
+<p>where <code class="sourceCode haskell"><span class="ot">fa ::</span> <span class="dt">Maybe</span> a</code> and <code class="sourceCode haskell"><span class="ot">fb ::</span> <span class="dt">Maybe</span> b</code>. If at least one of <code class="sourceCode haskell">fa</code> or <code class="sourceCode haskell">fb</code> is <code class="sourceCode haskell"><span class="dt">Nothing</span></code> then both sides are <code class="sourceCode haskell">[]</code>. If <code class="sourceCode haskell">fa <span class="fu">=</span> <span class="dt">Just</span> x</code> and <code class="sourceCode haskell">fb <span class="fu">=</span> <span class="dt">Just</span> y</code> then both sides are equal to <code class="sourceCode haskell">[(x, y)]</code>. This finishes our little proof.</p>
+<p>Actually something more general is going on here. Recall that <code class="sourceCode haskell">maybetoList</code> is also a monad homomorphism and our applicatives are induced by monad instances. So it is very natural to conjecture that all monad homomorphisms are also applicative homomorphisms with respect to the induced applicative structures. So let us prove this conjecture.</p>
+<p>Let <code class="sourceCode haskell">m</code> and <code class="sourceCode haskell">n</code> be monads and let <code class="sourceCode haskell"><span class="ot">morh ::</span> m <span class="fu">~&gt;</span> n</code> be a monad homomorphism. Then <code class="sourceCode haskell">morph <span class="fu">.</span> pure <span class="fu">=</span> pure</code> as <code class="sourceCode haskell">return <span class="fu">=</span> pure</code>. The other equality we need to prove turns into the following one</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftM2 (,) (morph ma) (morph mb)
+<span class="fu">=</span> morph <span class="fu">$</span> liftM2 (,) ma mb</code></pre></div>
+<p>as <code class="sourceCode haskell">liftA2 <span class="fu">=</span> liftM2</code>. We know that</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">liftM2 f mx my <span class="fu">=</span> mx <span class="fu">&gt;&gt;=</span> (\x <span class="ot">-&gt;</span> (my <span class="fu">&gt;&gt;=</span> \y <span class="ot">-&gt;</span> return <span class="fu">$</span> f x y))</code></pre></div>
+<p>Since <code class="sourceCode haskell">morph</code> is a monad homomorphism we have</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">morph (x <span class="fu">&gt;&gt;=</span> f) <span class="fu">=</span> morph x <span class="fu">&gt;&gt;=</span> morph <span class="fu">.</span> f</code></pre></div>
+<p>Now combining these two we get</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  morph <span class="fu">$</span> liftM2 (,) ma mb
+<span class="fu">=</span> morph <span class="fu">$</span> ma <span class="fu">&gt;&gt;=</span> (\a <span class="ot">-&gt;</span> (mb <span class="fu">&gt;&gt;=</span> \b <span class="ot">-&gt;</span> return (a, b)))
+<span class="fu">=</span> morph ma <span class="fu">&gt;&gt;=</span> morph <span class="fu">.</span> (\a <span class="ot">-&gt;</span> (mb <span class="fu">&gt;&gt;=</span> \b <span class="ot">-&gt;</span> return (a, b)))
+<span class="fu">=</span> morph ma <span class="fu">&gt;&gt;=</span> (\a <span class="ot">-&gt;</span> morph (mb <span class="fu">&gt;&gt;=</span> \b <span class="ot">-&gt;</span> return (a, b)))
+<span class="fu">=</span> morph ma <span class="fu">&gt;&gt;=</span> (\a <span class="ot">-&gt;</span> (morph mb <span class="fu">&gt;&gt;=</span> morph <span class="fu">.</span> (\b <span class="ot">-&gt;</span> return (a, b))))
+<span class="fu">=</span> morph ma <span class="fu">&gt;&gt;=</span> (\a <span class="ot">-&gt;</span> (morph mb <span class="fu">&gt;&gt;=</span> \b <span class="ot">-&gt;</span> morph <span class="fu">$</span> return (a, b)))
+<span class="fu">=</span> morph ma <span class="fu">&gt;&gt;=</span> (\a <span class="ot">-&gt;</span> (morph mb <span class="fu">&gt;&gt;=</span> \b <span class="ot">-&gt;</span> morph <span class="fu">.</span> return <span class="fu">$</span> (a, b)))
+<span class="fu">=</span> morph ma <span class="fu">&gt;&gt;=</span> (\a <span class="ot">-&gt;</span> (morph mb <span class="fu">&gt;&gt;=</span> \b <span class="ot">-&gt;</span> return (a, b)))
+<span class="fu">=</span> liftM2 (,) (morph ma) (morph mb)</code></pre></div>
+<p>which proves that <code class="sourceCode haskell">morph</code> is also an applicative homomorphism.</p>
+<p>We may also conjecture that any applicative homomorphism between monads is also a monad homomorphism but it is not true! Recall from the first part that <code class="sourceCode haskell">listToMaybe</code> is not a monad homomorphism. We will now show that it is actually an applicative homomorphism. The only nontrivial equation to check is the following:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 (,) (listToMaybe fa) (listToMaybe fb)
+<span class="fu">=</span> listToMaybe <span class="fu">$</span> liftA2 (,) fa fb</code></pre></div>
+<p>where <code class="sourceCode haskell"><span class="ot">fa ::</span> [a]</code> and <code class="sourceCode haskell"><span class="ot">fb ::</span> [b]</code>. If at least one of <code class="sourceCode haskell">fa</code> or <code class="sourceCode haskell">fb</code> is <code class="sourceCode haskell">[]</code> then both sides are <code class="sourceCode haskell"><span class="dt">Nothing</span></code>. If <code class="sourceCode haskell">fa <span class="fu">=</span> x <span class="fu">:</span> xs</code> and <code class="sourceCode haskell">fb <span class="fu">=</span> y <span class="fu">:</span> ys</code> then both sides are equal to <code class="sourceCode haskell"><span class="dt">Just</span> (x, y)</code>.</p>
+<p>Of course there are other examples of applicative homomorphisms, for instance <code class="sourceCode haskell">retractAp</code>, <code class="sourceCode haskell">hoistAp t</code> and <code class="sourceCode haskell">runAp t</code> from <a href="http://hackage.haskell.org/package/free-5.1/docs/Control-Applicative-Free.html">Control.Applicative.Free</a>, though they are called monoidal natural transformations in the documentation.</p>
+<h2 id="one-more-examples-of-an-applicative-homomorphism">One More Examples of an Applicative Homomorphism</h2>
+<p>Note that in <code class="sourceCode haskell">hoistAp t</code> and <code class="sourceCode haskell">runAp t</code> there is no restriction on <code class="sourceCode haskell">t</code> other than being a natural transformation. This may look odd, but really it is not because <code class="sourceCode haskell"><span class="dt">Ap</span></code> is the free part of a free-forgetful adjunction and if you are on the <em>forgotten</em> side of it, any natural transformation is a morphism as there is no structure to preserve. In general, though, such effortless theorems are rare. If you want to prove something you need to assume something. I want to give an example which depends on an algebraic assumption.</p>
+<p>I will use the <code class="sourceCode haskell"><span class="dt">Validation</span></code> typeclass from <a href="http://hackage.haskell.org/package/validation-1/docs/Data-Validation.html">Data.Validation</a>. Let me copy the relevant parts of the library here.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Validation</span> err a
+  <span class="fu">=</span> <span class="dt">Failure</span> err
+  <span class="fu">|</span> <span class="dt">Success</span> a
+
+<span class="kw">instance</span> <span class="dt">Semigroup</span> err <span class="ot">=&gt;</span> <span class="dt">Applicative</span> (<span class="dt">Validation</span> err a) <span class="kw">where</span>
+  pure <span class="fu">=</span> <span class="dt">Success</span>
+  <span class="dt">Failure</span> e1 <span class="fu">&lt;*&gt;</span> <span class="dt">Failure</span> e2 <span class="fu">=</span> <span class="dt">Failure</span> (e1 <span class="fu">&lt;&gt;</span> e2)
+  <span class="dt">Failure</span> e <span class="fu">&lt;*&gt;</span> <span class="dt">Success</span> _ <span class="fu">=</span> <span class="dt">Failure</span> e
+  <span class="dt">Success</span> _ <span class="fu">&lt;*&gt;</span> <span class="dt">Failure</span> e <span class="fu">=</span> <span class="dt">Failure</span> e
+  <span class="dt">Success</span> f <span class="fu">&lt;*&gt;</span> <span class="dt">Success</span> x <span class="fu">=</span> <span class="dt">Success</span> (f x)</code></pre></div>
+<p>As you can see, this is very much like <code class="sourceCode haskell"><span class="dt">Either</span></code> but the errors are accumulated using the semigroup structure as opposed to <code class="sourceCode haskell"><span class="dt">Either</span></code> which only keeps the first error. One nice thing about the <code class="sourceCode haskell"><span class="dt">Validation</span></code> is that its applicative instance is almost never induced by a monad instance.</p>
+<p>Now suppose that you want to change the error type you want from, say, <code class="sourceCode haskell">err1</code> to <code class="sourceCode haskell">err2</code> using a function <code class="sourceCode haskell"><span class="ot">convert ::</span> err1 <span class="ot">-&gt;</span> err2</code>. We can implement this easily by</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">changeErr ::</span> (err1 <span class="ot">-&gt;</span> err2) <span class="ot">-&gt;</span> <span class="dt">Validation</span> err1 a <span class="ot">-&gt;</span> <span class="dt">Validation</span> err2 a
+changeErr convert (<span class="dt">Failure</span> e) <span class="fu">=</span> <span class="dt">Failure</span> <span class="fu">$</span> convert e
+changeErr _ (<span class="dt">Success</span> x) <span class="fu">=</span> <span class="dt">Success</span> x</code></pre></div>
+<p>Now comes the interesting question: When is <code class="sourceCode haskell">changeErr</code> an applicative homomorphism? Obviously</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">changeErr convert <span class="fu">$</span> pure x <span class="fu">=</span> <span class="dt">Success</span> x <span class="fu">=</span> pure x</code></pre></div>
+<p>So we need to check</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 (,) (changeErr convert <span class="fu">$</span> fa) (changeErr convert <span class="fu">$</span> fb)
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> liftA2 (,) fa fb</code></pre></div>
+<p>where <code class="sourceCode haskell"><span class="ot">fa ::</span> <span class="dt">Validation</span> err1 a</code> and <code class="sourceCode haskell"><span class="ot">fb ::</span> <span class="dt">Validation</span> err2 b</code>. The proof is going to be a little boring because I will look at all four possible cases.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 (,) (changeErr convert <span class="fu">$</span> <span class="dt">Success</span> x) (changeErr convert <span class="fu">$</span> <span class="dt">Success</span> y)
+<span class="fu">=</span> liftA2 (,) (<span class="dt">Success</span> x) (<span class="dt">Success</span> y)
+<span class="fu">=</span> <span class="dt">Success</span> (x, y)
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> <span class="dt">Success</span> (x, y)
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> liftA2 (,) (<span class="dt">Success</span> x) (<span class="dt">Success</span> y)
+
+  liftA2 (,) (changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> e1) (changeErr convert <span class="fu">$</span> <span class="dt">Success</span> y)
+<span class="fu">=</span> liftA2 (,) (<span class="dt">Failure</span> <span class="fu">$</span> convert e1) (<span class="dt">Success</span> y)
+<span class="fu">=</span> <span class="dt">Failure</span> <span class="fu">$</span> convert e1
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> e1
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> liftA2 (,) (<span class="dt">Failure</span> e1) (<span class="dt">Success</span> y)
+
+  liftA2 (,) (changeErr convert <span class="fu">$</span> <span class="dt">Success</span> x) (changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> e2)
+<span class="fu">=</span> liftA2 (,) (<span class="dt">Success</span> x) (<span class="dt">Failure</span> <span class="fu">$</span> convert e2)
+<span class="fu">=</span> <span class="dt">Failure</span> <span class="fu">$</span> convert e2
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> e2
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> liftA2 (<span class="dt">Success</span> x) (<span class="dt">Failure</span> e2)</code></pre></div>
+<p>These equations hold without any assumption on <code class="sourceCode haskell">convert</code>. However, the final case reveals something:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  liftA2 (,) (changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> e1) (changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> e2)
+<span class="fu">=</span> liftA2 (,) (<span class="dt">Failure</span> <span class="fu">$</span> convert e1) (<span class="dt">Failure</span> <span class="fu">$</span> convert e2)
+<span class="fu">=</span> <span class="dt">Failure</span> <span class="fu">$</span> convert e1 <span class="fu">&lt;&gt;</span> convert e2
+
+  changeErr convert <span class="fu">$</span> liftA2 (,) (<span class="dt">Failure</span> e1) (<span class="dt">Failure</span> e2)
+<span class="fu">=</span> changeErr convert <span class="fu">$</span> <span class="dt">Failure</span> <span class="fu">$</span> e1 <span class="fu">&lt;&gt;</span> e2
+<span class="fu">=</span> <span class="dt">Failure</span> <span class="fu">$</span> convert <span class="fu">$</span> e1 <span class="fu">&lt;&gt;</span> e2</code></pre></div>
+<p>This shows that <code class="sourceCode haskell">changeErr convert</code> is an applicative homomorphism if and only if <code class="sourceCode haskell">convert</code> is a semigroup homomorphism. So, if <code class="sourceCode haskell">convert</code> is a semigroup homomorphism, then ew have</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  changeErr convert <span class="fu">$</span> f <span class="fu">&lt;$&gt;</span> v1 <span class="fu">&lt;*&gt;</span> v2 <span class="fu">&lt;*&gt;</span> v3 <span class="fu">&lt;*&gt;</span> v4 <span class="fu">&lt;*&gt;</span> <span class="fu">...</span> <span class="fu">&lt;*&gt;</span> vn
+<span class="fu">=</span> f <span class="fu">&lt;$&gt;</span> changeErr convert v1
+    <span class="fu">&lt;*&gt;</span> changeErr convert v2
+    <span class="fu">&lt;*&gt;</span> changeErr convert v3
+    <span class="fu">&lt;*&gt;</span> changeErr convert v4
+    <span class="fu">...</span>
+    <span class="fu">&lt;*&gt;</span> changeErr convert vn</code></pre></div>
+<p>where <code class="sourceCode haskell">f</code> is a curried function with n many inputs. Therefore we can choose the more efficient one by comparing the costs of converting an error from <code class="sourceCode haskell">err1</code> to <code class="sourceCode haskell">err2</code>, accumulating errors in <code class="sourceCode haskell">err1</code> and accumulating errors in <code class="sourceCode haskell">err2</code>.</p>
+<p>By the way, one can also find algebraic assumptions like this in the wild, too. The <code class="sourceCode haskell"><span class="dt">Action</span></code> instance of <code class="sourceCode haskell"><span class="dt">Endo</span> a</code> on <code class="sourceCode haskell">a</code> from <a href="http://hackage.haskell.org/package/monoid-extras-0.5/docs/Data-Monoid-Action.html">Data.Monoid.Action</a> is an example.</p>
+<h2 id="the-take-home-message">The Take-Home Message</h2>
+<p>The take-home message should be compact (and I am tired) so I will be brief: If you are going to work with objects with structure, do not neglect the structure preserving maps between them!</p>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-2020 <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>

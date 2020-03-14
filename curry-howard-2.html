@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Blog of S.Süer – Curry-Howard Correspondence From Scratch (Part 2 of 2)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div id="header">
+<h1 class="title">Curry-Howard Correspondence From Scratch (Part 2 of 2)</h1>
+</div>
+<h2 id="simply-typed-lambda-calculus">Simply Typed Lambda Calculus</h2>
+<p>In the first post we constructed a formal theory of propositions but left the notion of <em>naming a specific element</em> from a function set vague. Now we are going to fix that.</p>
+<p>Our central notion will be that of a <em>lambda term</em>. As we want to define a formal theory we will not define what a lambda term is and focus on how to construct new lambda terms from old ones. Intuitively though, we will think of lambda terms as function prototypes.</p>
+<p>First we need variables. We will assume that we have an infinite set of variables and denote variables by lower case letters from the Latin alphabet. Each variable will also be a lambda term. Other than that, there will be two ways to construct a lambda term. First, if <span class="math inline">\(M\)</span> and <span class="math inline">\(N\)</span> are lambda terms then so is <span class="math inline">\(MN\)</span>. We will think of <span class="math inline">\(MN\)</span> as <span class="math inline">\(M\)</span> applied to <span class="math inline">\(N\)</span>. Second, if <span class="math inline">\(x\)</span> is a variable and <span class="math inline">\(M\)</span> is a lambda term than so is <span class="math inline">\(\lambda x.M\)</span>. Intuitively <span class="math inline">\(\lambda x.M\)</span> will mean <span class="math inline">\(x\mapsto M(x)\)</span>. This will be clearer when we start using lambda terms.</p>
+<p>Let us look at a few examples. The following are all lambda terms constructed using variables only: <span class="math display">\[
+  x,\; xy,\; xx,\; x(yz),\; (xy)z,\; (xx)x,\; (xy)(x(yz)).
+\]</span> Of course we can also use <span class="math inline">\(\lambda\)</span>: <span class="math display">\[
+  \lambda x.x,\; \lambda y. y,\; \lambda x. y,\; \lambda y. (\lambda x. (yx))),\;
+  (\lambda x. (xy))(\lambda y. x).
+\]</span> To reduce the number of brackets we will give application higher priority than <span class="math inline">\(\lambda\)</span>. So, for instance, the expression <span class="math inline">\(\lambda x. yz\)</span> will stand for <span class="math inline">\(\lambda x. (yz)\)</span> rather than <span class="math inline">\((\lambda x. y)z\)</span>.</p>
+Now let us define when two lambda terms are equal. Since we think of <span class="math inline">\(\lambda x.M\)</span> as a function mapping <span class="math inline">\(x\)</span> to <span class="math inline">\(M\)</span>, we see <span class="math inline">\(\lambda x.x\)</span> as some kind of identity function. However, under this interpretation, there should not be a difference between <span class="math inline">\(\lambda x.x\)</span> and <span class="math inline">\(\lambda y.y\)</span>. More generally there should not be a difference between <span class="math inline">\(x\mapsto M(x)\)</span> and <span class="math inline">\(y\mapsto M(y)\)</span>. Therefore we want <span class="math display">\[
+  \lambda x. x  = \lambda y. y = \lambda z. z = \ldots
+\]</span> Maybe slightly more interestingly, we also want
+<span class="math display">\[\begin{align}
+\lambda z. ((\lambda x.x)(\lambda y.yz))   &amp;=
+\lambda u. ((\lambda x.x)(\lambda y.yu))\newline &amp;=
+\lambda z. ((\lambda x.x)(\lambda u.uz))\newline &amp;=
+\lambda z. ((\lambda z.z)(\lambda u.uz))\newline &amp;=
+\ldots
+\end{align}\]</span>
+<p>We will call this <em>harmless renaming of variables</em> <span class="math inline">\(\alpha\)</span>-equivalence. One can define <span class="math inline">\(\alpha\)</span>-equivalence formally but it is slightly messy. Therefore we will not do it here and instead adopt a convention: In a <span class="math inline">\(\lambda\)</span> term, each <span class="math inline">\(\lambda\)</span> will use a different variable. So, for instance, we will avoid using the last lambda term in the list above since <span class="math inline">\(\lambda z\)</span> appears twice in it.</p>
+Now comes the more interesting properties of equality. We define <span class="math display">\[
+  (\lambda x. M)N = M[x:= N].
+\]</span> Here <span class="math inline">\(M\)</span> is a lambda term and $ M[x:= N]$ stands for the lambda term obtained from <span class="math inline">\(M\)</span> by replacing each occurrence of <span class="math inline">\(x\)</span> by <span class="math inline">\(N\)</span>. For instance <span class="math display">\[
+  (\lambda x. x) N = x[x := N] = N.
+\]</span> So <span class="math inline">\(\lambda x. x\)</span> does behave like identity. Here is another example:
+<span class="math display">\[\begin{align}
+(\lambda y. (\lambda x. yx))(\lambda z. z)  &amp;= (\lambda x. yx)[y:=\lambda z. z] \newline
+&amp;= \lambda x. ((\lambda z.z)x) \newline
+&amp;= \lambda x. (z[z:=x]) \newline
+&amp;= \lambda x. x.
+\end{align}\]</span>
+<p>Finally, let us express the functions <span class="math inline">\(C\)</span> and <span class="math inline">\(E\)</span> we defined in the previous post as lambda terms. By definition <span class="math inline">\(C_x(y)=x\)</span> so <span class="math inline">\(C_x = \lambda y. x\)</span>. If we view <span class="math inline">\(C_x\)</span> as a function of <span class="math inline">\(x\)</span> then we get <span class="math display">\[
+  C = \lambda x. (\lambda y. x).
+\]</span> Again by definition we have <span class="math inline">\(E_x(f) = f(x)\)</span> so <span class="math inline">\(E_x = \lambda f. f x\)</span>. Therefore <span class="math display">\[
+  E = \lambda x. (\lambda f. f x).
+\]</span></p>
+<p>What we defined so far is called the <em>untyped lambda calculus</em>. Even though it gives us a formal theory of functions, it is not enough for our purposes as we also need function sets. To be able to talk about some sort of function sets, we will introduce the notion of <em>type</em> into our theory.</p>
+<p>The definition of a type is going to be very simple: if <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are types then so is <span class="math inline">\(\alpha\to\beta\)</span>. Note that, formally speaking, there is no difference between types and propositions we defined in the previous post. On the other hand, while a proposition has the connotation of a judgement, a type will be more like function sets.</p>
+<p>Now we will define our typing relation between lambda terms and types. If a lambda term <span class="math inline">\(M\)</span> is related to the type <span class="math inline">\(\tau\)</span> then we will say that <span class="math inline">\(M\)</span> is of type <span class="math inline">\(\tau\)</span> and denote it by <span class="math inline">\(M\colon\tau\)</span>. We will call a statement like <span class="math inline">\(M\colon\tau\)</span> a type assignment. A context will simply be a set of type assignments. Our typing system will consist of rules, which given a context, allows us to derive type assignments. If a context <span class="math inline">\(\Gamma\)</span> allows us to derive an assignment <span class="math inline">\(M\colon\tau\)</span> we will denote it by <span class="math inline">\(\Gamma\vdash M\colon\tau\)</span>. Note that we are overloading the symbol <span class="math inline">\(\vdash\)</span> here.</p>
+<p>Here is the first rule. Let <span class="math inline">\(\Gamma\)</span> be a context, then <span class="math display">\[
+  \Gamma,x\colon\tau\vdash x\colon\tau\
+\]</span> So, if the type of variable <span class="math inline">\(x\)</span> is <span class="math inline">\(\tau\)</span> in a given context, then we can derive the assignment <span class="math inline">\(x\colon\tau\)</span> in that context. Let us call this the rule <span class="math inline">\(A^\to\)</span>.</p>
+<p>Here is the second rule: <span class="math display">\[
+  \text{if }\;\,
+  \Gamma\vdash N:\sigma\;\,
+  \text{ and }\;\,\
+  \Gamma\vdash M:\sigma\to\tau\;\;
+  \text{ then }\;\;\Gamma\vdash MN:\tau.
+\]</span> So if <span class="math inline">\(M\)</span> is a function which maps objects of type <span class="math inline">\(\alpha\)</span> to objects of type <span class="math inline">\(\beta\)</span> and <span class="math inline">\(N\)</span> is of type <span class="math inline">\(\alpha\)</span> then <span class="math inline">\(M\)</span> applied to <span class="math inline">\(N\)</span> should be of type <span class="math inline">\(\beta\)</span>. Let us call this the rule <span class="math inline">\(B^\to\)</span>.</p>
+<p>Finally, <span class="math display">\[
+  \text{if }\;\;\;
+  \Gamma,x:\tau\vdash M:\sigma \;\;\;
+  \text{ then }\;\;\;
+  \Gamma\vdash \lambda x. M:\tau\to\sigma.
+\]</span> If <span class="math inline">\(x\)</span> is of type <span class="math inline">\(\tau\)</span> then any lambda term starting with <span class="math inline">\(\lambda x.\)</span> should be a function from <span class="math inline">\(\tau\)</span> to somewhere. As <span class="math inline">\(M\)</span> is of type <span class="math inline">\(\sigma\)</span>, obviously we should have <span class="math inline">\(\lambda x. M:\tau\to\sigma\)</span>. Let us call this the rule <span class="math inline">\(C^\to\)</span>.</p>
+<p>The system we constructed with rules <span class="math inline">\(A^\to\)</span>, <span class="math inline">\(B^\to\)</span> and <span class="math inline">\(C^\to\)</span> is called the simply typed lambda calculus in the style of Church and sometimes denoted by <span class="math inline">\(\lambda^\to\)</span>. At this point you might want to compare <span class="math inline">\({\rm IP}(\to)\)</span> and <span class="math inline">\(\lambda^\to\)</span>, especially the rules <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(A^\to\)</span>, <span class="math inline">\(B^\to\)</span>, <span class="math inline">\(C^\to\)</span>.</p>
+<p>Now we can give a precise definition of naming a specific element from a function set. Let <span class="math inline">\(A\)</span> be a function set as we used in the previous post. Formally, we can view <span class="math inline">\(A\)</span> as a type, say <span class="math inline">\(\tau\)</span>. If there is a lambda term <span class="math inline">\(M\)</span> such that <span class="math inline">\(\vdash M\colon\tau\)</span> then we say that one can name a specific function from <span class="math inline">\(A\)</span>, namely <span class="math inline">\(M\)</span>.</p>
+<p>As an example consider the lambda term <span class="math inline">\(\lambda x.(\lambda f.f x)\)</span>. Recall that it corresponds to <span class="math inline">\(x\mapsto E_x\)</span>. Let <span class="math inline">\(\Gamma=\{x:\alpha,\,f:\alpha\to\beta\}\)</span>. Then, by the rule <span class="math inline">\(A^\to\)</span>, we get <span class="math display">\[
+  \Gamma\vdash x\colon\alpha \;\;
+  \text{ and }\;\;
+  \Gamma\vdash f\colon\alpha\to\beta.
+\]</span> And from these, together with rule <span class="math inline">\(B^\to\)</span> we obtain <span class="math inline">\(\Gamma\vdash f x: \beta\)</span>. Finally, applying the rule <span class="math inline">\(C^\to\)</span> twice we derive <span class="math display">\[
+  \vdash \lambda x. (\lambda f. f x) : \alpha\to((\alpha\to\beta)\to\beta).
+\]</span></p>
+<h2 id="finally-the-curry-howard-correspondence">Finally, The Curry-Howard Correspondence</h2>
+<p>We need one final definition before we can express the Curry-Howard correspondence between <span class="math inline">\({\rm IP}(\to)\)</span> and <span class="math inline">\(\lambda^\to\)</span> formally.</p>
+<p>Let <span class="math inline">\(\Gamma\)</span> be a context. Define <span class="math display">\[
+  |\Gamma| =\{\tau \colon \text{ there is a variable $x$ such that } x : \tau\in\Gamma\}.
+\]</span> Note that <span class="math inline">\(|\Gamma|\)</span> consists of types/propositions. In other words, <span class="math inline">\(|\Gamma|\)</span> is an assumption set. is the set of variables appearing in <span class="math inline">\(\Gamma\)</span>.</p>
+<p>Finally, I present you the Curry-Howard Correspondence for <span class="math inline">\({\rm IP}(\to)\)</span> and <span class="math inline">\(\lambda^\to\)</span>:</p>
+<p>If <span class="math inline">\(\Gamma\vdash M:\varphi\)</span> then <span class="math inline">\(|\Gamma|\vdash\varphi\)</span>. Conversely, if <span class="math inline">\(|\Gamma|\vdash\varphi\)</span> then there is a lambda term <span class="math inline">\(M\)</span> such that <span class="math inline">\(\Delta\vdash M:\varphi\)</span> where <span class="math inline">\(\Delta=\{x_\psi:\psi\;|\; \psi\in\Gamma\}\)</span>. To paraphrase it as a slogan, if we view types as propositions, provable propositions are precisely the types of lambda terms.</p>
+<p>Even this modest version of the Curry-Howard correspondence is beautiful and surprising. One wonders if it is possible to generalize it. Actually, there is a very natural direction of generalization. We know that <span class="math inline">\({\rm IP}(\to)\)</span> is a restricted version of a more general logic, namely the full intuitionistic propositional logic. So we can try to generalize the theorem to different logics. However, it is not clear how to generalize <span class="math inline">\(\lambda^\to\)</span>, especially if you have not seen lambda calculus before. The idea is that <span class="math inline">\(\lambda^\to\)</span> is a programming language and in order to generalize the Curry-Howard correspondence, we need to find/invent different programming languages with different type systems.</p>
+<p>First, let us clarify what we mean by <span class="math inline">\(\lambda^\to\)</span> is a programming language. Let us fix a type <span class="math inline">\(\tau\)</span> and define <span class="math inline">\(\texttt{Nat}=(\tau\to\tau)\to(\tau\to\tau)\)</span>. As the name suggests, <span class="math inline">\(\texttt{Nat}\)</span> will be the set of natural numbers. For lambda terms <span class="math inline">\(M\)</span> and <span class="math inline">\(N\)</span> let us make the following recursive definition: <span class="math inline">\(M^0N = N\)</span> and <span class="math inline">\(M^{n+1}N=M(M^nN)\)</span>. So <span class="math inline">\(M^nN\)</span> is <span class="math inline">\(M\)</span> applied to <span class="math inline">\(N\)</span>, <span class="math inline">\(n\)</span>-times. The Church encoding of a natural number <span class="math inline">\(n\)</span> is <span class="math display">\[
+  \ulcorner n \urcorner = \lambda s. (\lambda z. s^n z).
+\]</span> As you can check easily, <span class="math inline">\(\vdash \ulcorner n \urcorner : \texttt{Nat}\)</span>. We can also define basic operations on <span class="math inline">\(\texttt{Nat}\)</span>. For instance if <span class="math display">\[
+  A_+ = \lambda x. (\lambda y. (\lambda s. (\lambda z. (xs)((ys)z))))
+\]</span> then we have <span class="math inline">\(\vdash A_+ : \texttt{Nat} \to (\texttt{Nat} \to \texttt{Nat})\)</span> and for all natural number <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> the equality $(A_+m )n =m + n $ holds. Therefore we can interpret <span class="math inline">\(A_+\)</span> as a program which adds numbers. As an exercise you might want to define a computer program which does multiplication.</p>
+<p>One can even define booleans in <span class="math inline">\(\lambda^\to\)</span>. Let <span class="math inline">\({\bf T}=\lambda y. (\lambda x . x)\)</span> and <span class="math inline">\({\bf F}=\lambda y. (\lambda x . y)\)</span>. If we interpret <span class="math inline">\({\bf T}\)</span> as true and <span class="math inline">\({\bf F}\)</span> as false then <span class="math inline">\((BP)Q\)</span> acts like <span class="math display">\[
+  {\bf if}\; B\; {\bf then}\; P \;{\bf else}\; Q
+\]</span> if <span class="math inline">\(B\)</span> is <span class="math inline">\({\bf T}\)</span> of <span class="math inline">\({\bf F}\)</span>. These may look like ad-hoc ideas but lambda terms (without their types) is actually a universal way of writing programs. This is the topic of another post, though.</p>
+<p>Now back to the original question (with a finer statement): Can we find/invent a different programming language whose typing rules corresponds to a logic in such a way that proving a proposition/type in that logic corresponds to writing a program of that proposition/type? The answer is amazingly yes!</p>
+<p>For a very simple example, consider the <em>and</em> operation on propositions. The type construction rule corresponding to logical <em>and</em> should be pairing, also known as the Cartesian product. Because, using the analogy in the first post, naming an element from a set <span class="math inline">\(X\)</span> <em>and</em> a set <span class="math inline">\(Y\)</span> is the same as naming an element from <span class="math inline">\(X\times Y\)</span>. In a similar fashion, <em>or</em> corresponds to sum types. One can also consider logics with quantifiers, modalities or linear logics etc. and they all come with their corresponding programming languages. Moreover the properties of the type system viewed as a logic are reflected as programming language features such as polymorphism, staging, resource awareness etc. So what we covered in these two posts is just the tip of the iceberg.</p>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-2020 <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>
