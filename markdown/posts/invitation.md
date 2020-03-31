@@ -89,7 +89,7 @@ Here are a few examples. For any set $S$, the set of self maps of $S$, denoted b
 A monoid homomorphism from $(M, \cdot, 1_M)$ to $(N, \star, 1_N)$ is a function $\varphi : M \to N$ such that $\varphi(1_M) = 1_N$ and
 $\varphi(x\cdot y) = \varphi(x)\star\varphi(y)$.
 
-The Cayley representation theorem, which is taught in every every abstract algebra course, says that the map $\mathcal{C} : M\to {\rm End}(M)$ defined by $\varphi(m)(n) = m \cdot n $ is an injective monoid homomorphism, i.e. a monoid embedding. Note that if a function $f$ is in the image of $\mathcal{C}$ then one can recover the element it came from by applying $f$ to the identity of the monoid.
+The Cayley representation theorem, which is taught in every every abstract algebra course, says that the map $\mathcal{C} : M\to {\rm End}(M)$ defined by $\varphi(m)(n) = m \cdot n$ is an injective monoid homomorphism, i.e. a monoid embedding. Note that if a function $f$ is in the image of $\mathcal{C}$ then one can recover the element it came from by applying $f$ to the identity of the monoid.
 
 Using the Cayley representation theorem, we can push the problem of computing inverses to the monoid ${\rm End}([a])$. (Note how I mixed the Haskell notation and standard mathematical notation.) The advantage is that in ${\rm End}([a])$, the monoidal operation, namely function composition, is very cheap. To be more precise, it requires constant time because the composition of two functions is left untouched until someone tries to apply it to a value. However, the notion of reverting only makes sense in $[a]$ and not in ${\rm End}([a])$. So we need to embed only the concatenation part of the problem into ${\rm End}([a])$.
 
@@ -115,7 +115,7 @@ betterReverse xs = cayleyReverse xs []
 
 
 
-Note that `cayleyReverse`{.haskell} is obtained from `naiveReverse`{.haskell} in a mechanical way replacing `++`{.haskell} by `{.haskell}.`{.haskell} and `[x]`{.haskell} by `singleton x`{.haskell}.
+Note that `cayleyReverse`{.haskell} is obtained from `naiveReverse`{.haskell} in a mechanical way replacing `++`{.haskell} by `{.}.`{.haskell} and `[x]`{.haskell} by `singleton x`{.haskell}.
 
 ## Final Remarks
 
