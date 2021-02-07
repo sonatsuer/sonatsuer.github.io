@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Leaking implementation details (for mathematicians))](leaking.html)
+  (February 7, 2021)
+
 - [Monoid homomorphisms (2/2)](monoid-homomorphisms-2.html)
   (August 9, 2018)
 
