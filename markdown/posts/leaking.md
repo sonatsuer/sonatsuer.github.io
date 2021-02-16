@@ -139,7 +139,7 @@ library to represent sets without mentioning order relations but it would be unu
 optimization --or some other cross cutting concern-- breaches those boundaries.
 
 We have similar practices in mathematics, too. Sometimes we pick a representation of an object and work with it because it is easier due to some
-extra structure of the particular representation. Here is a somewhat advanced example. Concrete categories, that is, categories with a faithful
-functor into ${\rm Set}$ are sometimes easier to work with as element chasing arguments are available. But the standard API of category theory
-has arrows but no elements. So sometimes we employ a big theorem like the [Freyd-Mitchell theorem](https://ncatlab.org/nlab/show/Freyd-Mitchell+embedding+theorem) which, in this case, essentially says that an abelian category can be viewed as full subcategory of an $R$-module category.
-This allows us to use assumptions like "morphisms are functions" which are not compatible with the API of categories.
+extra structure of the particular representation. For instance the tension between synthetic and analytic geometry can be read as an instance of this trade-off. Here is a somewhat advanced example. Concrete categories, that is, categories with a faithful functor into ${\rm Set}$ are sometimes
+easier to work with as element chasing arguments are available. But the standard API of category theory has arrows but no elements. So sometimes
+we employ a big theorem like the [Freyd-Mitchell theorem](https://ncatlab.org/nlab/show/Freyd-Mitchell+embedding+theorem) which, in this case,essentially says that an abelian category can be viewed as full subcategory of an $R$-module category. This allows us to use assumptions like
+"morphisms are functions" which are not compatible with the API of categories.
