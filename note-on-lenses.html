@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Blog of S.Süer – A Note On Lenses</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div id="header">
+<h1 class="title">A Note On Lenses</h1>
+</div>
+<p><span class="math display">\[
+\newcommand{\view}{\textrm{view}}
+\newcommand{\set}{\textrm{set}}
+\]</span></p>
+<h2 id="a-characterization-of-lenses">A Characterization of Lenses</h2>
+<p>Let us recall the definition of a lens expressed in terms of its usual api, namely the functions <span class="math inline">\({\rm view}\)</span> and <span class="math inline">\({\rm set}\)</span>.</p>
+<p><strong>Definition:</strong> Les <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets. A lens from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> is a tuple <span class="math display">\[
+\langle \view\colon S\to A,\, \set\colon S\to A\to S \rangle
+\]</span> satisfying the following identities:</p>
+<ul>
+<li><span class="math inline">\(\set\,s\,(\view s) = s\)</span> for all <span class="math inline">\(s\in S\)</span>,</li>
+<li><span class="math inline">\(\view\,(\set\,s\,a) = a\)</span> for all <span class="math inline">\(s\in S\)</span> and <span class="math inline">\(a\in A\)</span>,</li>
+<li><span class="math inline">\(\set\,(\set\,s\,a)\,b = \set\,s\,b\)</span> for all <span class="math inline">\(s\in A\)</span> and <span class="math inline">\(a,b\in A\)</span>.</li>
+</ul>
+<p>In this post I will derive a different and a little bit more geometric characterization of lenses. I am sure it is well known though I haven’t seen it written down anywhere else. But before that we need two preliminary notions.</p>
+<p>The first if the notion of a fiber of a function. Given a function <span class="math inline">\(\pi\colon S\to A\)</span> and an element <span class="math inline">\(a\in A\)</span>, we define the fiber of <span class="math inline">\(\pi\)</span> above <span class="math inline">\(a\)</span> to be <span class="math display">\[
+\pi^{-1}(a) = \{s\in S | \pi(s) = a\}.
+\]</span> Note that <span class="math inline">\(S\)</span> is a disjoint union of fibers of <span class="math inline">\(\pi\)</span>. We denote the set of fibers of <span class="math inline">\(\pi\)</span> by <span class="math inline">\(S/\pi\)</span>. So <span class="math inline">\(S/\pi\)</span> is the set of equivalence classes of the relation defined by <span class="math inline">\(a_1\equiv a_2\)</span> if and only if <span class="math inline">\(\pi(a_1)=\pi(a_2)\)</span>. We will also view <span class="math inline">\(S/\pi\)</span> as a category whose objects are the equivalence classes and whose morphisms are the functions.</p>
+<p>The second one is the notion of a codiscrete groupoid. Let <span class="math inline">\(A\)</span> be any set. Define <span class="math inline">\(\mathcal{E}(A)\)</span>, the codiscrete groupoid on <span class="math inline">\(A\)</span>, to be the category whose objects are the elements of <span class="math inline">\(A\)</span> and for any two elements <span class="math inline">\(a,b\in A\)</span> the set <span class="math inline">\({\rm Hom}(a,b)\)</span> has precisely one element. We will denote this element by <span class="math inline">\(\epsilon_{a,b}\)</span>. Note that <span class="math inline">\(\mathcal{E}\)</span> is a groupoid, that is all morphisms are isomorphisms. Indeed <span class="math inline">\(\epsilon_{a,a} = {\rm Id}_a\)</span> and <span class="math inline">\(\epsilon_{a,b}^{-1}\)</span> is given by <span class="math inline">\(\epsilon_{b,a}\)</span>.</p>
+<p>Now we can give our definition.</p>
+<p><strong>Definition:</strong> Let <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets. A lens fibration from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> is a tuple <span class="math display">\[
+\langle \pi\colon S\to A,\, F\colon\mathcal{E}(A)\to S/\pi \rangle
+\]</span> where</p>
+<ul>
+<li><span class="math inline">\(\pi\)</span> is surjective,</li>
+<li><span class="math inline">\(F\)</span> is a functor which sends an object of <span class="math inline">\(\mathcal{E}(a)\)</span> to the fiber of <span class="math inline">\(\pi\)</span> above it, i.e. <span class="math inline">\(F(a) = \pi^{-1}(a)\)</span> for all <span class="math inline">\(a\in A\)</span>.</li>
+</ul>
+<p>Here is our claim: Let <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets with <span class="math inline">\(S\neq\emptyset\)</span>. Then for a lens from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> we can construct a lens fibration from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span>. Similary, for a lens fibration from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> we can construct a lens from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span>. Moreover these constructions are inverse to each other.</p>
+<p>Let’s begin. Fix <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> as in the claim.</p>
+<p><strong>Lens to fibration:</strong> Given a lens <span class="math inline">\(\langle \view,\, \set \rangle\)</span> from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> let us define <span class="math inline">\(\pi = \view\)</span>. First we need to show that <span class="math inline">\(\pi\)</span> is surjective. Pick an <span class="math inline">\(s\in S\)</span>. Now for any <span class="math inline">\(a\in A\)</span> we have <span class="math display">\[
+a = \view\,(\set\,s\,a) = \pi(\set\,s\,a).
+\]</span> by the second lens rule. Thus <span class="math inline">\(a\)</span> is in the image of <span class="math inline">\(\pi\)</span>. Now let us define the functor <span class="math inline">\(F\)</span>. We do not have choice on the action of <span class="math inline">\(F\)</span> on the objects of <span class="math inline">\(\mathcal{E}(A)\)</span>: we must have <span class="math inline">\(F(a)=\pi^{-1}(a)\)</span>. For morphisms, we define <span class="math inline">\(F(\epsilon_{a,b})\colon\pi^{-1}(a)\to\pi^{-1}(b)\)</span> by the rule <span class="math display">\[
+F(\epsilon_{a,b})(s) = \set\,s\,b.
+\]</span> Let us first check that <span class="math inline">\(F(\epsilon_{a,b})\)</span> does send the fiber above <span class="math inline">\(a\)</span> to the fiber above <span class="math inline">\(b\)</span>. Let <span class="math inline">\(s\in\pi^{-1}(a)\)</span>. Then <span class="math display">\[
+\pi(F(\epsilon_{a,b})(s))=\pi(\set\,s\,b)= \view\,(\set\,s\,b) = b
+\]</span> by the second lens rule. So <span class="math inline">\(F(\epsilon_{a,b})\)</span> sends <span class="math inline">\(s\)</span> to <span class="math inline">\(\pi^{-1}(b)\)</span>.</p>
+<p>Now let us check the functor laws.</p>
+<ul>
+<li><em>Claim:</em> <span class="math inline">\(F({\rm Id}_a) = {\rm Id}_{\pi^{-1}(a)}\)</span>. Let <span class="math inline">\(s\in\pi^{-1}(a)\)</span>. Then <span class="math inline">\(a =\view\,s\)</span> by definition. This gives us <span class="math display">\[
+F({\rm Id}_a)(s) = F(\epsilon_{a,a})(s) = \set\,s\,a = \set\,s\,(\view\, s) = s
+\]</span> by the first lens law, proving that <span class="math inline">\(F({\rm Id}_a)\)</span> is the identity function.</li>
+<li><em>Claim:</em> <span class="math inline">\(F(\epsilon_{b,c}\circ\epsilon_{a,b}) = F(\epsilon_{b,c})\circ F(\epsilon_{a,b})\)</span>. Let <span class="math inline">\(s\in\pi^{-1}(a_1)\)</span>. We have <span class="math display">\[
+(F(\epsilon_{b,c})\circ F(\epsilon_{a,b}))(s) =
+F(\epsilon_{b,c})(F(\epsilon_{a,b})(s)) =
+\set\,(\set\,s\,b)\,c =
+\set\,s\,c
+\]</span> by the third lens law. On the other hand <span class="math display">\[
+F(\epsilon_{b,c}\circ\epsilon_{a,b})(s) =
+F(\epsilon_{a,c})(s) =
+\set\,s\,c
+\]</span> This proves the claim.</li>
+</ul>
+<p><strong>Fibration to lens:</strong> We will go in the opposite direction. Let <span class="math inline">\(\langle \pi,\, F \rangle\)</span> be a lens fibration. Let <span class="math inline">\(\view = \pi\)</span> and let <span class="math display">\[
+\set\,s\,a = F(\epsilon_{\pi(s),a})(s)
+\]</span> for <span class="math inline">\(s\in S\)</span> and <span class="math inline">\(a\in A\)</span>. Note that this makes sense since <span class="math inline">\(s\)</span> is in the domain of <span class="math inline">\(F(\epsilon_{\pi(s),a})\)</span>, namely <span class="math inline">\(\pi^{-1}(\pi(s))\)</span>. Now let us prove the lens laws.</p>
+<ul>
+<li><em>Claim:</em> <span class="math inline">\(\set\,s\,(\view s) = s\)</span>. By direct computation <span class="math display">\[
+\set\,(\view\,s)\,s =
+F(\epsilon_{\pi(s),\view\,s})(s) =
+F(\epsilon_{\pi(s),\pi(s)})(s) =
+F({\rm Id}_{\pi(s)})(s) =
+{\rm Id}_{\pi^{-1}(s)}(s) = s
+\]</span></li>
+<li><em>Claim:</em> <span class="math inline">\(\view\,(\set\,s\,a) = a\)</span>. By definition <span class="math display">\[
+\view\,(\set\,s\,a) = \pi(F(\epsilon_{\pi(s),a})(s)).
+\]</span> We know that <span class="math inline">\(F(\epsilon_{\pi(s),a})\colon\pi^{-1}(\pi(s))\to\pi^{-1}(a)\)</span> because <span class="math inline">\(F\)</span> is a functor. this means that <span class="math inline">\(F(\epsilon_{\pi(s),a})(s)\)</span> is in <span class="math inline">\(\pi^{-1}(a)\)</span>. Thus <span class="math inline">\(\pi(F(\epsilon_{\pi(s),a})(s)) = a\)</span>.</li>
+<li><em>Claim:</em> <span class="math inline">\(\set\,(\set\,s\,a)\,b = \set\,s\,b\)</span>. Again by direct computation we have
+<span class="math display">\[\begin{align}
+\set\,(\set\,s\,a)\,b &amp;= \set\,(F(\epsilon_{\pi(s),a})(s))\,b \newline
+                  &amp;= F(\epsilon_{\pi\left(F(\epsilon_{\pi(s),a}(s))\right),b})(F(\epsilon_{\pi(s),a})(s)) \newline
+                  &amp;= F(\epsilon_{a,b})(F(\epsilon_{\pi(s), a})) \newline
+                  &amp;= (F(\epsilon_{a,b})\circ F(\epsilon_{\pi(s),a}))(s) \newline
+                  &amp;= F(\epsilon_{a,b}\circ\epsilon_{\pi(s), a})(s) \;\;\text{(since $F$ is a functor)} \newline
+                  &amp;= F(\epsilon_{\pi(s), b})(s) \newline
+                  &amp;= \set\,s\,b
+\end{align}\]</span></li>
+</ul>
+<p>I will not prove that these constructions are inverse to each other –LaTeX is time consuming– but at this point it should not be too difficult to produce a proof.</p>
+<p>A few observations are in order. Let <span class="math inline">\(\langle \pi,\, F \rangle\)</span> be a lens fibration. Then all fibers of <span class="math inline">\(\pi\)</span> are isomorphic because <span class="math inline">\(\mathcal{E}(A)\)</span> is a connected and functors preserve isomorphism. This also means that for any <span class="math inline">\(a\in A\)</span>, <span class="math inline">\(S\)</span> is isomorphic to <span class="math inline">\(A\times\pi^{-1}(a)\)</span>.</p>
+<p>One can also view the notion of a lens fibration as a special case of a groupoid action defined, say, in section 10.4 of <a href="https://groupoids.org.uk/pdffiles/topgrpds-e.pdf">Topology and Groups</a> by Ronald Brown. The orbits of this action are the equivalence classes of the equivalence relation on <span class="math inline">\(S\)</span> defined by <span class="math display">\[
+s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
+\]</span> Each orbit intersects with all orbits exactly once tus restricting <span class="math inline">\(\pi\)</span> to any one of them gives a bijection onto <span class="math inline">\(A\)</span>. So in addition to the “vertical” decomposition of <span class="math inline">\(S\)</span> into orbits, we also have a “horizontal” decomposition into orbits. After this much information we can now draw pictures of lenses.</p>
+<p>It is time to see some examples with real code.</p>
+<h2 id="examples">Examples</h2>
+<p>Let us begin with a good old fashioned record.</p>
+<h2 id="what-else">What else?</h2>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-2021 <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>

@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [A note on lenses](note-on-lenses.html)
+  (July 4, 2021)
+
 - [Leaking implementation details (for mathematicians)](leaking.html)
   (February 7, 2021)
 
