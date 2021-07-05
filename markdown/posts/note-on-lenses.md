@@ -176,7 +176,7 @@ It is time to see some examples with real code.
 
 ## Examples
 
-I posted the code in this section as a [gist]() if you want to play with it.
+I posted the code in this section as a [gist](https://gist.github.com/sonatsuer/3f4a719e10e2c2c45e30b54b628d1f0e) if you want to play with it.
 
 **Example 1:** Lens on `Either`{.haskell}
 

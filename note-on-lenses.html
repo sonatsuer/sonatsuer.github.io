@@ -140,7 +140,7 @@ s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
 <p>Here the big rectangle is the set <span class="math inline">\(S\)</span> decomposed into blue fibers. The light orange lines are the orbits.</p>
 <p>It is time to see some examples with real code.</p>
 <h2 id="examples">Examples</h2>
-<p>I posted the code in this section as a <a href="">gist</a> if you want to play with it.</p>
+<p>I posted the code in this section as a <a href="https://gist.github.com/sonatsuer/3f4a719e10e2c2c45e30b54b628d1f0e">gist</a> if you want to play with it.</p>
 <p><strong>Example 1:</strong> Lens on <code class="sourceCode haskell"><span class="dt">Either</span></code></p>
 <p>Let us begin with the simplest nontrivial example. Assume that <span class="math inline">\(A\)</span> has only two elements. Then <span class="math inline">\(S\)</span> is a disjoint union of two fibers so we can model <span class="math inline">\(S\)</span> by <code class="sourceCode haskell"><span class="dt">Either</span></code>. Let us also model <span class="math inline">\(A\)</span> by a custom data type called <code class="sourceCode haskell"><span class="dt">Position</span></code>.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Position</span> <span class="fu">=</span> <span class="dt">OnTheLeft</span> <span class="fu">|</span> <span class="dt">OnTheRight</span>
