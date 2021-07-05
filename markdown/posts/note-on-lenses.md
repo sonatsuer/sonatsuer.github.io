@@ -7,6 +7,14 @@ $$
 \newcommand{\set}{\textrm{set}}
 $$
 
+## Summary
+
+This is a brain-dump of how I think about lenses in isolation. I worked with the lens laws directly
+in the category of sets with functions. So the arguments are meaningful for all lens implementations.
+Mathematical parts may seem opaque if you are not used this kind of proof writing but this should not
+deceive you. The content is not deep and I am sure all of these are known to experts but I haven't seen
+it written down like this anywhere else.
+
 ## A Characterization of Lenses
 
 Let us recall the definition of a lens expressed in terms of its usual api, namely the functions
@@ -24,8 +32,7 @@ satisfying the following identities:
 - $\set\,(\set\,s\,a)\,b = \set\,s\,b$ for all $s\in A$ and $a,b\in A$.
 
 In this post I will derive a different and a little bit more geometric characterization of
-lenses. I am sure it is well known though I haven't seen it written down anywhere else. But before
-that we need two preliminary notions.
+lenses. But before that we need two preliminary notions.
 
 The first if the notion of a fiber of a function. Given a function $\pi\colon S\to A$ and an element
 $a\in A$, we define the fiber of $\pi$ above $a$
@@ -132,7 +139,7 @@ this means that $F(\epsilon_{\pi(s),a})(s)$ is in $\pi^{-1}(a)$. Thus  $\pi(F(\e
 \begin{align}
 \set\,(\set\,s\,a)\,b &= \set\,(F(\epsilon_{\pi(s),a})(s))\,b \newline
                       &= F(\epsilon_{\pi\left(F(\epsilon_{\pi(s),a}(s))\right),b})(F(\epsilon_{\pi(s),a})(s)) \newline
-                      &= F(\epsilon_{a,b})(F(\epsilon_{\pi(s), a})) \newline
+                      &= F(\epsilon_{a,b})(F(\epsilon_{\pi(s), a})(s)) \newline
                       &= (F(\epsilon_{a,b})\circ F(\epsilon_{\pi(s),a}))(s) \newline
                       &= F(\epsilon_{a,b}\circ\epsilon_{\pi(s), a})(s) \;\;\text{(since $F$ is a functor)} \newline
                       &= F(\epsilon_{\pi(s), b})(s) \newline
@@ -156,7 +163,12 @@ s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
 $$
 Each orbit intersects with all orbits exactly once tus restricting $\pi$ to any one of them gives a bijection
 onto $A$. So in addition to the "vertical" decomposition of $S$ into orbits, we also have a "horizontal"
-decomposition into orbits. After this much information we can now draw pictures of lenses.
+decomposition into orbits.
+
+This is a lot to take in. So let's draw a picture explaining the situation.
+
+<span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
+
 
 
 It is time to see some examples with real code.

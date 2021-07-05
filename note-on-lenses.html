@@ -18,7 +18,8 @@
 \newcommand{\view}{\textrm{view}}
 \newcommand{\set}{\textrm{set}}
 \]</span></p>
-<h2 id="a-characterization-of-lenses">A Characterization of Lenses</h2>
+<h2 id="summary">Summary</h2>
+<p>This is a brain-dump of how I think about lenses in isolation. I worked with the lens laws directly in the category of sets with functions. So the arguments are meaningful for all lens implementations. Mathematical parts may seem opaque if you are not used this kind of proof writing but this should not deceive you. The content is not deep and I am sure all of these are known to experts but I haven’t seen it written down like this anywhere else. ## A Characterization of Lenses</p>
 <p>Let us recall the definition of a lens expressed in terms of its usual api, namely the functions <span class="math inline">\({\rm view}\)</span> and <span class="math inline">\({\rm set}\)</span>.</p>
 <p><strong>Definition:</strong> Les <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets. A lens from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> is a tuple <span class="math display">\[
 \langle \view\colon S\to A,\, \set\colon S\to A\to S \rangle
@@ -28,7 +29,7 @@
 <li><span class="math inline">\(\view\,(\set\,s\,a) = a\)</span> for all <span class="math inline">\(s\in S\)</span> and <span class="math inline">\(a\in A\)</span>,</li>
 <li><span class="math inline">\(\set\,(\set\,s\,a)\,b = \set\,s\,b\)</span> for all <span class="math inline">\(s\in A\)</span> and <span class="math inline">\(a,b\in A\)</span>.</li>
 </ul>
-<p>In this post I will derive a different and a little bit more geometric characterization of lenses. I am sure it is well known though I haven’t seen it written down anywhere else. But before that we need two preliminary notions.</p>
+<p>In this post I will derive a different and a little bit more geometric characterization of lenses. But before that we need two preliminary notions.</p>
 <p>The first if the notion of a fiber of a function. Given a function <span class="math inline">\(\pi\colon S\to A\)</span> and an element <span class="math inline">\(a\in A\)</span>, we define the fiber of <span class="math inline">\(\pi\)</span> above <span class="math inline">\(a\)</span> to be <span class="math display">\[
 \pi^{-1}(a) = \{s\in S | \pi(s) = a\}.
 \]</span> Note that <span class="math inline">\(S\)</span> is a disjoint union of fibers of <span class="math inline">\(\pi\)</span>. We denote the set of fibers of <span class="math inline">\(\pi\)</span> by <span class="math inline">\(S/\pi\)</span>. So <span class="math inline">\(S/\pi\)</span> is the set of equivalence classes of the relation defined by <span class="math inline">\(a_1\equiv a_2\)</span> if and only if <span class="math inline">\(\pi(a_1)=\pi(a_2)\)</span>. We will also view <span class="math inline">\(S/\pi\)</span> as a category whose objects are the equivalence classes and whose morphisms are the functions.</p>
@@ -84,7 +85,7 @@ F({\rm Id}_{\pi(s)})(s) =
 <span class="math display">\[\begin{align}
 \set\,(\set\,s\,a)\,b &amp;= \set\,(F(\epsilon_{\pi(s),a})(s))\,b \newline
                   &amp;= F(\epsilon_{\pi\left(F(\epsilon_{\pi(s),a}(s))\right),b})(F(\epsilon_{\pi(s),a})(s)) \newline
-                  &amp;= F(\epsilon_{a,b})(F(\epsilon_{\pi(s), a})) \newline
+                  &amp;= F(\epsilon_{a,b})(F(\epsilon_{\pi(s), a})(s)) \newline
                   &amp;= (F(\epsilon_{a,b})\circ F(\epsilon_{\pi(s),a}))(s) \newline
                   &amp;= F(\epsilon_{a,b}\circ\epsilon_{\pi(s), a})(s) \;\;\text{(since $F$ is a functor)} \newline
                   &amp;= F(\epsilon_{\pi(s), b})(s) \newline
@@ -95,7 +96,9 @@ F({\rm Id}_{\pi(s)})(s) =
 <p>A few observations are in order. Let <span class="math inline">\(\langle \pi,\, F \rangle\)</span> be a lens fibration. Then all fibers of <span class="math inline">\(\pi\)</span> are isomorphic because <span class="math inline">\(\mathcal{E}(A)\)</span> is a connected and functors preserve isomorphism. This also means that for any <span class="math inline">\(a\in A\)</span>, <span class="math inline">\(S\)</span> is isomorphic to <span class="math inline">\(A\times\pi^{-1}(a)\)</span>.</p>
 <p>One can also view the notion of a lens fibration as a special case of a groupoid action defined, say, in section 10.4 of <a href="https://groupoids.org.uk/pdffiles/topgrpds-e.pdf">Topology and Groups</a> by Ronald Brown. The orbits of this action are the equivalence classes of the equivalence relation on <span class="math inline">\(S\)</span> defined by <span class="math display">\[
 s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
-\]</span> Each orbit intersects with all orbits exactly once tus restricting <span class="math inline">\(\pi\)</span> to any one of them gives a bijection onto <span class="math inline">\(A\)</span>. So in addition to the “vertical” decomposition of <span class="math inline">\(S\)</span> into orbits, we also have a “horizontal” decomposition into orbits. After this much information we can now draw pictures of lenses.</p>
+\]</span> Each orbit intersects with all orbits exactly once tus restricting <span class="math inline">\(\pi\)</span> to any one of them gives a bijection onto <span class="math inline">\(A\)</span>. So in addition to the “vertical” decomposition of <span class="math inline">\(S\)</span> into orbits, we also have a “horizontal” decomposition into orbits.</p>
+<p>This is a lot to take in. So let’s draw a picture explaining the situation.</p>
+<p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
 <p>It is time to see some examples with real code.</p>
 <h2 id="examples">Examples</h2>
 <p>Let us begin with a good old fashioned record.</p>
