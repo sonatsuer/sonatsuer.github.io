@@ -9,11 +9,11 @@ $$
 
 ## Summary
 
-This is a brain-dump of how I think about lenses in isolation. I worked with the lens laws directly
+This is a brain-dump of how I think about lenses in isolation. I will be using the lens laws directly
 in the category of sets with functions. So the arguments are meaningful for all lens implementations.
-Mathematical parts may seem opaque if you are not used this kind of proof writing but this should not
-deceive you. The content is not deep and I am sure all of these are known to experts but I haven't seen
-it written down like this anywhere else.
+Mathematical parts may seem opaque if you are not used this kind of technical writing but this should not
+deceive you. The content is not deep and I am sure all of these are known to experts. However I haven't seen
+these arguments written down like this anywhere else.
 
 ## A Characterization of Lenses
 
@@ -34,7 +34,7 @@ satisfying the following identities:
 In this post I will derive a different and a little bit more geometric characterization of
 lenses. But before that we need two preliminary notions.
 
-The first if the notion of a fiber of a function. Given a function $\pi\colon S\to A$ and an element
+The first is the notion of a fiber of a function. Given a function $\pi\colon S\to A$ and an element
 $a\in A$, we define the fiber of $\pi$ above $a$
 to be
 $$
@@ -48,7 +48,7 @@ whose objects are the equivalence classes and whose morphisms are the functions.
 The second one is the notion of a codiscrete groupoid. Let $A$ be any set. Define
 $\mathcal{E}(A)$, the codiscrete groupoid on $A$, to be the category whose objects are the
 elements of $A$ and for any two elements $a,b\in A$ the set ${\rm Hom}(a,b)$ has precisely one
-element. We will denote this element by $\epsilon_{a,b}$. Note that $\mathcal{E}$ is a groupoid,
+element. We will denote this element by $\epsilon_{a,b}$. Note that $\mathcal{E}(A)$ is a groupoid,
 that is all morphisms are isomorphisms. Indeed $\epsilon_{a,a} = {\rm Id}_a$ and $\epsilon_{a,b}^{-1}$
 is given by $\epsilon_{b,a}$.
 
@@ -134,7 +134,7 @@ $$
 \view\,(\set\,s\,a) = \pi(F(\epsilon_{\pi(s),a})(s)).
 $$
 We know that $F(\epsilon_{\pi(s),a})\colon\pi^{-1}(\pi(s))\to\pi^{-1}(a)$ because $F$ is a functor.
-this means that $F(\epsilon_{\pi(s),a})(s)$ is in $\pi^{-1}(a)$. Thus  $\pi(F(\epsilon_{\pi(s),a})(s)) = a$.
+This means that $F(\epsilon_{\pi(s),a})(s)$ is in $\pi^{-1}(a)$. Thus  $\pi(F(\epsilon_{\pi(s),a})(s)) = a$.
 - _Claim:_ $\set\,(\set\,s\,a)\,b = \set\,s\,b$. Again by direct computation we have
 \begin{align}
 \set\,(\set\,s\,a)\,b &= \set\,(F(\epsilon_{\pi(s),a})(s))\,b \newline
@@ -151,8 +151,8 @@ I will not prove that these constructions are inverse to each other --LaTeX is t
 point it should not be too difficult to produce a proof.
 
 A few observations are in order. Let $\langle \pi,\, F \rangle$ be a lens fibration. Then all fibers of $\pi$
-are isomorphic because $\mathcal{E}(A)$ is a connected and functors preserve isomorphism. This also means that
-for any $a\in A$, $S$ is isomorphic to $A\times\pi^{-1}(a)$.
+are isomorphic because $\mathcal{E}(A)$ is a connected grouppoid and functors preserve isomorphism. This also
+means that for any $a\in A$, $S$ is isomorphic to $A\times\pi^{-1}(a)$.
 
 One can also view the notion of a lens fibration as a special case of a groupoid action defined, say, in
 section 10.4 of [Topology and Groups](https://groupoids.org.uk/pdffiles/topgrpds-e.pdf) by Ronald Brown. The
@@ -161,13 +161,16 @@ defined by
 $$
 s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
 $$
-Each orbit intersects with all orbits exactly once tus restricting $\pi$ to any one of them gives a bijection
-onto $A$. So in addition to the "vertical" decomposition of $S$ into orbits, we also have a "horizontal"
+Each orbit intersects with all fibers exactly once thus restricting $\pi$ to any one of orbits gives a bijection
+onto $A$. So in addition to the "vertical" decomposition of $S$ into fibers, we also have a "horizontal"
 decomposition into orbits.
 
 This is a lot to take in. So let's draw a picture explaining the situation.
 
-<span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
+<span style="display:block;text-align:center">![Lens Picture](assets/lens_fibration.png)
+
+Here the big rectangle is the set $S$ decomposed into blue fibers. The light orange lines
+are the orbits.
 
 It is time to see some examples with real code.
 
@@ -218,10 +221,10 @@ crossed :: Lens' (Either Bool Bool) Position
 crossed = lensFromIso $ iso not not
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-these lenses have the same getter but their setters are different. Drawing pictures of these lenses should
+These lenses have the same getter but their setters are different. Drawing pictures of these lenses should
 clarify the choice of names.
 
-<span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
+<span style="display:block;text-align:center">![Lens Picture](assets/parallel_and_crossed.png)
 
 Actually `parallel`{.haskell} is a more traditional lens in disguise. Note that we have the following
 isomorphism:
@@ -260,7 +263,7 @@ In the previous example we modeled a disjoint as a sum type. It may be the case 
 into a sum is not explicitly expressed in the type. Now let us see an example of that. This time
 we will start with the picture:
 
-<span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
+<span style="display:block;text-align:center">![Lens Picture](assets/even_odd.png)
 
 The fibers are the even and odd numbers. As in the case of `Position`{.haskell} we will define a custom
 type to model $A$.
@@ -479,7 +482,7 @@ Here `Sized`{.haskell} is your garden variety length-indexed list but I had to i
 own version since nix told me that the package is broken and I really don't want to deal with
 it right now.
 
-To give an idea of what is happening, here is a small repl interaction
+To give an idea of what is happening, here is a small repl interaction:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
 ex1 :: ChunkedStream One Int

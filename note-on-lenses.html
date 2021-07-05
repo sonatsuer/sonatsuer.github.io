@@ -56,7 +56,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 \newcommand{\set}{\textrm{set}}
 \]</span></p>
 <h2 id="summary">Summary</h2>
-<p>This is a brain-dump of how I think about lenses in isolation. I worked with the lens laws directly in the category of sets with functions. So the arguments are meaningful for all lens implementations. Mathematical parts may seem opaque if you are not used this kind of proof writing but this should not deceive you. The content is not deep and I am sure all of these are known to experts but I haven’t seen it written down like this anywhere else.</p>
+<p>This is a brain-dump of how I think about lenses in isolation. I will be using the lens laws directly in the category of sets with functions. So the arguments are meaningful for all lens implementations. Mathematical parts may seem opaque if you are not used this kind of technical writing but this should not deceive you. The content is not deep and I am sure all of these are known to experts. However I haven’t seen these arguments written down like this anywhere else.</p>
 <h2 id="a-characterization-of-lenses">A Characterization of Lenses</h2>
 <p>Let us recall the definition of a lens expressed in terms of its usual api, namely the functions <span class="math inline">\({\rm view}\)</span> and <span class="math inline">\({\rm set}\)</span>.</p>
 <p><strong>Definition:</strong> Les <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets. A lens from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> is a tuple <span class="math display">\[
@@ -68,10 +68,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><span class="math inline">\(\set\,(\set\,s\,a)\,b = \set\,s\,b\)</span> for all <span class="math inline">\(s\in A\)</span> and <span class="math inline">\(a,b\in A\)</span>.</li>
 </ul>
 <p>In this post I will derive a different and a little bit more geometric characterization of lenses. But before that we need two preliminary notions.</p>
-<p>The first if the notion of a fiber of a function. Given a function <span class="math inline">\(\pi\colon S\to A\)</span> and an element <span class="math inline">\(a\in A\)</span>, we define the fiber of <span class="math inline">\(\pi\)</span> above <span class="math inline">\(a\)</span> to be <span class="math display">\[
+<p>The first is the notion of a fiber of a function. Given a function <span class="math inline">\(\pi\colon S\to A\)</span> and an element <span class="math inline">\(a\in A\)</span>, we define the fiber of <span class="math inline">\(\pi\)</span> above <span class="math inline">\(a\)</span> to be <span class="math display">\[
 \pi^{-1}(a) = \{s\in S | \pi(s) = a\}.
 \]</span> Note that <span class="math inline">\(S\)</span> is a disjoint union of fibers of <span class="math inline">\(\pi\)</span>. We denote the set of fibers of <span class="math inline">\(\pi\)</span> by <span class="math inline">\(S/\pi\)</span>. So <span class="math inline">\(S/\pi\)</span> is the set of equivalence classes of the relation defined by <span class="math inline">\(a_1\equiv a_2\)</span> if and only if <span class="math inline">\(\pi(a_1)=\pi(a_2)\)</span>. We will also view <span class="math inline">\(S/\pi\)</span> as a category whose objects are the equivalence classes and whose morphisms are the functions.</p>
-<p>The second one is the notion of a codiscrete groupoid. Let <span class="math inline">\(A\)</span> be any set. Define <span class="math inline">\(\mathcal{E}(A)\)</span>, the codiscrete groupoid on <span class="math inline">\(A\)</span>, to be the category whose objects are the elements of <span class="math inline">\(A\)</span> and for any two elements <span class="math inline">\(a,b\in A\)</span> the set <span class="math inline">\({\rm Hom}(a,b)\)</span> has precisely one element. We will denote this element by <span class="math inline">\(\epsilon_{a,b}\)</span>. Note that <span class="math inline">\(\mathcal{E}\)</span> is a groupoid, that is all morphisms are isomorphisms. Indeed <span class="math inline">\(\epsilon_{a,a} = {\rm Id}_a\)</span> and <span class="math inline">\(\epsilon_{a,b}^{-1}\)</span> is given by <span class="math inline">\(\epsilon_{b,a}\)</span>.</p>
+<p>The second one is the notion of a codiscrete groupoid. Let <span class="math inline">\(A\)</span> be any set. Define <span class="math inline">\(\mathcal{E}(A)\)</span>, the codiscrete groupoid on <span class="math inline">\(A\)</span>, to be the category whose objects are the elements of <span class="math inline">\(A\)</span> and for any two elements <span class="math inline">\(a,b\in A\)</span> the set <span class="math inline">\({\rm Hom}(a,b)\)</span> has precisely one element. We will denote this element by <span class="math inline">\(\epsilon_{a,b}\)</span>. Note that <span class="math inline">\(\mathcal{E}(A)\)</span> is a groupoid, that is all morphisms are isomorphisms. Indeed <span class="math inline">\(\epsilon_{a,a} = {\rm Id}_a\)</span> and <span class="math inline">\(\epsilon_{a,b}^{-1}\)</span> is given by <span class="math inline">\(\epsilon_{b,a}\)</span>.</p>
 <p>Now we can give our definition.</p>
 <p><strong>Definition:</strong> Let <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets. A lens fibration from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> is a tuple <span class="math display">\[
 \langle \pi\colon S\to A,\, F\colon\mathcal{E}(A)\to S/\pi \rangle
@@ -118,7 +118,7 @@ F({\rm Id}_{\pi(s)})(s) =
 \]</span></li>
 <li><em>Claim:</em> <span class="math inline">\(\view\,(\set\,s\,a) = a\)</span>. By definition <span class="math display">\[
 \view\,(\set\,s\,a) = \pi(F(\epsilon_{\pi(s),a})(s)).
-\]</span> We know that <span class="math inline">\(F(\epsilon_{\pi(s),a})\colon\pi^{-1}(\pi(s))\to\pi^{-1}(a)\)</span> because <span class="math inline">\(F\)</span> is a functor. this means that <span class="math inline">\(F(\epsilon_{\pi(s),a})(s)\)</span> is in <span class="math inline">\(\pi^{-1}(a)\)</span>. Thus <span class="math inline">\(\pi(F(\epsilon_{\pi(s),a})(s)) = a\)</span>.</li>
+\]</span> We know that <span class="math inline">\(F(\epsilon_{\pi(s),a})\colon\pi^{-1}(\pi(s))\to\pi^{-1}(a)\)</span> because <span class="math inline">\(F\)</span> is a functor. This means that <span class="math inline">\(F(\epsilon_{\pi(s),a})(s)\)</span> is in <span class="math inline">\(\pi^{-1}(a)\)</span>. Thus <span class="math inline">\(\pi(F(\epsilon_{\pi(s),a})(s)) = a\)</span>.</li>
 <li><em>Claim:</em> <span class="math inline">\(\set\,(\set\,s\,a)\,b = \set\,s\,b\)</span>. Again by direct computation we have
 <span class="math display">\[\begin{align}
 \set\,(\set\,s\,a)\,b &amp;= \set\,(F(\epsilon_{\pi(s),a})(s))\,b \newline
@@ -131,12 +131,13 @@ F({\rm Id}_{\pi(s)})(s) =
 \end{align}\]</span></li>
 </ul>
 <p>I will not prove that these constructions are inverse to each other –LaTeX is time consuming– but at this point it should not be too difficult to produce a proof.</p>
-<p>A few observations are in order. Let <span class="math inline">\(\langle \pi,\, F \rangle\)</span> be a lens fibration. Then all fibers of <span class="math inline">\(\pi\)</span> are isomorphic because <span class="math inline">\(\mathcal{E}(A)\)</span> is a connected and functors preserve isomorphism. This also means that for any <span class="math inline">\(a\in A\)</span>, <span class="math inline">\(S\)</span> is isomorphic to <span class="math inline">\(A\times\pi^{-1}(a)\)</span>.</p>
+<p>A few observations are in order. Let <span class="math inline">\(\langle \pi,\, F \rangle\)</span> be a lens fibration. Then all fibers of <span class="math inline">\(\pi\)</span> are isomorphic because <span class="math inline">\(\mathcal{E}(A)\)</span> is a connected grouppoid and functors preserve isomorphism. This also means that for any <span class="math inline">\(a\in A\)</span>, <span class="math inline">\(S\)</span> is isomorphic to <span class="math inline">\(A\times\pi^{-1}(a)\)</span>.</p>
 <p>One can also view the notion of a lens fibration as a special case of a groupoid action defined, say, in section 10.4 of <a href="https://groupoids.org.uk/pdffiles/topgrpds-e.pdf">Topology and Groups</a> by Ronald Brown. The orbits of this action are the equivalence classes of the equivalence relation on <span class="math inline">\(S\)</span> defined by <span class="math display">\[
 s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
-\]</span> Each orbit intersects with all orbits exactly once tus restricting <span class="math inline">\(\pi\)</span> to any one of them gives a bijection onto <span class="math inline">\(A\)</span>. So in addition to the “vertical” decomposition of <span class="math inline">\(S\)</span> into orbits, we also have a “horizontal” decomposition into orbits.</p>
+\]</span> Each orbit intersects with all fibers exactly once thus restricting <span class="math inline">\(\pi\)</span> to any one of orbits gives a bijection onto <span class="math inline">\(A\)</span>. So in addition to the “vertical” decomposition of <span class="math inline">\(S\)</span> into fibers, we also have a “horizontal” decomposition into orbits.</p>
 <p>This is a lot to take in. So let’s draw a picture explaining the situation.</p>
-<p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
+<p><span style="display:block;text-align:center"><img src="assets/lens_fibration.png" alt="Lens Picture" /></p>
+<p>Here the big rectangle is the set <span class="math inline">\(S\)</span> decomposed into blue fibers. The light orange lines are the orbits.</p>
 <p>It is time to see some examples with real code.</p>
 <h2 id="examples">Examples</h2>
 <p>I posted the code in this section as a <a href="">gist</a> if you want to play with it.</p>
@@ -165,8 +166,8 @@ parallel <span class="fu">=</span> lensFromIso simple
 
 <span class="ot">crossed ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">Either</span> <span class="dt">Bool</span> <span class="dt">Bool</span>) <span class="dt">Position</span>
 crossed <span class="fu">=</span> lensFromIso <span class="fu">$</span> iso not not</code></pre></div>
-<p>these lenses have the same getter but their setters are different. Drawing pictures of these lenses should clarify the choice of names.</p>
-<p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
+<p>These lenses have the same getter but their setters are different. Drawing pictures of these lenses should clarify the choice of names.</p>
+<p><span style="display:block;text-align:center"><img src="assets/parallel_and_crossed.png" alt="Lens Picture" /></p>
 <p>Actually <code class="sourceCode haskell">parallel</code> is a more traditional lens in disguise. Note that we have the following isomorphism:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">WithPosition</span> a <span class="fu">=</span> <span class="dt">WithPosition</span>
   {<span class="ot"> _value ::</span> a,
@@ -190,7 +191,7 @@ position&#39; <span class="fu">=</span> productToSum <span class="fu">.</span> p
 <p>It is easy to see that <code class="sourceCode haskell">position</code> and <code class="sourceCode haskell">position&#39;</code> are the same lens.</p>
 <p><strong>Example 2:</strong> Sum without <code class="sourceCode haskell"><span class="dt">Either</span></code></p>
 <p>In the previous example we modeled a disjoint as a sum type. It may be the case that decomposition into a sum is not explicitly expressed in the type. Now let us see an example of that. This time we will start with the picture:</p>
-<p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
+<p><span style="display:block;text-align:center"><img src="assets/even_odd.png" alt="Lens Picture" /></p>
 <p>The fibers are the even and odd numbers. As in the case of <code class="sourceCode haskell"><span class="dt">Position</span></code> we will define a custom type to model <span class="math inline">\(A\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Parity</span> <span class="fu">=</span> <span class="dt">Even</span> <span class="fu">|</span> <span class="dt">Odd</span>
   <span class="kw">deriving</span> <span class="dt">Show</span>
@@ -361,7 +362,7 @@ setChunksize sN strN sM <span class="fu">=</span> nToM strN
   <span class="dt">Lens</span> (<span class="dt">ChunkedStream</span> (<span class="ch">&#39;S n) a) (ChunkedStream (&#39;</span><span class="dt">S</span> m) a) (<span class="dt">SNat</span> (<span class="ch">&#39;S n)) (SNat (&#39;</span><span class="dt">S</span> m))
 chunkSize <span class="fu">=</span> lens (getChunkSize <span class="fu">$</span> <span class="dt">SS</span> sing) (setChunksize <span class="fu">$</span> <span class="dt">SS</span> sing)</code></pre></div>
 <p>Here <code class="sourceCode haskell"><span class="dt">Sized</span></code> is your garden variety length-indexed list but I had to implement my own version since nix told me that the package is broken and I really don’t want to deal with it right now.</p>
-<p>To give an idea of what is happening, here is a small repl interaction</p>
+<p>To give an idea of what is happening, here is a small repl interaction:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ex1 ::</span> <span class="dt">ChunkedStream</span> <span class="dt">One</span> <span class="dt">Int</span>
 ex1 <span class="fu">=</span> fromElement <span class="fu">&lt;$&gt;</span> Str.iterate (<span class="fu">+</span><span class="dv">1</span>) <span class="dv">0</span>
 
