@@ -6,6 +6,43 @@
   <meta name="generator" content="pandoc" />
   <title>Blog of S.Süer – A Note On Lenses</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="./assets/format.css" type="text/css" />
   <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
   <link rel="icon" href="assets/logo.png">
@@ -102,8 +139,243 @@ s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
 <p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
 <p>It is time to see some examples with real code.</p>
 <h2 id="examples">Examples</h2>
-<p>Let us begin with a good old fashioned record.</p>
-<h2 id="what-else">What else?</h2>
+<p>I posted the code in this section as a <a href="">gist</a> if you want to play with it.</p>
+<p><strong>Example 1:</strong> Lens on <code class="sourceCode haskell"><span class="dt">Either</span></code></p>
+<p>Let us begin with the simplest nontrivial example. Assume that <span class="math inline">\(A\)</span> has only two elements. Then <span class="math inline">\(S\)</span> is a disjoint union of two fibers so we can model <span class="math inline">\(S\)</span> by <code class="sourceCode haskell"><span class="dt">Either</span></code>. Let us also model <span class="math inline">\(A\)</span> by a custom data type called <code class="sourceCode haskell"><span class="dt">Position</span></code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Position</span> <span class="fu">=</span> <span class="dt">OnTheLeft</span> <span class="fu">|</span> <span class="dt">OnTheRight</span>
+  <span class="kw">deriving</span> <span class="dt">Show</span></code></pre></div>
+<p>Now if we have an isomorphism between two types <code class="sourceCode haskell">a</code> and <code class="sourceCode haskell">b</code> then we can use them as fibers and define a lens from <code class="sourceCode haskell"><span class="dt">Either</span> a b</code> to <code class="sourceCode haskell"><span class="dt">Position</span></code>. The implementation is straightforward.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">lensFromIso ::</span> <span class="dt">Iso&#39;</span> a b <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (<span class="dt">Either</span> a b) <span class="dt">Position</span>
+lensFromIso f <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter <span class="fu">=</span> \<span class="kw">case</span>
+      <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">OnTheLeft</span>
+      <span class="dt">Right</span> _ <span class="ot">-&gt;</span> <span class="dt">OnTheRight</span>
+    setter s a <span class="fu">=</span>
+      <span class="kw">case</span> (s, a) <span class="kw">of</span>
+        (<span class="dt">Left</span> a, <span class="dt">OnTheRight</span>) <span class="ot">-&gt;</span>
+          <span class="dt">Right</span> <span class="fu">$</span> a <span class="fu">^.</span> f
+        (<span class="dt">Right</span> b, <span class="dt">OnTheLeft</span>) <span class="ot">-&gt;</span>
+          <span class="dt">Left</span> <span class="fu">$</span> b <span class="fu">^.</span> re f
+        _ <span class="ot">-&gt;</span>
+          s</code></pre></div>
+<p>To simplify things further, let us take <code class="sourceCode haskell">a</code> and <code class="sourceCode haskell">b</code> to be <code class="sourceCode haskell"><span class="dt">Bool</span></code>. Then we can describe all lens structures with signature <code class="sourceCode haskell"><span class="dt">Lens&#39;</span> (<span class="dt">Either</span> <span class="dt">Bool</span> <span class="dt">Bool</span>) <span class="dt">Position</span></code> because we know all automorphisms of <code class="sourceCode haskell"><span class="dt">Bool</span></code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">parallel ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">Either</span> a a) <span class="dt">Position</span>
+parallel <span class="fu">=</span> lensFromIso simple
+
+<span class="ot">crossed ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">Either</span> <span class="dt">Bool</span> <span class="dt">Bool</span>) <span class="dt">Position</span>
+crossed <span class="fu">=</span> lensFromIso <span class="fu">$</span> iso not not</code></pre></div>
+<p>these lenses have the same getter but their setters are different. Drawing pictures of these lenses should clarify the choice of names.</p>
+<p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
+<p>Actually <code class="sourceCode haskell">parallel</code> is a more traditional lens in disguise. Note that we have the following isomorphism:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">WithPosition</span> a <span class="fu">=</span> <span class="dt">WithPosition</span>
+  {<span class="ot"> _value ::</span> a,
+<span class="ot">    _position ::</span> <span class="dt">Position</span>
+  } <span class="kw">deriving</span> <span class="dt">Show</span>
+makeLenses <span class="ch">&#39;&#39;</span><span class="dt">WithPosition</span>
+
+<span class="ot">productToSum ::</span> <span class="dt">Iso&#39;</span> (<span class="dt">WithPosition</span> a) (<span class="dt">Either</span> a a)
+productToSum <span class="fu">=</span> iso fromProduct fromSum
+  <span class="kw">where</span>
+    fromSum <span class="fu">=</span> \<span class="kw">case</span>
+      <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">WithPosition</span> a <span class="dt">OnTheLeft</span>
+      <span class="dt">Right</span> a <span class="ot">-&gt;</span> <span class="dt">WithPosition</span> a <span class="dt">OnTheRight</span>
+    fromProduct (<span class="dt">WithPosition</span> a pos) <span class="fu">=</span>
+      <span class="kw">case</span> pos <span class="kw">of</span>
+        <span class="dt">OnTheLeft</span> <span class="ot">-&gt;</span> <span class="dt">Left</span> a
+        <span class="dt">OnTheRight</span> <span class="ot">-&gt;</span> <span class="dt">Right</span> a</code></pre></div>
+<p>which is an instance of the isomorphism <span class="math inline">\(a\times 2 \cong a + a\)</span>. Using this isomorphism we can define</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">position&#39; ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WithPosition</span> a) <span class="dt">Position</span>
+position&#39; <span class="fu">=</span> productToSum <span class="fu">.</span> parallel</code></pre></div>
+<p>It is easy to see that <code class="sourceCode haskell">position</code> and <code class="sourceCode haskell">position&#39;</code> are the same lens.</p>
+<p><strong>Example 2:</strong> Sum without <code class="sourceCode haskell"><span class="dt">Either</span></code></p>
+<p>In the previous example we modeled a disjoint as a sum type. It may be the case that decomposition into a sum is not explicitly expressed in the type. Now let us see an example of that. This time we will start with the picture:</p>
+<p><span style="display:block;text-align:center"><img src="assets/logo.png" alt="Lens Picture" /></p>
+<p>The fibers are the even and odd numbers. As in the case of <code class="sourceCode haskell"><span class="dt">Position</span></code> we will define a custom type to model <span class="math inline">\(A\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Parity</span> <span class="fu">=</span> <span class="dt">Even</span> <span class="fu">|</span> <span class="dt">Odd</span>
+  <span class="kw">deriving</span> <span class="dt">Show</span>
+
+<span class="ot">parity ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Int</span> <span class="dt">Parity</span>
+parity <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter n <span class="fu">=</span>
+      <span class="kw">if</span> even n <span class="kw">then</span> <span class="dt">Even</span> <span class="kw">else</span> <span class="dt">Odd</span>
+    setter n p <span class="fu">=</span>
+      <span class="kw">case</span> (getter n, p) <span class="kw">of</span>
+        (<span class="dt">Even</span>, <span class="dt">Odd</span>) <span class="ot">-&gt;</span> n <span class="fu">+</span> <span class="dv">1</span>
+        (<span class="dt">Odd</span>, <span class="dt">Even</span>) <span class="ot">-&gt;</span> n <span class="fu">-</span> <span class="dv">1</span>
+        _ <span class="ot">-&gt;</span> n</code></pre></div>
+<p>Note that in this example the fibers are not types in Haskell –maybe in Liquid Haskell, hmm…– but we can still define a lens very much like <code class="sourceCode haskell">lensFromIso</code>.</p>
+<p><strong>Example 3:</strong> Pairs as fibrations</p>
+<p>Now let us remove our restriction on the size of <span class="math inline">\(A\)</span>. We can define</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">lensFromIsoFamily ::</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (a, b) a
+lensFromIsoFamily functor <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter (a, _b) <span class="fu">=</span> a
+    setter (a1, b) a2 <span class="fu">=</span> (a2, functor a1 a2 b)</code></pre></div>
+<p>Here <code class="sourceCode haskell">(a2, functor a1 a2 b)</code> corresponds to <span class="math inline">\(F(\epsilon_{a_1, a_2})(s)\)</span> where <span class="math inline">\(s = (a_1, b)\)</span>. We expect <code class="sourceCode haskell">functor a a <span class="fu">=</span> id</code> and <code class="sourceCode haskell">functor a2 a3 <span class="fu">.</span> functor a1 a2 <span class="fu">=</span> functor a1 a3</code> to hold for this to be a lawful lens.</p>
+<p>For a concrete example let us consider the plane with a given coordinate system.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Coordinate</span> <span class="fu">=</span> <span class="dt">Double</span>
+<span class="kw">type</span> <span class="dt">Plane</span> <span class="fu">=</span> (<span class="dt">Coordinate</span>, <span class="dt">Coordinate</span>)
+
+<span class="ot">standardX ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Plane</span> <span class="dt">Coordinate</span>
+standardX <span class="fu">=</span> lensFromIsoFamily f
+  <span class="kw">where</span>
+    f _ _ <span class="fu">=</span> id
+
+<span class="ot">skewedX ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Plane</span> <span class="dt">Coordinate</span>
+skewedX <span class="fu">=</span> lensFromIsoFamily f
+  <span class="kw">where</span>
+    f a1 a2 b <span class="fu">=</span> b <span class="fu">+</span> a1 <span class="fu">-</span> a2</code></pre></div>
+<p>Here <code class="sourceCode haskell">standardX</code> is the same as the lens <code class="sourceCode haskell">_1</code> specialized to pairs. You can check that the <code class="sourceCode haskell">f</code> in the second example satisfies the functor laws.</p>
+<p><strong>Example 4:</strong> Using singletons over a finite focus</p>
+<p>All these examples are fine but they have a common drawback. After using <span class="math inline">\(\set\)</span> on any of these lenses the value forgets what was set. For instance I can produce a value by the expression <code class="sourceCode haskell"><span class="dt">Left</span> <span class="dv">3</span> <span class="fu">&amp;</span> parallel <span class="fu">.~</span> <span class="dt">OnTheRight</span></code> which I know to be <code class="sourceCode haskell"><span class="dt">Right</span> <span class="dv">3</span></code>, however when I want to consume tat value I still need to pattern match against <em>both</em> <code class="sourceCode haskell"><span class="dt">Left</span></code> and <code class="sourceCode haskell"><span class="dt">Right</span></code>. the ony way to get around this problem to allow set to change the type of the structure it acts on. So simple lenses will not cut it.</p>
+<p>As an example let we will model temperature with unit Fahrenheit or Celsius.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Unit</span> <span class="fu">=</span> <span class="dt">Celsius</span> <span class="fu">|</span> <span class="dt">Fahrenheit</span>
+  <span class="kw">deriving</span> <span class="dt">Show</span>
+genSingletons [<span class="ch">&#39;&#39;</span><span class="dt">Unit</span>]
+
+<span class="kw">newtype</span> <span class="dt">Temperature</span> (<span class="ot">u ::</span> <span class="dt">Unit</span>) <span class="fu">=</span> <span class="dt">Temperature</span> {<span class="ot"> rawValue ::</span> <span class="dt">Double</span> }
+  <span class="kw">deriving</span> <span class="dt">Show</span>
+
+<span class="ot">fahrenheightToCelsiusIso ::</span> <span class="dt">Iso&#39;</span> <span class="dt">Double</span> <span class="dt">Double</span>
+fahrenheightToCelsiusIso <span class="fu">=</span> iso toFahrenheit fromFahrenheit
+  <span class="kw">where</span>
+    toFahrenheit c <span class="fu">=</span> (c <span class="fu">*</span> (<span class="dv">9</span><span class="fu">/</span><span class="dv">5</span>)) <span class="fu">+</span> <span class="dv">32</span>
+    fromFahrenheit f <span class="fu">=</span> (f <span class="fu">-</span> <span class="dv">32</span>) <span class="fu">*</span> (<span class="dv">5</span><span class="fu">/</span><span class="dv">9</span>)
+
+<span class="ot">getUnit ::</span> <span class="dt">SUnit</span> u <span class="ot">-&gt;</span> <span class="dt">Temperature</span> u <span class="ot">-&gt;</span> <span class="dt">SUnit</span> u
+getUnit s _ <span class="fu">=</span> s
+
+<span class="ot">setUnit ::</span> <span class="dt">SUnit</span> u <span class="ot">-&gt;</span> <span class="dt">Temperature</span> u <span class="ot">-&gt;</span> <span class="dt">SUnit</span> v <span class="ot">-&gt;</span> <span class="dt">Temperature</span> v
+setUnit sU (<span class="dt">Temperature</span>  v) sV <span class="fu">=</span>
+  <span class="kw">case</span> (sU, sV) <span class="kw">of</span>
+    (<span class="dt">SCelsius</span>, <span class="dt">SFahrenheit</span>) <span class="ot">-&gt;</span>
+      <span class="dt">Temperature</span> <span class="fu">$</span> v <span class="fu">^.</span> fahrenheightToCelsiusIso
+    (<span class="dt">SFahrenheit</span>, <span class="dt">SCelsius</span>) <span class="ot">-&gt;</span>
+      <span class="dt">Temperature</span>  <span class="fu">$</span> v <span class="fu">^.</span> re fahrenheightToCelsiusIso
+    _ <span class="ot">-&gt;</span>
+      <span class="dt">Temperature</span>  v
+
+<span class="ot">unit ::</span> <span class="dt">SingI</span> u <span class="ot">=&gt;</span> <span class="dt">Lens</span> (<span class="dt">Temperature</span> u) (<span class="dt">Temperature</span> v) (<span class="dt">SUnit</span> u) (<span class="dt">SUnit</span> v)
+unit <span class="fu">=</span> lens (getUnit sing) (setUnit sing)</code></pre></div>
+<p>Note that everything went one level up: fibers are types and the fibration is over a kind. If we want to we can even implement Celsius and Fahrenheit lenses in terms of <code class="sourceCode haskell">unit</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">AsCelsius</span> <span class="fu">=</span> <span class="dt">AsCelsius</span> {<span class="ot"> getCelsisus ::</span> <span class="dt">Double</span> }
+  <span class="kw">deriving</span> <span class="dt">Show</span>
+
+<span class="kw">newtype</span> <span class="dt">AsFahrenheit</span> <span class="fu">=</span> <span class="dt">AsFahreheit</span> {<span class="ot"> getFahrenheit ::</span> <span class="dt">Double</span> }
+  <span class="kw">deriving</span> <span class="dt">Show</span>
+
+<span class="ot">celsiusMono ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">Temperature</span> <span class="ch">&#39;Celsius) AsCelsius</span>
+celsiusMono <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter <span class="fu">=</span> <span class="dt">AsCelsius</span> <span class="fu">.</span> rawValue
+    setter (<span class="dt">Temperature</span> _) (<span class="dt">AsCelsius</span> c) <span class="fu">=</span> <span class="dt">Temperature</span>  c
+
+<span class="ot">fahrenheitMono ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">Temperature</span> <span class="ch">&#39;Fahrenheit) AsFahrenheit</span>
+fahrenheitMono <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter <span class="fu">=</span> <span class="dt">AsFahreheit</span> <span class="fu">.</span> rawValue
+    setter (<span class="dt">Temperature</span> _) (<span class="dt">AsFahreheit</span> f) <span class="fu">=</span> <span class="dt">Temperature</span>  f
+
+<span class="ot">celsius ::</span> <span class="dt">SingI</span> u <span class="ot">=&gt;</span> <span class="dt">Lens&#39;</span> (<span class="dt">Temperature</span> u) <span class="dt">AsCelsius</span>
+celsius <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter t <span class="fu">=</span>
+      t <span class="fu">&amp;</span> unit <span class="fu">.~</span> <span class="dt">SCelsius</span>
+        <span class="fu">&amp;</span> view celsiusMono
+    setter t c <span class="fu">=</span>
+      t <span class="fu">&amp;</span> unit <span class="fu">.~</span> <span class="dt">SCelsius</span>
+        <span class="fu">&amp;</span> celsiusMono <span class="fu">.~</span> c
+        <span class="fu">&amp;</span> unit <span class="fu">.~</span> sing
+
+<span class="ot">fahrenheit ::</span> <span class="dt">SingI</span> u <span class="ot">=&gt;</span> <span class="dt">Lens&#39;</span> (<span class="dt">Temperature</span> u) <span class="dt">AsFahrenheit</span>
+fahrenheit <span class="fu">=</span> lens getter setter
+  <span class="kw">where</span>
+    getter t <span class="fu">=</span>
+      t <span class="fu">&amp;</span> unit <span class="fu">.~</span> <span class="dt">SFahrenheit</span>
+        <span class="fu">&amp;</span> view fahrenheitMono
+    setter t f <span class="fu">=</span>
+      t <span class="fu">&amp;</span> unit <span class="fu">.~</span> <span class="dt">SFahrenheit</span>
+        <span class="fu">&amp;</span> fahrenheitMono <span class="fu">.~</span> f
+        <span class="fu">&amp;</span> unit <span class="fu">.~</span> sing</code></pre></div>
+<p><strong>Example 5:</strong> Using singletons over an infinite focus</p>
+<p>The last example is a little on the nerd-snipe side. We will consider a fibration over type level positive integers where the fiber above <code class="sourceCode haskell">n</code> is streams with chunk size <code class="sourceCode haskell">n</code>. Here is the code.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Sized</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) (<span class="ot">a ::</span> <span class="dt">Type</span>) <span class="kw">where</span>
+  <span class="dt">Null</span><span class="ot"> ::</span> <span class="dt">Sized</span> <span class="dt">Zero</span> a
+<span class="ot">  (:::) ::</span> a <span class="ot">-&gt;</span> <span class="dt">Sized</span> n a <span class="ot">-&gt;</span> <span class="dt">Sized</span> (<span class="ch">&#39;S n) a</span>
+<span class="kw">infixr</span> <span class="dv">5</span> <span class="ot">::</span><span class="fu">:</span>
+
+<span class="ot">toElement ::</span> <span class="dt">Sized</span> <span class="dt">One</span> a <span class="ot">-&gt;</span> a
+toElement (a <span class="ot">::</span><span class="fu">:</span> <span class="dt">Null</span>) <span class="fu">=</span> a
+
+<span class="ot">fromElement ::</span> a <span class="ot">-&gt;</span> <span class="dt">Sized</span> <span class="dt">One</span> a
+fromElement a <span class="fu">=</span> a <span class="ot">::</span><span class="fu">:</span> <span class="dt">Null</span>
+
+<span class="ot">sizedToList ::</span> <span class="dt">Sized</span> n a <span class="ot">-&gt;</span> [a]
+sizedToList <span class="dt">Null</span> <span class="fu">=</span> []
+sizedToList (a <span class="ot">::</span><span class="fu">:</span> rest) <span class="fu">=</span> a <span class="fu">:</span> sizedToList rest
+
+<span class="kw">instance</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> <span class="dt">Show</span> (<span class="dt">Sized</span> n a) <span class="kw">where</span>
+  show <span class="fu">=</span> show <span class="fu">.</span> sizedToList
+
+<span class="kw">type</span> <span class="dt">ChunkedStream</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) (<span class="ot">a ::</span> <span class="dt">Type</span>) <span class="fu">=</span> <span class="dt">Str.Stream</span> (<span class="dt">Sized</span> n a)
+
+<span class="ot">decomposeIntoSingles ::</span> <span class="dt">Sized</span> n a <span class="ot">-&gt;</span> [<span class="dt">Sized</span> <span class="dt">One</span> a]
+decomposeIntoSingles <span class="dt">Null</span> <span class="fu">=</span> []
+decomposeIntoSingles (a <span class="ot">::</span><span class="fu">:</span> rest) <span class="fu">=</span> (a <span class="ot">::</span><span class="fu">:</span> <span class="dt">Null</span>) <span class="fu">:</span> decomposeIntoSingles rest
+
+<span class="ot">splitSized ::</span>
+  <span class="dt">SNat</span> n <span class="ot">-&gt;</span>
+  <span class="dt">Str.Stream</span> (<span class="dt">Sized</span> <span class="dt">One</span> a) <span class="ot">-&gt;</span>
+  (<span class="dt">Sized</span> n a, <span class="dt">Str.Stream</span> (<span class="dt">Sized</span> <span class="dt">One</span> a))
+splitSized sN str<span class="fu">@</span>(<span class="dt">Str.Cons</span> a rest) <span class="fu">=</span>
+  <span class="kw">case</span> sN <span class="kw">of</span>
+    <span class="dt">SZ</span> <span class="ot">-&gt;</span>
+      (<span class="dt">Null</span>, str)
+    <span class="dt">SS</span> pred <span class="ot">-&gt;</span>
+      <span class="kw">let</span> (taken, remaining) <span class="fu">=</span> splitSized pred rest
+       <span class="kw">in</span> (toElement a <span class="ot">::</span><span class="fu">:</span> taken, remaining)
+
+<span class="ot">mkChunkIso ::</span> <span class="dt">SNat</span> (<span class="ch">&#39;S n) -&gt; Iso&#39;</span> (<span class="dt">ChunkedStream</span> <span class="dt">One</span> a) (<span class="dt">ChunkedStream</span> (<span class="ch">&#39;S n) a)</span>
+mkChunkIso sN <span class="fu">=</span> iso toNChunk toOneChunk
+  <span class="kw">where</span>
+    toNChunk str <span class="fu">=</span>
+      <span class="kw">let</span> (taken, remaining) <span class="fu">=</span> splitSized sN str
+       <span class="kw">in</span> taken <span class="fu">&lt;:&gt;</span> toNChunk remaining
+    toOneChunk (<span class="dt">Str.Cons</span> a rest) <span class="fu">=</span>
+       decomposeIntoSingles a <span class="ot">`Str.prefix`</span> toOneChunk rest
+
+<span class="ot">getChunkSize ::</span> <span class="dt">SNat</span> n <span class="ot">-&gt;</span> <span class="dt">ChunkedStream</span> n a <span class="ot">-&gt;</span> <span class="dt">SNat</span> n
+getChunkSize sN _ <span class="fu">=</span> sN
+
+<span class="ot">setChunksize ::</span> <span class="dt">SNat</span> (<span class="ch">&#39;S n) -&gt; ChunkedStream (&#39;</span><span class="dt">S</span> n) a <span class="ot">-&gt;</span> <span class="dt">SNat</span> (<span class="ch">&#39;S m) -&gt; ChunkedStream (&#39;</span><span class="dt">S</span> m) a
+setChunksize sN strN sM <span class="fu">=</span> nToM strN
+  <span class="kw">where</span>
+    nToM <span class="fu">=</span> oneToM <span class="fu">.</span> nToOne
+    nToOne <span class="fu">=</span> view <span class="fu">$</span> re <span class="fu">$</span> mkChunkIso sN
+    oneToM <span class="fu">=</span> view <span class="fu">$</span> mkChunkIso sM
+
+<span class="ot">chunkSize ::</span>
+  <span class="dt">SingI</span> n <span class="ot">=&gt;</span>
+  <span class="dt">Lens</span> (<span class="dt">ChunkedStream</span> (<span class="ch">&#39;S n) a) (ChunkedStream (&#39;</span><span class="dt">S</span> m) a) (<span class="dt">SNat</span> (<span class="ch">&#39;S n)) (SNat (&#39;</span><span class="dt">S</span> m))
+chunkSize <span class="fu">=</span> lens (getChunkSize <span class="fu">$</span> <span class="dt">SS</span> sing) (setChunksize <span class="fu">$</span> <span class="dt">SS</span> sing)</code></pre></div>
+<p>Here <code class="sourceCode haskell"><span class="dt">Sized</span></code> is your garden variety length-indexed list but I had to implement my own version since nix told me that the package is broken and I really don’t want to deal with it right now.</p>
+<p>To give an idea of what is happening, here is a small repl interaction</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ex1 ::</span> <span class="dt">ChunkedStream</span> <span class="dt">One</span> <span class="dt">Int</span>
+ex1 <span class="fu">=</span> fromElement <span class="fu">&lt;$&gt;</span> Str.iterate (<span class="fu">+</span><span class="dv">1</span>) <span class="dv">0</span>
+
+<span class="ot">sample ::</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> <span class="dt">ChunkedStream</span> n a <span class="ot">-&gt;</span> <span class="dt">String</span>
+sample str <span class="fu">=</span> show <span class="fu">$</span> Str.take <span class="dv">10</span> str
+
+<span class="co">{-</span>
+<span class="co">&gt; :t (ex1 ^. chunkSize)</span>
+<span class="co">(ex1 ^. chunkSize) :: SNat (&#39;S ZSym0)</span>
+<span class="co">&gt; sample ex1</span>
+<span class="co">&quot;[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9]]&quot;</span>
+<span class="co">&gt; sample (ex1 &amp; chunkSize .~ SS (SS SZ))</span>
+<span class="co">&quot;[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15],[16,17],[18,19]]&quot;</span>
+<span class="co">-}</span></code></pre></div>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">

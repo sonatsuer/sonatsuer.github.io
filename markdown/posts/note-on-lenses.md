@@ -169,13 +169,331 @@ This is a lot to take in. So let's draw a picture explaining the situation.
 
 <span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
 
-
-
 It is time to see some examples with real code.
 
 ## Examples
 
-Let us begin with a good old fashioned record.
+I posted the code in this section as a [gist]() if you want to play with it.
 
-## What else?
+**Example 1:** Lens on `Either`{.haskell}
 
+Let us begin with the simplest nontrivial example. Assume that $A$ has only two elements. Then
+$S$ is a disjoint union of two fibers so we can model $S$ by `Either`{.haskell}. Let us also model
+$A$ by a custom data type called `Position`{.haskell}.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+data Position = OnTheLeft | OnTheRight
+  deriving Show
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now if we have an isomorphism between two types `a`{.haskell} and `b`{.haskell} then we can use them
+as fibers and define a lens from `Either a b`{.haskell} to `Position`{.haskell}. The implementation is
+straightforward.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+lensFromIso :: Iso' a b -> Lens' (Either a b) Position
+lensFromIso f = lens getter setter
+  where
+    getter = \case
+      Left _ -> OnTheLeft
+      Right _ -> OnTheRight
+    setter s a =
+      case (s, a) of
+        (Left a, OnTheRight) ->
+          Right $ a ^. f
+        (Right b, OnTheLeft) ->
+          Left $ b ^. re f
+        _ ->
+          s
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To simplify things further, let us take `a`{.haskell} and `b`{.haskell} to be `Bool`{.haskell}. Then we can describe all lens structures with signature  `Lens' (Either Bool Bool) Position`{.haskell} because we know
+all automorphisms of `Bool`{.haskell}:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+parallel :: Lens' (Either a a) Position
+parallel = lensFromIso simple
+
+crossed :: Lens' (Either Bool Bool) Position
+crossed = lensFromIso $ iso not not
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+these lenses have the same getter but their setters are different. Drawing pictures of these lenses should
+clarify the choice of names.
+
+<span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
+
+Actually `parallel`{.haskell} is a more traditional lens in disguise. Note that we have the following
+isomorphism:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+data WithPosition a = WithPosition
+  { _value :: a,
+    _position :: Position
+  } deriving Show
+makeLenses ''WithPosition
+
+productToSum :: Iso' (WithPosition a) (Either a a)
+productToSum = iso fromProduct fromSum
+  where
+    fromSum = \case
+      Left a -> WithPosition a OnTheLeft
+      Right a -> WithPosition a OnTheRight
+    fromProduct (WithPosition a pos) =
+      case pos of
+        OnTheLeft -> Left a
+        OnTheRight -> Right a
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+which is an instance of the isomorphism $a\times 2 \cong a + a$. Using this isomorphism we can define
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+position' :: Lens' (WithPosition a) Position
+position' = productToSum . parallel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is easy to see that `position`{.haskell} and `position'`{.haskell} are the same lens.
+
+**Example 2:** Sum without `Either`{.haskell}
+
+In the previous example we modeled a disjoint as a sum type. It may be the case that decomposition
+into a sum is not explicitly expressed in the type. Now let us see an example of that. This time
+we will start with the picture:
+
+<span style="display:block;text-align:center">![Lens Picture](assets/logo.png)
+
+The fibers are the even and odd numbers. As in the case of `Position`{.haskell} we will define a custom
+type to model $A$.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+data Parity = Even | Odd
+  deriving Show
+
+parity :: Lens' Int Parity
+parity = lens getter setter
+  where
+    getter n =
+      if even n then Even else Odd
+    setter n p =
+      case (getter n, p) of
+        (Even, Odd) -> n + 1
+        (Odd, Even) -> n - 1
+        _ -> n
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that in this example the fibers are not types in Haskell --maybe in Liquid Haskell, hmm...--
+but we can still define a lens very much like `lensFromIso`{.haskell}.
+
+**Example 3:** Pairs as fibrations
+
+Now let us remove our restriction on the size of $A$. We can define
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+lensFromIsoFamily :: (a -> a -> b -> b) -> Lens' (a, b) a
+lensFromIsoFamily functor = lens getter setter
+  where
+    getter (a, _b) = a
+    setter (a1, b) a2 = (a2, functor a1 a2 b)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Here `(a2, functor a1 a2 b)`{.haskell} corresponds to $F(\epsilon_{a_1, a_2})(s)$ where $s = (a_1, b)$.
+We expect `functor a a = id`{.haskell} and `functor a2 a3 . functor a1 a2 = functor a1 a3`{.haskell} to
+hold for this to be a lawful lens.
+
+For a concrete example let us consider the plane with a given coordinate system.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+type Coordinate = Double
+type Plane = (Coordinate, Coordinate)
+
+standardX :: Lens' Plane Coordinate
+standardX = lensFromIsoFamily f
+  where
+    f _ _ = id
+
+skewedX :: Lens' Plane Coordinate
+skewedX = lensFromIsoFamily f
+  where
+    f a1 a2 b = b + a1 - a2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Here `standardX`{.haskell} is the same as the lens `_1`{.haskell} specialized to pairs. You can check that
+the `f`{.haskell} in the second example satisfies the functor laws.
+
+**Example 4:** Using singletons over a finite focus
+
+All these examples are fine but they have a common drawback. After using $\set$ on any of these lenses the value
+forgets what was set. For instance I can produce a value by the expression
+`Left 3 & parallel .~ OnTheRight`{.haskell} which I know to be `Right 3`{.haskell}, however when I want to
+consume tat value I still need to pattern match against _both_ `Left`{.haskell} and `Right`{.haskell}.
+the ony way to get around this problem to allow set to change the type of the structure it acts on. So
+simple lenses will not cut it.
+
+As an example let we will model temperature with unit Fahrenheit or Celsius.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+data Unit = Celsius | Fahrenheit
+  deriving Show
+genSingletons [''Unit]
+
+newtype Temperature (u :: Unit) = Temperature { rawValue :: Double }
+  deriving Show
+
+fahrenheightToCelsiusIso :: Iso' Double Double
+fahrenheightToCelsiusIso = iso toFahrenheit fromFahrenheit
+  where
+    toFahrenheit c = (c * (9/5)) + 32
+    fromFahrenheit f = (f - 32) * (5/9)
+
+getUnit :: SUnit u -> Temperature u -> SUnit u
+getUnit s _ = s
+
+setUnit :: SUnit u -> Temperature u -> SUnit v -> Temperature v
+setUnit sU (Temperature  v) sV =
+  case (sU, sV) of
+    (SCelsius, SFahrenheit) ->
+      Temperature $ v ^. fahrenheightToCelsiusIso
+    (SFahrenheit, SCelsius) ->
+      Temperature  $ v ^. re fahrenheightToCelsiusIso
+    _ ->
+      Temperature  v
+
+unit :: SingI u => Lens (Temperature u) (Temperature v) (SUnit u) (SUnit v)
+unit = lens (getUnit sing) (setUnit sing)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that everything went one level up: fibers are types and the fibration is over a kind. If we want
+to we can even implement Celsius and Fahrenheit lenses in terms of `unit`{.haskell}.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+newtype AsCelsius = AsCelsius { getCelsisus :: Double }
+  deriving Show
+
+newtype AsFahrenheit = AsFahreheit { getFahrenheit :: Double }
+  deriving Show
+
+celsiusMono :: Lens' (Temperature 'Celsius) AsCelsius
+celsiusMono = lens getter setter
+  where
+    getter = AsCelsius . rawValue
+    setter (Temperature _) (AsCelsius c) = Temperature  c
+
+fahrenheitMono :: Lens' (Temperature 'Fahrenheit) AsFahrenheit
+fahrenheitMono = lens getter setter
+  where
+    getter = AsFahreheit . rawValue
+    setter (Temperature _) (AsFahreheit f) = Temperature  f
+
+celsius :: SingI u => Lens' (Temperature u) AsCelsius
+celsius = lens getter setter
+  where
+    getter t =
+      t & unit .~ SCelsius
+        & view celsiusMono
+    setter t c =
+      t & unit .~ SCelsius
+        & celsiusMono .~ c
+        & unit .~ sing
+
+fahrenheit :: SingI u => Lens' (Temperature u) AsFahrenheit
+fahrenheit = lens getter setter
+  where
+    getter t =
+      t & unit .~ SFahrenheit
+        & view fahrenheitMono
+    setter t f =
+      t & unit .~ SFahrenheit
+        & fahrenheitMono .~ f
+        & unit .~ sing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Example 5:** Using singletons over an infinite focus
+
+The last example is a little on the nerd-snipe side. We will consider a fibration over type
+level positive integers where the fiber above `n`{.haskell} is streams with chunk size `n`{.haskell}.
+Here is the code.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+data Sized (n :: Nat) (a :: Type) where
+  Null :: Sized Zero a
+  (:::) :: a -> Sized n a -> Sized ('S n) a
+infixr 5 :::
+
+toElement :: Sized One a -> a
+toElement (a ::: Null) = a
+
+fromElement :: a -> Sized One a
+fromElement a = a ::: Null
+
+sizedToList :: Sized n a -> [a]
+sizedToList Null = []
+sizedToList (a ::: rest) = a : sizedToList rest
+
+instance Show a => Show (Sized n a) where
+  show = show . sizedToList
+
+type ChunkedStream (n :: Nat) (a :: Type) = Str.Stream (Sized n a)
+
+decomposeIntoSingles :: Sized n a -> [Sized One a]
+decomposeIntoSingles Null = []
+decomposeIntoSingles (a ::: rest) = (a ::: Null) : decomposeIntoSingles rest
+
+splitSized ::
+  SNat n ->
+  Str.Stream (Sized One a) ->
+  (Sized n a, Str.Stream (Sized One a))
+splitSized sN str@(Str.Cons a rest) =
+  case sN of
+    SZ ->
+      (Null, str)
+    SS pred ->
+      let (taken, remaining) = splitSized pred rest
+       in (toElement a ::: taken, remaining)
+
+mkChunkIso :: SNat ('S n) -> Iso' (ChunkedStream One a) (ChunkedStream ('S n) a)
+mkChunkIso sN = iso toNChunk toOneChunk
+  where
+    toNChunk str =
+      let (taken, remaining) = splitSized sN str
+       in taken <:> toNChunk remaining
+    toOneChunk (Str.Cons a rest) =
+       decomposeIntoSingles a `Str.prefix` toOneChunk rest
+
+getChunkSize :: SNat n -> ChunkedStream n a -> SNat n
+getChunkSize sN _ = sN
+
+setChunksize :: SNat ('S n) -> ChunkedStream ('S n) a -> SNat ('S m) -> ChunkedStream ('S m) a
+setChunksize sN strN sM = nToM strN
+  where
+    nToM = oneToM . nToOne
+    nToOne = view $ re $ mkChunkIso sN
+    oneToM = view $ mkChunkIso sM
+
+chunkSize ::
+  SingI n =>
+  Lens (ChunkedStream ('S n) a) (ChunkedStream ('S m) a) (SNat ('S n)) (SNat ('S m))
+chunkSize = lens (getChunkSize $ SS sing) (setChunksize $ SS sing)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Here `Sized`{.haskell} is your garden variety length-indexed list but I had to implement my
+own version since nix told me that the package is broken and I really don't want to deal with
+it right now.
+
+To give an idea of what is happening, here is a small repl interaction
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
+ex1 :: ChunkedStream One Int
+ex1 = fromElement <$> Str.iterate (+1) 0
+
+sample :: Show a => ChunkedStream n a -> String
+sample str = show $ Str.take 10 str
+
+{-
+> :t (ex1 ^. chunkSize)
+(ex1 ^. chunkSize) :: SNat ('S ZSym0)
+> sample ex1
+"[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9]]"
+> sample (ex1 & chunkSize .~ SS (SS SZ))
+"[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15],[16,17],[18,19]]"
+-}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
