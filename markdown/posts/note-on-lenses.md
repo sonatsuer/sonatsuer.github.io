@@ -20,7 +20,7 @@ these arguments written down like this anywhere else.
 Let us recall the definition of a lens expressed in terms of its usual api, namely the functions
 ${\rm view}$ and ${\rm set}$.
 
-**Definition:** Les $S$ and $A$ be sets. A lens from $S$ to $A$ is
+**Definition:** Let $S$ and $A$ be sets. A lens from $S$ to $A$ is
 a tuple
 $$
 \langle \view\colon S\to A,\, \set\colon S\to A\to S \rangle
@@ -49,7 +49,7 @@ The second one is the notion of a codiscrete groupoid. Let $A$ be any set. Defin
 $\mathcal{E}(A)$, the codiscrete groupoid on $A$, to be the category whose objects are the
 elements of $A$ and for any two elements $a,b\in A$ the set ${\rm Hom}(a,b)$ has precisely one
 element. We will denote this element by $\epsilon_{a,b}$. Note that $\mathcal{E}(A)$ is a groupoid,
-that is all morphisms are isomorphisms. Indeed $\epsilon_{a,a} = {\rm Id}_a$ and $\epsilon_{a,b}^{-1}$
+that is, all morphisms are isomorphisms. Indeed $\epsilon_{a,a} = {\rm Id}_a$ and $\epsilon_{a,b}^{-1}$
 is given by $\epsilon_{b,a}$.
 
 Now we can give our definition.
@@ -72,12 +72,12 @@ Let's begin. Fix $S$ and $A$ as in the claim.
 
 **Lens to fibration:**
 Given a lens $\langle \view,\, \set \rangle$ from $S$ to $A$ let us define $\pi = \view$. First
-we need to show that $\pi$ is surjective. Pick an $s\in S$. Now for any $a\in A$ we have
+we need to show that $\pi$ is surjective. Pick an $s\in S$. For any $a\in A$ we have
 $$
 a = \view\,(\set\,s\,a) = \pi(\set\,s\,a).
 $$
 by the second lens rule. Thus $a$ is in the image of $\pi$. Now let us define the functor $F$. We
-do not have choice on the action of $F$ on the objects of $\mathcal{E}(A)$: we must have $F(a)=\pi^{-1}(a)$.
+do not have a choice on the action of $F$ on the objects of $\mathcal{E}(A)$: we must have $F(a)=\pi^{-1}(a)$.
 For morphisms, we define $F(\epsilon_{a,b})\colon\pi^{-1}(a)\to\pi^{-1}(b)$ by the rule
 $$
 F(\epsilon_{a,b})(s) = \set\,s\,b.
@@ -151,7 +151,7 @@ I will not prove that these constructions are inverse to each other --LaTeX is t
 point it should not be too difficult to produce a proof.
 
 A few observations are in order. Let $\langle \pi,\, F \rangle$ be a lens fibration. Then all fibers of $\pi$
-are isomorphic because $\mathcal{E}(A)$ is a connected grouppoid and functors preserve isomorphism. This also
+are isomorphic because $\mathcal{E}(A)$ is a connected groupoid and functors preserve isomorphisms. This also
 means that for any $a\in A$, $S$ is isomorphic to $A\times\pi^{-1}(a)$.
 
 One can also view the notion of a lens fibration as a special case of a groupoid action defined, say, in
@@ -161,9 +161,9 @@ defined by
 $$
 s \equiv t \;\;\;\text{ if and only if }\;\;\; F(\epsilon_{\pi(s),\pi(t)})(s)=t.
 $$
-Each orbit intersects with all fibers exactly once thus restricting $\pi$ to any one of orbits gives a bijection
-onto $A$. So in addition to the "vertical" decomposition of $S$ into fibers, we also have a "horizontal"
-decomposition into orbits.
+Each orbit intersects with all fibers exactly once thus restricting $\pi$ to any one of these orbits gives
+a bijection onto $A$. So in addition to the "vertical" decomposition of $S$ into fibers, we also have a
+"horizontal" decomposition into orbits.
 
 This is a lot to take in. So let's draw a picture explaining the situation.
 
@@ -259,7 +259,7 @@ It is easy to see that `position`{.haskell} and `position'`{.haskell} are the sa
 
 **Example 2:** Sum without `Either`{.haskell}
 
-In the previous example we modeled a disjoint as a sum type. It may be the case that decomposition
+In the previous example we modeled a disjoint union as a sum type. It may be the case that decomposition
 into a sum is not explicitly expressed in the type. Now let us see an example of that. This time
 we will start with the picture:
 
@@ -329,10 +329,10 @@ All these examples are fine but they have a common drawback. After using $\set$ 
 forgets what was set. For instance I can produce a value by the expression
 `Left 3 & parallel .~ OnTheRight`{.haskell} which I know to be `Right 3`{.haskell}, however when I want to
 consume tat value I still need to pattern match against _both_ `Left`{.haskell} and `Right`{.haskell}.
-the ony way to get around this problem to allow set to change the type of the structure it acts on. So
-simple lenses will not cut it.
+The only way to get around this problem is to allow `set`{.haskell} to change the type of the structure it
+acts on. So simple lenses will not cut it.
 
-As an example let we will model temperature with unit Fahrenheit or Celsius.
+As an example we will model temperature with unit Fahrenheit or Celsius.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
 data Unit = Celsius | Fahrenheit
