@@ -52,11 +52,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">A Note On Lenses</h1>
 </div>
 <p><span class="math display">\[
-\newcommand{\view}{\textrm{view}}
+\newcommand{\view}{\textrm{get}}
 \newcommand{\set}{\textrm{set}}
 \]</span></p>
 <h2 id="summary">Summary</h2>
 <p>This is a brain-dump of how I think about lenses in isolation. I will be using the lens laws directly in the category of sets with functions. So the arguments are meaningful for all lens implementations. Mathematical parts may seem opaque if you are not used this kind of technical writing but this should not deceive you. The content is not deep and I am sure all of these are known to experts. However I haven’t seen these arguments written down like this anywhere else.</p>
+<p><em>Update:</em> Found it! <a href="http://ceur-ws.org/Vol-1571/paper_13.pdf">Unifying Set-Based, Delta-Based and Edit-Based Lenses</a> by Michael Johnson and Robert Rosebrugh has essentialy the ame content. Also, found a paper by the same authors treating lenses as Grothendieck opfibrations <a href="http://web.science.mq.edu.au/~mike/papers/72.pdf">Lenses, fibrations and universal translations</a>. So why read this post instead of these papers? Well, probably for the fibration formulation inspired lens constructions implemented in Haskell.</p>
 <h2 id="a-characterization-of-lenses">A Characterization of Lenses</h2>
 <p>Let us recall the definition of a lens expressed in terms of its usual api, namely the functions <span class="math inline">\({\rm view}\)</span> and <span class="math inline">\({\rm set}\)</span>.</p>
 <p><strong>Definition:</strong> Let <span class="math inline">\(S\)</span> and <span class="math inline">\(A\)</span> be sets. A lens from <span class="math inline">\(S\)</span> to <span class="math inline">\(A\)</span> is a tuple <span class="math display">\[

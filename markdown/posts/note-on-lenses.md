@@ -3,7 +3,7 @@ title: A Note On Lenses
 ---
 
 $$
-\newcommand{\view}{\textrm{view}}
+\newcommand{\view}{\textrm{get}}
 \newcommand{\set}{\textrm{set}}
 $$
 
@@ -14,6 +14,10 @@ in the category of sets with functions. So the arguments are meaningful for all 
 Mathematical parts may seem opaque if you are not used this kind of technical writing but this should not
 deceive you. The content is not deep and I am sure all of these are known to experts. However I haven't seen
 these arguments written down like this anywhere else.
+
+*Update:* Found it! [Unifying Set-Based, Delta-Based and Edit-Based Lenses](http://ceur-ws.org/Vol-1571/paper_13.pdf) by Michael Johnson and Robert Rosebrugh has essentialy the ame content. Also, found a paper by the
+same authors treating lenses as Grothendieck opfibrations [Lenses, fibrations and universal translations](http://web.science.mq.edu.au/~mike/papers/72.pdf). So why read this post instead of these papers? Well, probably for the
+fibration formulation inspired lens constructions implemented in Haskell.
 
 ## A Characterization of Lenses
 
