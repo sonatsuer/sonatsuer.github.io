@@ -11,8 +11,8 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
-- [Schröder-Bernstein Theorem](schroder-bernstein.html)
-  (July 11, 2022)
+- [Schröder-Bernstein via Eilenberg-Mazur in Haskell](schroder-bernstein.html)
+  (July 12, 2022)
 
 - [A note on lenses](note-on-lenses.html)
   (July 4, 2021)
