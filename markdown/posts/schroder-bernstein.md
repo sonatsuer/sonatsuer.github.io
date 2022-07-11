@@ -68,7 +68,7 @@ Of course I pushed some details under the rug and there are a few details to be 
 ## Haskell Implementation
 
 I will put code snippets together with explanations in the post. If you want to play with the
-code, it is available as a [gist]().
+code, it is available as a [gist](https://gist.github.com/sonatsuer/0701497e29a706ee45a591918ea9802c).
 
 First of all, the notions of disjoint union and being in bijection already exist in Haskell
 but with different names. So let us first rename them so they look more like mathematical
