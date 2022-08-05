@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Optics and representable functors](optics-and-representable-functors.html)
+  (August 6, 2022)
+
 - [Schröder-Bernstein via Eilenberg-Mazur in Haskell](schroder-bernstein.html)
   (July 12, 2022)
 
