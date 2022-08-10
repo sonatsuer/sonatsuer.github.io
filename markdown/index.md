@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Two characterizations of natural numbers](two-characterizations-of-natural-numbers.html)
+  (August 11, 2022)
+
 - [Optics and representable functors](optics-and-representable-functors.html)
   (August 6, 2022)
 
