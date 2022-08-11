@@ -7,7 +7,7 @@ title: Blog of S.Süer
 
 Hi there!
 
-I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via email: _sonatsuer at gmail dot com_.
+I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via email: _sonatsuer at gmail dot com_. I am also on [twitter](https://twitter.com/sonatsuer).
 
 This is my blog:
 
