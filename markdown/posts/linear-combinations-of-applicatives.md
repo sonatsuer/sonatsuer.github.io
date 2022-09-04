@@ -390,8 +390,7 @@ Again we have an `undefined`{.haskel} in the definition but this time in the
 opposite direction. This time the reason is the ideal consisting of the absorbing element.
 
 The machinery --even the version with only two functors and two lax monoidal morphisms-- is
-more general than the examples here illustrated. For instance we can even define
-~~utterly useless~~ exotic variants of validation and overflow. One can even construct an
-example where both lax monoidal morphisms are needed and they are inverse to each other.
+stronger than the examples here illustrated. For instance we can define
+~~utterly useless~~ exotic variants of validation and overflow. We can even construct an
+example where both lax monoidal morphisms are needed and they are *not* inverse to each other.
 They are all implemented in the [gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
-
