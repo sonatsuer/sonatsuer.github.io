@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Linear combinations of applicatives](linear-combinations-of-applicatives.html)
+  (September 4, 2022)
+
 - [Two characterizations of natural numbers](two-characterizations-of-natural-numbers.html)
   (August 11, 2022)
 
