@@ -22,7 +22,7 @@ Here I will give yet another method to construct Applicatives.
 
 If you want to skip the mathematics, you can directly jump to the Either-ish examples section.
 This is where Haskell code starts. The code in that section and more --a small test suite and a
-few more examples-- is available as a [gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
+few more examples-- are available as a [gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
 
 ## The Construction
 
@@ -33,11 +33,11 @@ to Haskell's `Applicative`{.haskell} class is explained, for instance,
 We will be working in the category of sets, so no domain theory will be necessary.
 Let $\mathcal{M}=(M,\cdot,1)$ be a monoid. Consider a family of lax monoidal functors
 $\{F_m\}_{m\in M}$. We wil identify each element $m\in M$ with the constant functor $x\mapsto\{m\}$.
-Now let us defined:
+Now let us define:
 $$
 F(x) = \sum_{m\in M} m\times F_m(x).
 $$
-We want to turn $F$ into a lax monoidal functor from sets to sets where the monidal
+We want to turn $F$ into a lax monoidal functor from sets to sets where the monoidal
 structure is $\times$. We need a unit, that is an element
 $$
 \epsilon \in F(1)
@@ -56,7 +56,7 @@ there are $m,n\in M$, $a_m\in F_m(x)$ and $b_n\in F_n(y)$ such that $a = (m, a_m
 First let us choose the summand in which $a\odot b$ will fall. A very natural candidate is
 $(m\cdot n)\times F_{m\cdot n}(x\times y)$. So  $a\odot b$ will be of the form
 $(m\cdot n, c_{m\cdot n})$ for some $c_{m\cdot n}\in F_{m\cdot n}(x\times y)$. One way of doing that
-is to push $a_m$ into $F_{m\cdot n}(x)$ an $b_n$ into $F_{m\cdot n}(y)$ and then
+is to push $a_m$ into $F_{m\cdot n}(x)$, $b_n$ into $F_{m\cdot n}(y)$ and then
 combine them by $\odot_{m\cdot n}$. Let us give names to the functions we use to push the elements:
 $$
 L(m, n)\in {\rm Hom}(F_m, F_{m\cdot n}),\;\;\; R(m, n)\in (F_n, F_{m\cdot n})
@@ -93,19 +93,18 @@ $$
 
 Nice and symmetric. It looks like a categorified version of a bi-action. I will leave it
 to you to find a *"It's just a blah in the category of blöh."* kind of characterization.
-Finally, note that we do no really need all $F_m$ to be instances of `Applicative`{.haskell}
-applicatives. For $m\neq 1$, we only need an `Apply`{.haskell} instance.
+Finally, note that we do no really need all $F_m$ to be instances of `Applicative`{.haskell}.
+For $m\neq 1$, we only need `Apply`{.haskell}.
 
 ## Examples
 
 I will not give an implementation of the general construction as it talks about arbitrary
-type level monoids. It can be done for *some* monoids but frankly I think it is worth the
-trouble. Instead, I will give several implements corresponding to special cases when it
-makes sense to do so.
+type level monoids. It can be done for *some* monoids but frankly I think it is not worth the
+trouble. Instead, I will give several implementations corresponding to special cases.
 
 ### List-ish Examples
 
-Let us begin an easy example. Consider the monoid
+Let us begin with an easy example. Consider the monoid
 $\mathcal{N}_\infty = (\mathbb{N}\cup\{\infty\}, \min, \infty)$. Let
 $$
 \mathcal{Z}(x) = \sum_{n\in \mathcal{N}_\infty} m\times V_m(x)
@@ -116,8 +115,8 @@ If we define
 $$
 L(m,n) = R(n,m) \in {\rm Hom}(F_m, F_{\min\{m,\, n\}})
 $$
-by truncating then all the conditions we mentioned in the last chapter are satisfied
-the lax monoidal structure we get on $F$ is the zippy version.
+by truncating then all the conditions we mentioned in the last chapter are satisfied.
+The lax monoidal structure we get on $F$ is the zippy version.
 
 One can also obtained the lax monoidal structure induced by the list monad in a similar
 way. Consider the multiplicative monoid $\mathcal{N}_*=(\mathbb{N}\cup\{\infty\}, *, 1)$. Let $V_n$
@@ -145,19 +144,19 @@ $$
 
 I leave the case of infinite vectors as ~~an exercise~~ a fun puzzle.
 
-I think a remark on implementations is in order. It might be tempting to to model these
-functors as dependent sums --which Haskell supports to an extend-- then implement the general
+I think a remark on implementations is in order. It might be tempting to model these
+functors as dependent sums --which Haskell supports to an extent-- then implement the general
 construction and transfer it to regular lists. However, this is not really possible
 because the list type in Haskell is *not* isomorphic to a dependent sum of fixed-length
 vectors. On the dependent sum  type we can implement the `isFinite`{.haskell} predicate
-simply by pattern matching. On the other hand, for lists this would practically mean
-to solve the halting problem.
+simply by pattern matching. On the other hand, for lists, this would practically mean
+solving the halting problem.
 
 ### Either-ish Examples
 
 So let us move to more practical examples. First let us reduce the dependent sum
 to a regular sum. Suppose the family $\{F_m\}_{m\in M}$ contains only finitely many functors,
-say, $G_1,\ldots,G_k$, then we can group the shared functors to obtain the following equivalent form:
+say, $G_1,\ldots,G_k$. Then we can group the duplicated functors to obtain the following equivalent form:
 $$
 F(x) = \sum_{i=1}^k M_k\times G_k(x)
 $$
@@ -296,13 +295,14 @@ instance Semigroup m => Applicative (ClassicalValidation m) where
 
 Let us address a few things quickly. First, there is an `undefined`{.haskell}
 in the `Applicative`{.haskell} instance definition. The reason is that we never need to
-go from `g1`{.haskell} to `g2`{.haskell} so that undefined is never called. To see why
+go from `g1`{.haskell} to `g2`{.haskell} so undefined is never called. To see why
 it is the case look at the multiplication of `AddUnit m`{.haskell}. In that monoid, multiplication
 of any element with an old element (from both sides) is again an old element. In algebra we
-say that the old element is a two sided ideal.
+say that the old elements form a two sided ideal.
 
 Second, the point of this implementation is illustrating a point. If you really need an implementation
-the best way to inline/specialize the `alignFunctors`{.haskell}.
+the best way is to inline/specialize the `alignFunctors`{.haskell} and eliminate the
+`undefined`{.haskell}.
 
 Now we will construct a potentially useful applicative. The idea is that if you decompose
 a monoid into disjoint sets, the set containing the unit is a partial monoid. The converse
@@ -346,7 +346,7 @@ instance PartialMonoid m => Monoid (AddAbsorbing m) where
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This gives us all we need to define an applicative where less than perfect
-success cases can accumulate and yield an error. Probably it is well known
+success cases can accumulate and deteriorate into an error. Probably it is well known
 to a lot of people but I had never seen it before.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ {.haskell}
@@ -390,7 +390,7 @@ Again we have an `undefined`{.haskel} in the definition but this time in the
 opposite direction. This time the reason is the ideal consisting of the absorbing element.
 
 The machinery --even the version with only two functors and two lax monoidal morphisms-- is
-stronger than the examples here illustrated. For instance we can define
+stronger than the examples above illustrate. For instance we can define
 ~~utterly useless~~ exotic variants of validation and overflow. We can even construct an
 example where both lax monoidal morphisms are needed and they are *not* inverse to each other.
-They are all implemented in the [gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
+These are all implemented in the [gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
