@@ -93,8 +93,6 @@ $$
 
 Nice and symmetric. It looks like a categorified version of a bi-action. I will leave it
 to you to find a *"It's just a blah in the category of blöh."* kind of characterization.
-Finally, note that we do no really need all $F_m$ to be instances of `Applicative`{.haskell}.
-For $m\neq 1$, we only need `Apply`{.haskell}.
 
 ## Examples
 
