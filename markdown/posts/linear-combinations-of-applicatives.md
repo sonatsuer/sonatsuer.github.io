@@ -387,8 +387,11 @@ instance PartialMonoid pm => Applicative (Overflow pm) where
 Again we have an `undefined`{.haskel} in the definition but this time in the
 opposite direction. This time the reason is the ideal consisting of the absorbing element.
 
-The machinery --even the version with only two functors and two lax monoidal morphisms-- is
-stronger than the examples above illustrate. For instance we can define
-~~utterly useless~~ exotic variants of validation and overflow. We can even construct an
-example where both lax monoidal morphisms are needed and they are *not* inverse to each other.
-These are all implemented in the [gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
+The machinery --even the version with only two functors and one lax monoidal morphism-- is
+stronger than the examples above illustrate. For instance we can create an applicative which
+supports overflow style failure and validation style error accumulation.
+[Here](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e#file-applicativeexperiments-linearcombinations-hs-L275)
+is an implementation. We can even define ~~utterly useless~~ exotic variants of validation
+and overflow. We can even construct an example where both lax monoidal morphisms are needed
+and they are *not* inverse to each other. These are all implemented in the
+[gist](https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e).
