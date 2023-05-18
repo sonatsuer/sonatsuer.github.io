@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Optics in Clojure](optics-in-clojure.html)
+  (May 27, 2023)
+
 - [Linear combinations of applicatives](linear-combinations-of-applicatives.html)
   (September 4, 2022)
 

@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Blog of S.Süer – Optics in Clojure</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div id="header">
+<h1 class="title">Optics in Clojure</h1>
+</div>
+<h2 id="dead-simple-optics">Dead Simple Optics</h2>
+<p>Recently I gave a talk about optics in our local <em>Funktionaler Stammtisch</em> –<a href="assets/optics-talk.pdf">here</a> are the slides if you are curious. My goal was to help people construct a mental model of optics using their existential encodings. The language I chose was Kotlin because there were Kotlin programmers in the audience and there is a nice functional programming library called Arrow in Kotlin which <a href="https://arrow-kt.io/learn/immutable-data/">implements</a> optics.</p>
+<p>While preparing the talk I had a chance to look at the Kotlin implementation. In the Arrow library, optics are defined as interfaces. Capabilities of an optic –things like view, review, traverse, etc– corresponds to methods of the interface. If a capability is shared by different optics, this is handled by inheritance. For instance since isomorphisms can do everything other optics can do, their interface inherits from all of them. This is from the Arrow library documentation:</p>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="kw">interface</span> PIso&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt; : <span class="dt">PPrism</span>&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt; , <span class="dt">PLens</span>&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt; ,
+  <span class="dt">Getter</span>&lt;<span class="dt">S</span>, <span class="dt">A</span>&gt; , <span class="dt">POptional</span>&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt; , <span class="dt">PSetter</span>&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt; , <span class="dt">Fold</span>&lt;<span class="dt">S</span>, <span class="dt">A</span>&gt; ,
+  <span class="dt">PTraversal</span>&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt; , <span class="dt">PEvery</span>&lt;<span class="dt">S</span>, <span class="dt">T</span>, <span class="dt">A</span>, <span class="dt">B</span>&gt;</code></pre></div>
+<p>Behind this OOP noise, there is actually a simple idea: An optic is a collection of capabilities. Compared to some Haskell implementations, where you talk about profunctors, existential types or van Laarhoven encodings this is dead simple.</p>
+<p>So let’s try to imitate this in Haskell. I will focus on isomorphisms, lenses, prisms and traversals.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">OpticType</span> <span class="fu">=</span> <span class="dt">Iso</span> <span class="fu">|</span> <span class="dt">Lens</span> <span class="fu">|</span> <span class="dt">Prism</span> <span class="fu">|</span> <span class="dt">Traversal</span></code></pre></div>
+<p>As a very unidiomatic Haskell definition, each capability corresponds to a field in a record:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Optic</span> s t a b <span class="fu">=</span> <span class="dt">Optic</span>
+  {<span class="ot"> getView ::</span> <span class="dt">Maybe</span> (s <span class="ot">-&gt;</span> a)
+  ,<span class="ot"> getReview ::</span> <span class="dt">Maybe</span> (b <span class="ot">-&gt;</span> t)
+  ,<span class="ot"> getOver ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> t
+  ,<span class="ot"> getToList ::</span> s <span class="ot">-&gt;</span> [a]
+  ,<span class="ot"> getTraverse ::</span> forall f<span class="fu">.</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> f b) <span class="ot">-&gt;</span> (s <span class="ot">-&gt;</span> f t)
+  }</code></pre></div>
+<p>Now you can recover the type of an optic just by looking at whether you have <code>view</code> and/or <code>review</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">classify ::</span> <span class="dt">Optic</span> s t a b <span class="ot">-&gt;</span> <span class="dt">OpticType</span>
+classify optic <span class="fu">=</span>
+  <span class="kw">case</span> (getView optic, getReview optic) <span class="kw">of</span>
+    (<span class="dt">Nothing</span>, <span class="dt">Nothing</span>) <span class="ot">-&gt;</span> <span class="dt">Traversal</span>
+    (<span class="dt">Just</span> _, <span class="dt">Nothing</span>) <span class="ot">-&gt;</span> <span class="dt">Lens</span>
+    (<span class="dt">Nothing</span>, <span class="dt">Just</span> _) <span class="ot">-&gt;</span> <span class="dt">Prism</span>
+    (<span class="dt">Just</span> _, <span class="dt">Just</span> _) <span class="ot">-&gt;</span> <span class="dt">Iso</span></code></pre></div>
+<p>Obviously this implementation is unusable. Though, I think, if you keep track of the available capabilities at type level, then you may turn this idea into a semi-decent optics library.</p>
+<p>Even though this record base implementation is not practical, it has a pedagogical merit: it makes composition explicit.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">composeOptics ::</span> <span class="dt">Optic</span> s t a&#39; b&#39; <span class="ot">-&gt;</span> <span class="dt">Optic</span> a&#39; b&#39; a b <span class="ot">-&gt;</span> <span class="dt">Optic</span> s t a b
+composeOptics optic1 optic2 <span class="fu">=</span> <span class="dt">Optic</span> {
+  getView <span class="fu">=</span> liftA2 (flip (<span class="fu">.</span>)) (getView optic1) (getView optic2),
+  getReview <span class="fu">=</span> liftA2 (<span class="fu">.</span>) (getReview optic1) (getReview optic2),
+  getOver <span class="fu">=</span> getOver optic1 <span class="fu">.</span> getOver optic2,
+  getToList <span class="fu">=</span> getToList optic1 <span class="fu">&gt;=&gt;</span> getToList optic2,
+  getTraverse <span class="fu">=</span> getTraverse optic1 <span class="fu">.</span> getTraverse optic2
+  }</code></pre></div>
+<p>So composition of optics is just capability wise composition where capabilities compose in appropriate categories: <code>view</code> in the opposite category, <code>toList</code> in the Kleisli category for lists and the rest in the ambient category –Hask if you will.</p>
+<h2 id="implementation-in-clojure">Implementation in Clojure</h2>
+<p>In clojure, where there are no types, you can replace the record above by a good old fashioned map. Here is what composition looks like in Clojure.</p>
+<div class="sourceCode"><pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="bu">defn-</span><span class="fu"> compose-binary</span>
+  [optic1 optic2]
+  (<span class="kw">let</span>
+   [compose-capability (<span class="kw">fn</span> [field-name binary-op] (binary-op (field-name optic1) (field-name optic2)))
+    candidates {<span class="at">:view</span> (compose-capability <span class="at">:view</span> backward-compose)
+                <span class="at">:to-list</span> (compose-capability <span class="at">:to-list</span> vector-kleisli)
+                <span class="at">:over</span> (compose-capability <span class="at">:over</span> forward-compose)
+                <span class="at">:review</span> (compose-capability <span class="at">:review</span> forward-compose)
+                <span class="at">:traverse</span> (compose-capability <span class="at">:traverse</span> forward-compose)}]
+    (<span class="kw">into</span> {} (<span class="kw">filter</span> (<span class="kw">comp</span> some? <span class="kw">val</span>) candidates))))
+
+(<span class="bu">defn</span><span class="fu"> compose</span>
+  <span class="do">&quot;General optic composition. Accepts an arbitrary list of</span>
+<span class="do">   optics. It produces the `eq`, the unit on optic composition,</span>
+<span class="do">   for the empty list.&quot;</span>
+  ([&amp; optics] (<span class="kw">reduce</span> compose-binary eq optics)))</code></pre></div>
+<p>Actually, one can even build a small library around this idea and that is exactly what I did. Here it is: <a href="https://github.com/sonatsuer/concrete-optics">concrete-optics</a>, a dead simple implementation of optics in Clojure. <a href="https://sonatsuer.github.io/concrete-optics/index.html">Here</a> is a link to the API docs.</p>
+<p>With this library, you can do stuff like this:</p>
+<div class="sourceCode"><pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="bu">def</span><span class="fu"> nested-data</span>
+  [{<span class="at">:a</span> <span class="dv">1</span> <span class="at">:b</span> <span class="dv">2</span>} {<span class="at">:c</span> <span class="dv">3</span>} {<span class="at">:a</span> <span class="dv">-5</span>} {<span class="at">:a</span> <span class="dv">7</span> <span class="at">:z</span> <span class="dv">22</span>}])
+
+(<span class="bu">def</span><span class="fu"> each-positive-a</span>
+  (opt/compose opt/vector-traversal
+               (opt/ix <span class="at">:a</span>)
+               (opt/predicate-prism #(<span class="kw">&gt;</span> <span class="va">%</span> <span class="dv">0</span>))))
+
+(<span class="bu">deftest</span><span class="fu"> list-positive-as-test</span>
+  (<span class="kw">testing</span> <span class="st">&quot;listing elements with a filtering condition&quot;</span>
+    (<span class="kw">is</span> (<span class="kw">=</span> (opt/to-list each-positive-a nested-data)
+           [<span class="dv">1</span> <span class="dv">7</span>]))))
+
+(<span class="bu">deftest</span><span class="fu"> modify-positive-as-test</span>
+  (<span class="kw">testing</span> <span class="st">&quot;modifying only the values fitting a filtering condition&quot;</span>
+    (<span class="kw">is</span> (<span class="kw">=</span> (opt/over each-positive-a <span class="kw">inc</span> nested-data)
+           [{<span class="at">:a</span> <span class="dv">2</span>, <span class="at">:b</span> <span class="dv">2</span>} {<span class="at">:c</span> <span class="dv">3</span>} {<span class="at">:a</span> <span class="dv">-5</span>} {<span class="at">:a</span> <span class="dv">8</span>, <span class="at">:z</span> <span class="dv">22</span>}]))))</code></pre></div>
+<p>For more examples you can have a look at the <a href="https://sonatsuer.github.io/concrete-optics/showcase.html">showcase</a>. Feedback is most welcome.</p>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-maxBound <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>
