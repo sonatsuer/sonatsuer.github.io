@@ -1,84 +1,234 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Blog of S.Süer – Monoid Homomorphisms (1 of 2)</title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="stylesheet" href="./assets/format.css" />
   <link rel="icon" href="assets/logo.png">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
-<div id="header">
+<header id="title-block-header">
 <h1 class="title">Monoid Homomorphisms (1 of 2)</h1>
-</div>
-<h2 id="abstract-algebra-and-programming">Abstract Algebra and Programming</h2>
-<p>Haskell community in particular and the functional programming community in general adopted a lot of useful algebraic structures, such as semigroups,monoids, (linear) orders, monads, categories etc. However, in the vast majority of the cases, this adoption has been at the level of of individual objects as opposed to adopting the category they form. People talk about monoids, however you do not hear many programmers talking about the <em>category</em> of monoids, for instance. Similarly, you do not see many type class instances which use an assumption that a certain map is actually a morphism in some category. One notable exception is Kmett’s monad homomorphism library, which treats monads as a category.</p>
-<p>From an ex-mathematicians point of view, most functional programmers learning category theory seem to have blind spot there. There is this whole genre of categories where objects are <em>sets with extra structure</em> and morphisms are <em>structure preserving functions</em>. For the working programmer, a category usually consists of types and functions you can define between them. The extra structure part is completely lost. A function is merely a way to get from type a to type b. It is not seen as a means to carry or translate structure.</p>
-<p>This is not a big loss, of course, because most of the time the category at at hand <em>does</em> consist of types in a programming language and functions you can define between them. However, I think, the <em>morphisms preserve structure</em> approach has its use cases.</p>
+</header>
+<h2 id="abstract-algebra-and-programming">Abstract Algebra and
+Programming</h2>
+<p>Haskell community in particular and the functional programming
+community in general adopted a lot of useful algebraic structures, such
+as semigroups,monoids, (linear) orders, monads, categories etc. However,
+in the vast majority of the cases, this adoption has been at the level
+of of individual objects as opposed to adopting the category they form.
+People talk about monoids, however you do not hear many programmers
+talking about the <em>category</em> of monoids, for instance. Similarly,
+you do not see many type class instances which use an assumption that a
+certain map is actually a morphism in some category. One notable
+exception is Kmett’s monad homomorphism library, which treats monads as
+a category.</p>
+<p>From an ex-mathematicians point of view, most functional programmers
+learning category theory seem to have blind spot there. There is this
+whole genre of categories where objects are <em>sets with extra
+structure</em> and morphisms are <em>structure preserving
+functions</em>. For the working programmer, a category usually consists
+of types and functions you can define between them. The extra structure
+part is completely lost. A function is merely a way to get from type a
+to type b. It is not seen as a means to carry or translate
+structure.</p>
+<p>This is not a big loss, of course, because most of the time the
+category at at hand <em>does</em> consist of types in a programming
+language and functions you can define between them. However, I think,
+the <em>morphisms preserve structure</em> approach has its use
+cases.</p>
 <h2 id="monoids">Monoids</h2>
-<p>Let’s look at a concrete example. A monoid is a triple <span class="math inline">\((M, \star, 1_M)\)</span> where <span class="math inline">\(M\)</span> is a set, <span class="math inline">\(\star\)</span> is a binary operation on <span class="math inline">\(M\)</span> and <span class="math inline">\(1_M\)</span> is an element of <span class="math inline">\(M\)</span> subject to the following conditions, called the monoid axioms:</p>
+<p>Let’s look at a concrete example. A monoid is a triple <span
+class="math inline">\((M, \star, 1_M)\)</span> where <span
+class="math inline">\(M\)</span> is a set, <span
+class="math inline">\(\star\)</span> is a binary operation on <span
+class="math inline">\(M\)</span> and <span
+class="math inline">\(1_M\)</span> is an element of <span
+class="math inline">\(M\)</span> subject to the following conditions,
+called the monoid axioms:</p>
 <ul>
-<li><span class="math inline">\(\star\)</span> is associative, i.e. <span class="math inline">\(x\star(y\star z) = (x\star y) \star z\)</span> for all <span class="math inline">\(x,y,z\in M\)</span>,</li>
-<li><span class="math inline">\(1_M\)</span> is the identity of the operation <span class="math inline">\(\star\)</span>, i.e. <span class="math inline">\(1_M\star x = x = x\star 1_M\)</span> for all <span class="math inline">\(x\in M\)</span>.</li>
+<li><span class="math inline">\(\star\)</span> is associative,
+i.e. <span class="math inline">\(x\star(y\star z) = (x\star y) \star
+z\)</span> for all <span class="math inline">\(x,y,z\in M\)</span>,</li>
+<li><span class="math inline">\(1_M\)</span> is the identity of the
+operation <span class="math inline">\(\star\)</span>, i.e. <span
+class="math inline">\(1_M\star x = x = x\star 1_M\)</span> for all <span
+class="math inline">\(x\in M\)</span>.</li>
 </ul>
-<p>So monoids are sets with extra structure. Now let us define what it means for a function to preserve this structure. A monoid homomorphism from a monoid <span class="math inline">\((M,\star, 1_M)\)</span> to <span class="math inline">\((N, \ast, 1_N)\)</span> is a function <span class="math inline">\(\varphi : M\to N\)</span> which satisfies</p>
+<p>So monoids are sets with extra structure. Now let us define what it
+means for a function to preserve this structure. A monoid homomorphism
+from a monoid <span class="math inline">\((M,\star, 1_M)\)</span> to
+<span class="math inline">\((N, \ast, 1_N)\)</span> is a function <span
+class="math inline">\(\varphi : M\to N\)</span> which satisfies</p>
 <ul>
 <li><span class="math inline">\(\varphi(1_M) = 1_N\)</span> and</li>
-<li><span class="math inline">\(\varphi(x \star y) = \varphi(x) \ast \varphi (y)\)</span>.</li>
+<li><span class="math inline">\(\varphi(x \star y) = \varphi(x) \ast
+\varphi (y)\)</span>.</li>
 </ul>
-<p>Note that the definition of monoid homomorphism does not depend on the monoid axioms but only on the operations needed to define a monoid.</p>
-<p>Here are two monoids: <span class="math inline">\((\mathbb{R}, +, 0)\)</span> and <span class="math inline">\((\mathbb{R}^{&gt;0}, \cdot, 1)\)</span>. And here are two famous monoid homomorphisms: <span class="math inline">\(\log:\mathbb{R}^{&gt;0}\to\mathbb{R}\)</span> and <span class="math inline">\(\exp:\mathbb{R}\to\mathbb{R}^{&gt;0}\)</span>, which happen to be inverse to each other.</p>
-<p>Now comes the interesting part. Suppose we need to multiply two large numbers, say <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The obvious thing is to use a computer or a calculator. But there is also an outdated alternative: logarithm tables. We simply look up the logarithms of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, add the results, and using the logarithm table (and the fact that <span class="math inline">\(\log\)</span> is monotone increasing) compute the exponential. More symbolically, we use the following identity: <span class="math display">\[
+<p>Note that the definition of monoid homomorphism does not depend on
+the monoid axioms but only on the operations needed to define a
+monoid.</p>
+<p>Here are two monoids: <span class="math inline">\((\mathbb{R}, +,
+0)\)</span> and <span class="math inline">\((\mathbb{R}^{&gt;0}, \cdot,
+1)\)</span>. And here are two famous monoid homomorphisms: <span
+class="math inline">\(\log:\mathbb{R}^{&gt;0}\to\mathbb{R}\)</span> and
+<span
+class="math inline">\(\exp:\mathbb{R}\to\mathbb{R}^{&gt;0}\)</span>,
+which happen to be inverse to each other.</p>
+<p>Now comes the interesting part. Suppose we need to multiply two large
+numbers, say <span class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span>. The obvious thing is to use a computer
+or a calculator. But there is also an outdated alternative: logarithm
+tables. We simply look up the logarithms of <span
+class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span>, add the results, and using the
+logarithm table (and the fact that <span
+class="math inline">\(\log\)</span> is monotone increasing) compute the
+exponential. More symbolically, we use the following identity: <span
+class="math display">\[
   x\cdot y = \exp ( \log(x) + \log(y)).
-\]</span> Let us go over what we did here. We took a <em>computation</em> in <span class="math inline">\(\mathbb{R}^{&gt;0}\)</span>, namely <span class="math inline">\(x\cdot y\)</span>, and pushed it to <span class="math inline">\(\mathbb{R}\)</span> using <span class="math inline">\(\log\)</span>. This made the computation easier as addition is easier than multiplication. Then we pushed the result back in <span class="math inline">\(\mathbb{R}^{&gt;0}\)</span> where we needed it. This idea is very common in mathematics. For instance, Hughes’ difference lists also use monoid homomorphisms. In that case the role of <span class="math inline">\(\log\)</span> is played by the Cayley representation map. I actually wrote about it <a href="invitation.html">here</a>.</p>
+\]</span> Let us go over what we did here. We took a
+<em>computation</em> in <span
+class="math inline">\(\mathbb{R}^{&gt;0}\)</span>, namely <span
+class="math inline">\(x\cdot y\)</span>, and pushed it to <span
+class="math inline">\(\mathbb{R}\)</span> using <span
+class="math inline">\(\log\)</span>. This made the computation easier as
+addition is easier than multiplication. Then we pushed the result back
+in <span class="math inline">\(\mathbb{R}^{&gt;0}\)</span> where we
+needed it. This idea is very common in mathematics. For instance,
+Hughes’ difference lists also use monoid homomorphisms. In that case the
+role of <span class="math inline">\(\log\)</span> is played by the
+Cayley representation map. I actually wrote about it <a
+href="invitation.html">here</a>.</p>
 <h2 id="categorification">Categorification</h2>
 <blockquote>
-<p>A monad is just a monoid in the category of endofunctors, what’s the problem?</p>
+<p>A monad is just a monoid in the category of endofunctors, what’s the
+problem?</p>
 </blockquote>
-<p>The problem is that the monoidal structure on the endofunctor category is not specified. Joking aside, it has been almost 10 years since Dan Piponi wrote a blog post titled <a href="http://blog.sigfpe.com/2008/11/from-monoids-to-monads.html">From Monoids to Monads</a>. So I will not explain how the notion of monad is a categorified version of the notion of a monoid. However, mostly to fix notation, I will explain what the notion of the category of monoid objects in an arbitrary monoidal category is.</p>
-<p>Let us start with usual monoids in the category of sets. The first step is to express everything using functions in the point-free style. The binary operation on a monoid is already a function. But how do we talk about the identity element? The idea is to view the identity as a <em>nullary</em> operation, that is, a function from the zeroth cartesian power of the monoid to itself. The zeroth power of a set is a set with a single element, also known as a singleton. So a nullary operation on a set <span class="math inline">\(X\)</span> is simply a function from a singleton to <span class="math inline">\(X\)</span>, which is obviously determined by the unique element in its image. This means that we can identify nullary operations on <span class="math inline">\(X\)</span> with elements of <span class="math inline">\(X\)</span>.</p>
-<p>Now let us rephrase the definition of a monoid without referring to elements. Fix a singleton <span class="math inline">\(1\)</span>. A monoid is a triple <span class="math inline">\((M, \star, 1_M)\)</span> where <span class="math inline">\(\star\)</span> and <span class="math inline">\(1_M\)</span> are binary and nullary operations, respectively, on <span class="math inline">\(M\)</span> where the following diagrams commute:</p>
-<p><span class="math inline">\(\newcommand{\ra}[1]{\kern-1.5ex\xrightarrow{\ \ #1\ \ }\phantom{}\kern-1.5ex}\)</span> <span class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span class="math inline">\(\newcommand{\da}[1]{\bigg\downarrow\raise.5ex\rlap{\scriptstyle#1}}\)</span> <span class="math inline">\(\newcommand{\id}{\textrm{id}}\)</span></p>
+<p>The problem is that the monoidal structure on the endofunctor
+category is not specified. Joking aside, it has been almost 10 years
+since Dan Piponi wrote a blog post titled <a
+href="http://blog.sigfpe.com/2008/11/from-monoids-to-monads.html">From
+Monoids to Monads</a>. So I will not explain how the notion of monad is
+a categorified version of the notion of a monoid. However, mostly to fix
+notation, I will explain what the notion of the category of monoid
+objects in an arbitrary monoidal category is.</p>
+<p>Let us start with usual monoids in the category of sets. The first
+step is to express everything using functions in the point-free style.
+The binary operation on a monoid is already a function. But how do we
+talk about the identity element? The idea is to view the identity as a
+<em>nullary</em> operation, that is, a function from the zeroth
+cartesian power of the monoid to itself. The zeroth power of a set is a
+set with a single element, also known as a singleton. So a nullary
+operation on a set <span class="math inline">\(X\)</span> is simply a
+function from a singleton to <span class="math inline">\(X\)</span>,
+which is obviously determined by the unique element in its image. This
+means that we can identify nullary operations on <span
+class="math inline">\(X\)</span> with elements of <span
+class="math inline">\(X\)</span>.</p>
+<p>Now let us rephrase the definition of a monoid without referring to
+elements. Fix a singleton <span class="math inline">\(1\)</span>. A
+monoid is a triple <span class="math inline">\((M, \star, 1_M)\)</span>
+where <span class="math inline">\(\star\)</span> and <span
+class="math inline">\(1_M\)</span> are binary and nullary operations,
+respectively, on <span class="math inline">\(M\)</span> where the
+following diagrams commute:</p>
+<p><span
+class="math inline">\(\newcommand{\ra}[1]{\kern-1.5ex\xrightarrow{\ \
+#1\ \ }\phantom{}\kern-1.5ex}\)</span> <span
+class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \
+\smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span
+class="math inline">\(\newcommand{\da}[1]{\bigg\downarrow\raise.5ex\rlap{\scriptstyle#1}}\)</span>
+<span class="math inline">\(\newcommand{\id}{\textrm{id}}\)</span></p>
 <p><span class="math display">\[
 \begin{array}{c}
 1 \times M &amp; \ras{1_M \times \id} &amp; M \times M \newline
@@ -95,12 +245,21 @@ M \times 1 &amp; \ras{\;\;\rho\;\;} &amp; M \newline
 <p>and</p>
 <p><span class="math display">\[
 \begin{array}{c}
-(M \times M) \times M &amp; \ras{\alpha}\;\;\;\; M \times (M\times M)\;\;\;\; \ras{\star} &amp; M \times M \newline
+(M \times M) \times M &amp; \ras{\alpha}\;\;\;\; M \times (M\times
+M)\;\;\;\; \ras{\star} &amp; M \times M \newline
 \da{\star} &amp; &amp; \da{\star} \newline
-M \times M &amp; \ras{\;\;\;\;\;\;\;\;\;\;\;\;\;\;\star\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;} &amp; M. \newline
+M \times M &amp;
+\ras{\;\;\;\;\;\;\;\;\;\;\;\;\;\;\star\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;}
+&amp; M. \newline
 \end{array}
 \]</span></p>
-<p>Here <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\rho\)</span> are projections and <span class="math inline">\(\alpha((x,y), z) = (x,(y,z))\)</span>. A function <span class="math inline">\(\varphi:M\to N\)</span> is a monoid homomorphism from <span class="math inline">\((M,\star,1_M)\)</span> to <span class="math inline">\((N,\ast, 1_N)\)</span> if the following diagrams commute:</p>
+<p>Here <span class="math inline">\(\lambda\)</span> and <span
+class="math inline">\(\rho\)</span> are projections and <span
+class="math inline">\(\alpha((x,y), z) = (x,(y,z))\)</span>. A function
+<span class="math inline">\(\varphi:M\to N\)</span> is a monoid
+homomorphism from <span class="math inline">\((M,\star,1_M)\)</span> to
+<span class="math inline">\((N,\ast, 1_N)\)</span> if the following
+diagrams commute:</p>
 <p><span class="math display">\[
 \begin{array}{c}
 1 &amp; \ras{1_M} &amp; M \newline
@@ -114,58 +273,156 @@ M \times M &amp; \ras{\varphi \times \varphi} &amp; N \times N \newline
 M &amp; \ras{\varphi} &amp; N. \newline
 \end{array}
 \]</span></p>
-<p>This formulation tells us that in any category with finite products we can talk about monoids and monoid homomorphisms. For instance if we replace the category of sets by topological spaces (with continuous maps) we obtain the notion of a topological monoid. We will do something better, though. We will isolate the properties of category theoretic product we needed in the definitions above. This will give us a notion of an abstract product which will yield the notion a monoidal category.</p>
-<p>Let <span class="math inline">\(C\)</span> be an arbitrary category. Let <span class="math inline">\(\otimes\)</span> be our abstract product on <span class="math inline">\(C\)</span>.We want to be able replace every occurrence of <span class="math inline">\(\times\)</span> above by <span class="math inline">\(\otimes\)</span>. First of all we should have</p>
+<p>This formulation tells us that in any category with finite products
+we can talk about monoids and monoid homomorphisms. For instance if we
+replace the category of sets by topological spaces (with continuous
+maps) we obtain the notion of a topological monoid. We will do something
+better, though. We will isolate the properties of category theoretic
+product we needed in the definitions above. This will give us a notion
+of an abstract product which will yield the notion a monoidal
+category.</p>
+<p>Let <span class="math inline">\(C\)</span> be an arbitrary category.
+Let <span class="math inline">\(\otimes\)</span> be our abstract product
+on <span class="math inline">\(C\)</span>.We want to be able replace
+every occurrence of <span class="math inline">\(\times\)</span> above by
+<span class="math inline">\(\otimes\)</span>. First of all we should
+have</p>
 <p><span class="math display">\[
 \otimes : C \times C \to C
 \]</span></p>
-<p>because a product takes two objects and produces one. We also need <span class="math inline">\(f\otimes g\)</span> where <span class="math inline">\(f\times g\)</span> is a functor from <span class="math inline">\(C\times C\)</span> to itself. So let us take <span class="math inline">\(\otimes\)</span> to be a functor. What else? We need analogues of <span class="math inline">\(1\)</span>, <span class="math inline">\(\lambda\)</span>, <span class="math inline">\(\rho\)</span> and <span class="math inline">\(\alpha\)</span>.</p>
-<p>In the case of cartesian product, <span class="math inline">\(1\)</span> is the zeroth power of any object. This is essentially saying that our tensor should have a two sided identity, <em>up to isomorphism</em>. Now looking at the diagrams above, we see that, <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\rho\)</span> exactly do that. Finally, we need a family of isomorphism</p>
+<p>because a product takes two objects and produces one. We also need
+<span class="math inline">\(f\otimes g\)</span> where <span
+class="math inline">\(f\times g\)</span> is a functor from <span
+class="math inline">\(C\times C\)</span> to itself. So let us take <span
+class="math inline">\(\otimes\)</span> to be a functor. What else? We
+need analogues of <span class="math inline">\(1\)</span>, <span
+class="math inline">\(\lambda\)</span>, <span
+class="math inline">\(\rho\)</span> and <span
+class="math inline">\(\alpha\)</span>.</p>
+<p>In the case of cartesian product, <span
+class="math inline">\(1\)</span> is the zeroth power of any object. This
+is essentially saying that our tensor should have a two sided identity,
+<em>up to isomorphism</em>. Now looking at the diagrams above, we see
+that, <span class="math inline">\(\lambda\)</span> and <span
+class="math inline">\(\rho\)</span> exactly do that. Finally, we need a
+family of isomorphism</p>
 <p><span class="math display">\[
   \alpha_{a,b,c} : (a\otimes b)\otimes c\to a\otimes(b\otimes c)
 \]</span></p>
-<p>natural in <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>.</p>
-<p>It may seem that this is enough, however we also need some coherence conditions. Here is the problem. Obviously</p>
+<p>natural in <span class="math inline">\(a\)</span>, <span
+class="math inline">\(b\)</span> and <span
+class="math inline">\(c\)</span>.</p>
+<p>It may seem that this is enough, however we also need some coherence
+conditions. Here is the problem. Obviously</p>
 <p><span class="math display">\[
   ( a \times (b \times (c \times d))
   \;\;\text{ and }\;\;
   (((a \times b) \times c) \times d
 \]</span></p>
-<p>are isomorphic, naturally in <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span> and <span class="math inline">\(d\)</span>, but if we want to construct an actual isomorphism using <span class="math inline">\(\alpha\)</span> we have, a priori, two choices:</p>
+<p>are isomorphic, naturally in <span class="math inline">\(a\)</span>,
+<span class="math inline">\(b\)</span>, <span
+class="math inline">\(c\)</span> and <span
+class="math inline">\(d\)</span>, but if we want to construct an actual
+isomorphism using <span class="math inline">\(\alpha\)</span> we have, a
+priori, two choices:</p>
 <p><span class="math display">\[
 \alpha_{a\times b, c, d} \circ \alpha_{a,b,c\times d}
 \]</span></p>
 <p>and</p>
 <p><span class="math display">\[
-(\id_a \times \alpha_{b,c,d}) \circ \alpha_{a, b\times c, d} \circ (\alpha_{a,b,c}\times \id_z)
+(\id_a \times \alpha_{b,c,d}) \circ \alpha_{a, b\times c, d} \circ
+(\alpha_{a,b,c}\times \id_z)
 \]</span></p>
-<p>It happens that these are the same isomorphism but there is nothing guaranteeing that the same will hold for an arbitrary <span class="math inline">\(\otimes\)</span>. We want our isomorphisms to be unique provided that they are constructed from <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\rho\)</span>. It turns out that this can be achieved by assuming two simple laws, the so called pentagon law –this is actually what we just wrote– and the so called triangle law –a coherence condition regarding the identity. For details, you may have a look at <a href="https://ncatlab.org/nlab/show/monoidal+category">nLab</a>. So a monoidal category is a category with a product satisfying the pentagon and the triangle laws.</p>
-<p>Now if you stop for a second and squint at the screen, you may realize that a monoidal structure is a monoid where operations are defined <em>up to isomorphism</em>. So the notion of a monoidal category is also a categorification of the notion of a monoid, though in a entirely different direction. But then what is the correct notion of homomorphism here? We’ll see that when we come to applicative functors.</p>
+<p>It happens that these are the same isomorphism but there is nothing
+guaranteeing that the same will hold for an arbitrary <span
+class="math inline">\(\otimes\)</span>. We want our isomorphisms to be
+unique provided that they are constructed from <span
+class="math inline">\(\alpha\)</span>, <span
+class="math inline">\(\lambda\)</span> and <span
+class="math inline">\(\rho\)</span>. It turns out that this can be
+achieved by assuming two simple laws, the so called pentagon law –this
+is actually what we just wrote– and the so called triangle law –a
+coherence condition regarding the identity. For details, you may have a
+look at <a
+href="https://ncatlab.org/nlab/show/monoidal+category">nLab</a>. So a
+monoidal category is a category with a product satisfying the pentagon
+and the triangle laws.</p>
+<p>Now if you stop for a second and squint at the screen, you may
+realize that a monoidal structure is a monoid where operations are
+defined <em>up to isomorphism</em>. So the notion of a monoidal category
+is also a categorification of the notion of a monoid, though in a
+entirely different direction. But then what is the correct notion of
+homomorphism here? We’ll see that when we come to applicative
+functors.</p>
 <h2 id="monad-homomorphisms">Monad Homomorphisms</h2>
-<p><span class="math inline">\(\newcommand{\end}[1]{\textrm{End}(#1)}\)</span> Given a category <span class="math inline">\(C\)</span>, let <span class="math inline">\(\end{C}\)</span> be the category of functors from <span class="math inline">\(C\)</span> to itself where the morphisms are given by natural transformations. Functor composition gives a natural monoidal structure on <span class="math inline">\(\end{C}\)</span> and the monoidal objects in this category are called, you guessed it, monads.</p>
-<p>Now let’s look at monad homomorphisms. Here, I will switch to Haskell notation. Whether I can or should switch to Haskell like that is the subject of an entirely different <a href="http://math.andrej.com/2016/08/06/hask-is-not-a-category/">discussion</a>.</p>
-<p>Let us specialize the definition of a homomorphism to our case. Let <code class="sourceCode haskell">m</code> and <code class="sourceCode haskell">n</code> be monads. A monad homomorphism is a natural transformation <code class="sourceCode haskell"><span class="ot">morph ::</span> forall a<span class="fu">.</span> m a <span class="ot">-&gt;</span> n a</code> satisfying the following properties:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">morph <span class="fu">.</span> return <span class="fu">=</span> return
-morph <span class="fu">.</span> join <span class="fu">=</span> join <span class="fu">.</span> (morph <span class="fu">.</span> fmap morph)</code></pre></div>
+<p><span
+class="math inline">\(\newcommand{\end}[1]{\textrm{End}(#1)}\)</span>
+Given a category <span class="math inline">\(C\)</span>, let <span
+class="math inline">\(\end{C}\)</span> be the category of functors from
+<span class="math inline">\(C\)</span> to itself where the morphisms are
+given by natural transformations. Functor composition gives a natural
+monoidal structure on <span class="math inline">\(\end{C}\)</span> and
+the monoidal objects in this category are called, you guessed it,
+monads.</p>
+<p>Now let’s look at monad homomorphisms. Here, I will switch to Haskell
+notation. Whether I can or should switch to Haskell like that is the
+subject of an entirely different <a
+href="http://math.andrej.com/2016/08/06/hask-is-not-a-category/">discussion</a>.</p>
+<p>Let us specialize the definition of a homomorphism to our case. Let
+<code class="sourceCode haskell">m</code> and <code
+class="sourceCode haskell">n</code> be monads. A monad homomorphism is a
+natural transformation <code
+class="sourceCode haskell"><span class="ot">morph ::</span> <span class="kw">forall</span> a<span class="op">.</span> m a <span class="ot">-&gt;</span> n a</code>
+satisfying the following properties:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>morph <span class="op">.</span> <span class="fu">return</span> <span class="ot">=</span> <span class="fu">return</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>morph <span class="op">.</span> join <span class="ot">=</span> join <span class="op">.</span> (morph <span class="op">.</span> <span class="fu">fmap</span> morph)</span></code></pre></div>
 <p>The second law is equivalent o</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">morph (x <span class="fu">&gt;&gt;=</span> f) <span class="fu">=</span> morph x <span class="fu">&gt;&gt;=</span> morph <span class="fu">.</span> f</code></pre></div>
-<p>if you are used to thinking in terms of <code class="sourceCode haskell"><span class="fu">&gt;&gt;=</span></code>.</p>
-<p>For a list of examples you may have a look at <a href="https://gist.github.com/ekmett/48f1b578cadeeaeee7a309ec6933d7ec">this</a> gist which has cute homomorphisms like <code class="sourceCode haskell">readOnly</code> which is not in <a href="http://hackage.haskell.org/package/mmorph-1.1.2/docs/Control-Monad-Morph.html">Control.Monad.Morph</a>.</p>
-<p>So what is the merit of knowing that, say <code>lift</code>, is a monad homomorphism? Well, when you think about it, we use <code class="sourceCode haskell">lift</code> when we are in the wrong monad. That is, we use <code class="sourceCode haskell">lift</code> to get from type a to type b just as I mentioned in the beginning. Indeed, if you have only one monadic value, this is all you can do with <code class="sourceCode haskell">lift</code>. The fact that <code class="sourceCode haskell">lift</code> is a homomorphism becomes useful when we want to lift many values. For instance we have</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">forM_ xs (lift <span class="fu">.</span> f) <span class="fu">=</span> lift (forM_ xs f)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>morph (x <span class="op">&gt;&gt;=</span> f) <span class="ot">=</span> morph x <span class="op">&gt;&gt;=</span> morph <span class="op">.</span> f</span></code></pre></div>
+<p>if you are used to thinking in terms of <code
+class="sourceCode haskell"><span class="op">&gt;&gt;=</span></code>.</p>
+<p>For a list of examples you may have a look at <a
+href="https://gist.github.com/ekmett/48f1b578cadeeaeee7a309ec6933d7ec">this</a>
+gist which has cute homomorphisms like <code
+class="sourceCode haskell">readOnly</code> which is not in <a
+href="http://hackage.haskell.org/package/mmorph-1.1.2/docs/Control-Monad-Morph.html">Control.Monad.Morph</a>.</p>
+<p>So what is the merit of knowing that, say <code>lift</code>, is a
+monad homomorphism? Well, when you think about it, we use <code
+class="sourceCode haskell">lift</code> when we are in the wrong monad.
+That is, we use <code class="sourceCode haskell">lift</code> to get from
+type a to type b just as I mentioned in the beginning. Indeed, if you
+have only one monadic value, this is all you can do with <code
+class="sourceCode haskell">lift</code>. The fact that <code
+class="sourceCode haskell">lift</code> is a homomorphism becomes useful
+when we want to lift many values. For instance we have</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>forM_ xs (lift <span class="op">.</span> f) <span class="ot">=</span> lift (forM_ xs f)</span></code></pre></div>
 <p>and</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">mapM_ (lift <span class="fu">.</span> f) xs <span class="fu">=</span> lift (mapM_ f xs)</code></pre></div>
-<p>And since lifting has a cost, the forms on the right hand side are usually more efficient.</p>
-<p>I would like to finish this part by giving an example of a natural transformation which is not a monad homomorphism. Let <code class="sourceCode haskell">listToMaybe</code> be defined by <code class="sourceCode haskell">foldr (const <span class="fu">.</span> <span class="dt">Just</span>) <span class="dt">Nothing</span></code>. Then <code class="sourceCode haskell">listToMaybe</code> is not a monad homomorphism. Indeed,</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  listToMaybe (join [[], [<span class="dv">1</span>]])
-<span class="fu">=</span> listToMaybe [<span class="dv">1</span>]
-<span class="fu">=</span> <span class="dt">Just</span> <span class="dv">1</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapM_</span> (lift <span class="op">.</span> f) xs <span class="ot">=</span> lift (<span class="fu">mapM_</span> f xs)</span></code></pre></div>
+<p>And since lifting has a cost, the forms on the right hand side are
+usually more efficient.</p>
+<p>I would like to finish this part by giving an example of a natural
+transformation which is not a monad homomorphism. Let <code
+class="sourceCode haskell">listToMaybe</code> be defined by <code
+class="sourceCode haskell"><span class="fu">foldr</span> (<span class="fu">const</span> <span class="op">.</span> <span class="dt">Just</span>) <span class="dt">Nothing</span></code>.
+Then <code class="sourceCode haskell">listToMaybe</code> is not a monad
+homomorphism. Indeed,</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  listToMaybe (join [[], [<span class="dv">1</span>]])</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ot">=</span> listToMaybe [<span class="dv">1</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ot">=</span> <span class="dt">Just</span> <span class="dv">1</span></span></code></pre></div>
 <p>but</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  join <span class="fu">$</span> listToMaybe <span class="fu">$</span> listToMaybe <span class="fu">&lt;$&gt;</span> [[], [<span class="dv">1</span>]]
-<span class="fu">=</span> join <span class="fu">$</span> listToMaybe [<span class="dt">Nothing</span>, <span class="dt">Just</span> <span class="dv">1</span>]
-<span class="fu">=</span> join (<span class="dt">Just</span> <span class="dt">Nothing</span>)
-<span class="fu">=</span> <span class="dt">Nothing</span></code></pre></div>
-<p>On the other hand, <code class="sourceCode haskell">maybeToList</code> defined by <code class="sourceCode haskell">foldr (<span class="fu">:</span>) []</code> <em>is</em> a monad homomorphism.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  join <span class="op">$</span> listToMaybe <span class="op">$</span> listToMaybe <span class="op">&lt;$&gt;</span> [[], [<span class="dv">1</span>]]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ot">=</span> join <span class="op">$</span> listToMaybe [<span class="dt">Nothing</span>, <span class="dt">Just</span> <span class="dv">1</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ot">=</span> join (<span class="dt">Just</span> <span class="dt">Nothing</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ot">=</span> <span class="dt">Nothing</span></span></code></pre></div>
+<p>On the other hand, <code
+class="sourceCode haskell">maybeToList</code> defined by <code
+class="sourceCode haskell"><span class="fu">foldr</span> (<span class="op">:</span>) []</code>
+<em>is</em> a monad homomorphism.</p>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">

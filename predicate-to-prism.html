@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Blog of S.Süer – Making Prisms out of Predicates with Liquid Haskell</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="./assets/format.css" />
+  <link rel="icon" href="assets/logo.png">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Making Prisms out of Predicates with Liquid
+Haskell</h1>
+</header>
+<h2 id="tldr">TL;DR</h2>
+<p>An attempt to fix a few unlawful isos turns into a modest showcase of
+some undocumented features of Liquid Haskell and a low-key rant about
+how undocumented they are.</p>
+<h2 id="unlawful-isos-in-the-lens-library">Unlawful Isos in the Lens
+Library</h2>
+<p>Consider the iso <a
+href="https://hackage.haskell.org/package/lens-5.2.3/docs/Control-Lens-Iso.html#v:non"><code>non</code></a>
+from the lens library in Haskell:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">non ::</span> <span class="dt">Eq</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Iso&#39;</span> (<span class="dt">Maybe</span> a) a</span></code></pre></div>
+<p>One immediately sees that this cannot be lawful as the number of
+inhabitants for <code class="sourceCode haskell">a</code> and <code
+class="sourceCode haskell"><span class="dt">Maybe</span> a</code> are
+different for a finite type <code class="sourceCode haskell">a</code>.
+We can also write down an explicit counterexample to the isomorphism
+laws:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">nonzero ::</span> <span class="dt">Iso&#39;</span> (<span class="dt">Maybe</span> <span class="dt">Int</span>) <span class="dt">Int</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nonzero <span class="ot">=</span> non <span class="dv">0</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Just 0 ^. nonzero . from nonzero</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">-- Nothing</span></span></code></pre></div>
+<p>The result should have been <code
+class="sourceCode haskell"><span class="dt">Just</span> <span class="dv">0</span></code>.</p>
+<p>The documentation says that <code
+class="sourceCode haskell">non x</code> is actually an isomorphism
+between <code
+class="sourceCode haskell"><span class="dt">Maybe</span> a</code> and
+<code class="sourceCode haskell">a</code> sans <code
+class="sourceCode haskell">v</code>. There is a similar remark about <a
+href="https://hackage.haskell.org/package/lens-5.2.3/docs/Control-Lens-Iso.html#v:anon"><code>anon</code></a>
+saying that it is not lawful.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">anon ::</span> a <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Iso&#39;</span> (<span class="dt">Maybe</span> a) a</span></code></pre></div>
+<p>Can we fix the situation? Or at least can we improve it? It turns out
+that the answer is yes. First let us to make two observations:</p>
+<ul>
+<li>each predicate defines a <em>refinement type</em>,</li>
+<li>compared to isomorphisms, prisms are more appropriate to express the
+relation between a type and a refinement of it.</li>
+</ul>
+<p>As an example, our <code class="sourceCode haskell">nonzero</code>
+should be a prism from integers to nonzero integers. So how do we
+implement it? There are at least two methods.</p>
+<h2 id="refinements-via-smart-constructors">Refinements via Smart
+Constructors</h2>
+<p>We can model refinements as <code>newtype</code>s and do something
+like this:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Nonzero</span> <span class="ot">=</span> <span class="dt">Nonzero</span> <span class="dt">Int</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ot">homemadeNonzero ::</span> <span class="dt">Prism&#39;</span> <span class="dt">Int</span> <span class="dt">Nonzero</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>homemadeNonzero <span class="ot">=</span> prism&#39; create mbRecover</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    create (<span class="dt">Nonzero</span> n) <span class="ot">=</span> n</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    mbRecover n <span class="ot">=</span> <span class="kw">if</span> n <span class="op">==</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dt">Nothing</span> <span class="kw">else</span> <span class="dt">Just</span> (<span class="dt">Nonzero</span> n)</span></code></pre></div>
+<p>This works but it is ad-hoc and not really extensible. Luckily there
+is a Haskell library called <a
+href="https://hackage.haskell.org/package/refined">Refined</a> which is
+based on this approach and it comes with all sorts of auxiliary
+functions. With that library we can do this:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE DataKinds #-}</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">PredicatePlay</span> <span class="kw">where</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Relude</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Refined</span> <span class="kw">as</span> <span class="dt">R</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Lens</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ot">storeBoughtNonzero ::</span> <span class="dt">Prism&#39;</span> <span class="dt">Int</span> (<span class="dt">R.Refined</span> (<span class="dt">R.Not</span> (<span class="dt">R.EqualTo</span> <span class="dv">0</span>)) <span class="dt">Int</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>storeBoughtNonzero <span class="ot">=</span> prism&#39; create mbRecover</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    create <span class="ot">=</span> R.unrefine</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    mbRecover <span class="ot">=</span> rightToMaybe <span class="op">.</span> R.refine</span></code></pre></div>
+<p>By using the <code
+class="sourceCode haskell"><span class="dt">Predicate</span></code>
+typeclass provided by the library we can define a polymorphic prism
+which works for all predicates.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">predicatePrism ::</span> <span class="dt">R.Predicate</span> p x <span class="ot">=&gt;</span> <span class="dt">Prism&#39;</span> x (<span class="dt">R.Refined</span> p x)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>predicatePrism <span class="ot">=</span> prism&#39; create mbRecover</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    create <span class="ot">=</span> R.unrefine</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    mbRecover <span class="ot">=</span> rightToMaybe <span class="op">.</span> R.refine</span></code></pre></div>
+<p>Jolly good! Now let’s do it again but this time in <a
+href="https://ucsd-progsys.github.io/liquidhaskell/">Liquid
+Haskell!</a></p>
+<h2 id="liquid-haskell">Liquid Haskell</h2>
+<p>It is very easy to define refinement types in Liquid Haskell so we
+can use the definition of the nonzero prism almost verbatim.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ type Nonzero = { v:Int | v /= 0 } @-}</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ liquidNonzero :: Prism&#39; Int Nonzero @-}</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ot">liquidNonzero ::</span> <span class="dt">Prism&#39;</span> <span class="dt">Int</span> <span class="dt">Int</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>liquidNonzero <span class="ot">=</span> prism&#39; create mbRecover</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    create n <span class="ot">=</span> n</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    mbRecover n <span class="ot">=</span> <span class="kw">if</span> n <span class="op">==</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dt">Nothing</span> <span class="kw">else</span> <span class="dt">Just</span> n</span></code></pre></div>
+<p>However, if we want to use this prism we get into problems
+immediately. For instance</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ nonzeroPreview :: Int -&gt; Maybe Nonzero @-}</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ot">nonzeroPreview ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Int</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nonzeroPreview <span class="ot">=</span> preview liquidNonzero</span></code></pre></div>
+<p>is rejected by Liquid Haskell because Liquid Haskell has no way of
+knowing what the <code class="sourceCode haskell">preview</code>
+function does. So we need to explain it to Liquid Haskell. The problem
+is that <code class="sourceCode haskell">preview</code> is polymorphic
+and we cannot force it to be monomorphic by adding a Liquid Haskell
+signature. The solution relies on the notion of <a
+href="https://ranjitjhala.github.io/static/abstract_refinement_types.pdf">abstract
+refinement</a> which is an under documented feature of Liquid Haskell.
+Abstract refinements basically allow us to quantify over predicates. So
+the following signature solves our problem:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ preview :: forall &lt;p :: a -&gt; Bool&gt;.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">               MonadReader s m =&gt; Getting (First a) s a&lt;p&gt; -&gt; m (Maybe a&lt;p&gt;) @-}</span></span></code></pre></div>
+<p>Here <code>p</code> denotes a predicate on <code>a</code> which is
+just a Boolean valued function on <code>a</code>. The syntax
+<code>a&lt;p&gt;</code> denotes <code>a</code> refined by
+<code>p</code>. So we basically say that for any predicate
+<code>p</code>, if you <em>get</em> a value from a getter for a type
+refined by a predicate <code>p</code>, then the value you get also
+satisfies the predicate <code>p</code>.</p>
+<p>We can do a similar thing for <code
+class="sourceCode haskell">review</code>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ review :: forall &lt;p :: b -&gt; Bool&gt;.</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">              MonadReader b&lt;p&gt; m =&gt; AReview t b&lt;p&gt; -&gt; m t @-}</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ nonzeroReview :: Nonzero -&gt; Int @-}</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ot">nonzeroReview ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>nonzeroReview <span class="ot">=</span> review liquidNonzero</span></code></pre></div>
+<p>After this definition the following code is rightfully rejected by
+Liquid Haskell:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ot">notOk ::</span> <span class="dt">Int</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>notOk <span class="ot">=</span> nonzeroReview <span class="dv">0</span></span></code></pre></div>
+<p>and this one is accepted:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ot">ok ::</span> <span class="dt">Int</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ok <span class="ot">=</span> nonzeroReview <span class="dv">1</span></span></code></pre></div>
+<p>This is nice, but very monomorphic. Ideally we want something like
+the <code class="sourceCode haskell">predicatePrism</code> function from
+the previous section. In <code
+class="sourceCode haskell">predicatePrism</code> we use the typeclass
+mechanism to pass a predicate to the function which means that we still
+need to define each instance for this typeclass by hand. In Liquid
+Haskell, we can use a generic predicate and solve the problem in one
+place by using another under documented feature, namely <a
+href="https://arxiv.org/abs/1507.00385">bounded refinements</a>.
+Essentially, what we want to do is to give a Liquid Haskell type to the
+function</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ot">mkPreviewFromPredicate ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mkPreviewFromPredicate <span class="fu">pred</span> a <span class="ot">=</span> <span class="kw">if</span> <span class="fu">pred</span> a <span class="kw">then</span> <span class="dt">Just</span> a <span class="kw">else</span> <span class="dt">Nothing</span></span></code></pre></div>
+<p>The problem is that value level predicates and type level predicates
+are distinct objects and we need to relate them somehow. The solution is
+already present in the bounded refinements paper I linked above. The
+idea is to use a <em>witness</em> bound.</p>
+<p>Let <code
+class="sourceCode haskell"><span class="ot">p ::</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span></code>
+be a predicate in the sense of Liquid Haskell. A witness for <code
+class="sourceCode haskell">p</code> is a family of predicates on <code
+class="sourceCode haskell"><span class="dt">Bool</span></code>
+parametrized by <code class="sourceCode haskell">a</code>, that is a
+Liquid Haskell type level function
+<code>w :: a -&gt; Bool -&gt; Bool</code>, which satisfies the following
+property:</p>
+<blockquote>
+<p>for an <code class="sourceCode haskell">x</code> of type <code
+class="sourceCode haskell">a</code> and boolean value <code
+class="sourceCode haskell">b</code>, if <code
+class="sourceCode haskell">b</code> and <code>w x b</code> hold then
+<code>p x</code> holds.</p>
+</blockquote>
+<p>Let us abbreviate this to <code>bound Witness p w</code> following
+the paper. Now something like this should work:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ot">mkPreviewFromPredicate ::</span> <span class="kw">forall</span> <span class="op">&lt;</span><span class="ot">p ::</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>,<span class="ot"> w ::</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span><span class="op">&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                          { bound <span class="dt">Witness</span> p w }</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                          (x<span class="op">:</span>a <span class="ot">-&gt;</span> <span class="dt">Bool</span><span class="op">&lt;</span>w x<span class="op">&gt;</span>) <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a<span class="op">&lt;</span>p<span class="op">&gt;</span></span></code></pre></div>
+<p>Note that the <code
+class="sourceCode haskell">x<span class="op">:</span>a <span class="ot">-&gt;</span> <span class="dt">Bool</span><span class="op">&lt;</span>w x<span class="op">&gt;</span></code>
+captures <code
+class="sourceCode haskell"><span class="fu">pred</span></code> using
+<code class="sourceCode haskell">w</code> at value <code
+class="sourceCode haskell">x</code> and by the definition of the <code
+class="sourceCode haskell"><span class="dt">Witness</span></code> bound
+we –and more importantly the underlying SMT solver– can infer that <code
+class="sourceCode haskell">x</code> must satisfy the Liquid Haskell
+predicate <code class="sourceCode haskell">p</code>. Nice!</p>
+<p>Well, not really. Because this is not valid Liquid Haskell. Actually
+Liquid Haskell does not have first class refined predicates. What we can
+do is to translate the <code
+class="sourceCode haskell"><span class="dt">Witness</span></code> bound
+to a subtyping judgement which Liquid Haskell supports, but doesn’t
+mention in documents. I found about it while reading the actual source
+code. So here is the final version:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ mkPreviewFromPredicate ::</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">      forall &lt;p :: a -&gt; Bool, w :: a -&gt; Bool -&gt; Bool&gt;.</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">      {y :: a, b :: {v:Bool&lt;w y&gt; | v} |- {v:a | v == y} &lt;: a&lt;p&gt;}</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">      (x:a -&gt; Bool&lt;w x&gt;) -&gt; a -&gt; Maybe a&lt;p&gt; @-}</span></span></code></pre></div>
+<p>There are two new symbols here. First one is <code
+class="sourceCode haskell"><span class="op">|-</span></code> (or in
+LaTeX <span class="math inline">\(\vdash\)</span>). This is the
+entailment symbol. Basically it means that in the environment expressed
+on the left-hand-side the conclusion on the right-hand-side holds. For
+its precise meaning in this context you can refer to the bounded
+predicates paper.</p>
+<p>The other symbol is <code
+class="sourceCode haskell"><span class="op">&lt;:</span></code> which
+stands for subtyping. Note that <code
+class="sourceCode haskell">{v<span class="op">:</span>a <span class="op">|</span> v <span class="op">==</span> y} <span class="op">&lt;:</span> a<span class="op">&lt;</span>p<span class="op">&gt;</span></code>
+is an indirect way of saying that <code
+class="sourceCode haskell">y</code> satisfies <code
+class="sourceCode haskell">p</code>. So this is basically an encoding
+trick.</p>
+<p>Now we can use <code
+class="sourceCode haskell">mkPreviewFromPredicate</code> to define
+prisms directly from predicates:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ liquidNonzero2 :: Prism&#39; Int Nonzero @-}</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ot">liquidNonzero2 ::</span> <span class="dt">Prism&#39;</span> <span class="dt">Int</span> <span class="dt">Int</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>liquidNonzero2 <span class="ot">=</span> prism&#39; <span class="fu">id</span> <span class="op">$</span> mkPreviewFromPredicate (<span class="op">/=</span><span class="dv">0</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ type Positive = { v:Int | v &gt; 0 } @-}</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ liquidPositive :: Prism&#39; Int Positive @-}</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="ot">liquidPositive ::</span> <span class="dt">Prism&#39;</span> <span class="dt">Int</span> <span class="dt">Int</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>liquidPositive <span class="ot">=</span> prism&#39; <span class="fu">id</span> <span class="op">$</span> mkPreviewFromPredicate (<span class="op">&gt;</span><span class="dv">0</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">-- etc...</span></span></code></pre></div>
+<p>Whew…</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Of course the problem of ‘fixing’ unlawful isos is a pet peeve.
+However, it turned out to be a good opportunity to learn a few
+things.</p>
+<p>The <a href="https://hackage.haskell.org/package/refined">Refined</a>
+library seems useful if you do not need to carry out type-level proofs.
+The library does provide some proof combinators like <a
+href="https://hackage.haskell.org/package/refined-0.8.1/docs/Refined.html#t:Not">Not</a>,
+<a
+href="https://hackage.haskell.org/package/refined-0.8.1/docs/Refined.html#t:And">And</a>
+etc. However it seems propositions like <em>even if and only if not
+odd</em> are out of scope.</p>
+<p>Liquid Haskell turned out to be much more painful then I thought it
+would be. I am not talking about the need to provide signatures for
+<code class="sourceCode haskell">review</code> and <code
+class="sourceCode haskell">preview</code>. This is something you expect
+with preexisting library code as in the case of, say, <a
+href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/liquid-vector/src/Data/Vector_LHAssumptions.hs">vectors</a>.
+I am talking about lack of documentation. When I started writing this
+post I was not aware of abstract refinements or bounded refinements even
+though I had gone over the <a
+href="https://ucsd-progsys.github.io/intro-refinement-types/120/">official
+tutorial</a> which claims to be complete. Also error messages generated
+by liquid haskell were less than satisfactory. Here is an example:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ myMap :: forall &lt;p :: b -&gt; Bool&gt;. (f: a -&gt; b&lt;p&gt;) -&gt; [a] -&gt; [{v:b | p v}] @-}</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ot">myMap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [b]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>myMap f [] <span class="ot">=</span> []</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>myMap f (x<span class="op">:</span>xs) <span class="ot">=</span> f x <span class="op">:</span> myMap f xs</span></code></pre></div>
+<p>This is rejected by the following error message:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a> <span class="co">-- /home/sonat/Documents/haskell/liquid/nix-liquid/src/Experiment.hs:51:14: Error: Bad Type Specification</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- Experiment.myMap :: (a -&gt; {VV : b | true}) -&gt; [a] -&gt; [{VV : b | p VV}]</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">--     Sort Error in Refinement: {VV : b_a4On | p VV}</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">--     The sort (Pred  b_a4On) is not a function with at least 1 arguments</span></span></code></pre></div>
+<p>I see three obvious problems in this message: The notion of sort is
+not defined in the official documentation, the message is expressed in
+terms of names generated by Liquid Haskell and there is no indication
+about the location of the problem. By the way, the correct signature is
+as follows:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ myMap :: forall &lt;p :: b -&gt; Bool&gt;. (f: a -&gt; b&lt;p&gt;) -&gt; [a] -&gt; [b&lt;p&gt;] @-}</span></span></code></pre></div>
+<p>Here is another example. Not even line numbers are present. I have no
+idea what 17, 20 and 21 stand for.</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- :1:1-1:1: Error</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">--   Constraint with free vars</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">--   17</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">--   [p]</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">--   Try using the --prune-unsorted flag</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">-- :1:1-1:1: Error</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">--   Constraint with free vars</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">--   20</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">--   [p]</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">--   Try using the --prune-unsorted flag</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- :1:1-1:1: Error</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">--   Constraint with free vars</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">--   21</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">--   [p]</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">--   Try using the --prune-unsorted flag</span></span></code></pre></div>
+<p>Overall, Liquid Haskell feels more academic than practical,
+especially if you try to do something slightly original compared to the
+standard examples. My conclusion is that Liquid Haskell is a strong tool
+with great potential but developer experience leaves much to be desired,
+pushing the developer towards cargo cult programming.</p>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="footer">
+      <hr>
+      2018-maxBound <a href="index.html">Sonat Süer</a>
+    </div>
+  </body>
+</html>
+</body>
+</html>

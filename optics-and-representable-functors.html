@@ -1,400 +1,557 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Blog of S.Süer – Optics and Representable Functors</title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="./assets/format.css" type="text/css" />
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="stylesheet" href="./assets/format.css" />
   <link rel="icon" href="assets/logo.png">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
-<div id="header">
+<header id="title-block-header">
 <h1 class="title">Optics and Representable Functors</h1>
-</div>
+</header>
 <h2 id="a-few-simple-observations">A Few Simple Observations</h2>
-<p>I like the existential representations of optics because they are conceptually illuminating and allow me to play with the definitions easily without worrying about implementation details too much. This whole post is about such a playful act about the interaction between optics and representable functors.</p>
-<p>My notation in this section will be a mixture of classical mathematical notation, Haskell syntax and optic names as used in, say the <a href="https://hackage.haskell.org/package/lens">lens library</a>. If it it too mathy for your taste you can skip this section and move onto implementations in Haskell. Also there is a <a href="https://gist.github.com/sonatsuer/c8fad6612a67831b745217bcf59325f0">gist</a> with all the code here plus some extra examples.</p>
-<p>Suppose <span class="math inline">\(r_1\)</span> and <span class="math inline">\(r_2\)</span> are sets –or types, if you prefer– representing functors <span class="math inline">\(F\)</span> and <span class="math inline">\(G\)</span>, respectively. That is, <span class="math inline">\(F(a)=a^{r_1}\)</span> and <span class="math inline">\(G(a)=a^{r_2}\)</span>. Let <span class="math inline">\(\cong\)</span> denote isomorphism. Then we have the following constructions:</p>
-<p><strong>Isomorphism from isomorphism:</strong> Suppose we have an <span class="math inline">\({\rm Iso&#39;}\,r_1\, r_2 = r_1\cong r_2\)</span>. Then <span class="math display">\[
+<p>I like the existential representations of optics because they are
+conceptually illuminating and allow me to play with the definitions
+easily without worrying about implementation details too much. This
+whole post is about such a playful act about the interaction between
+optics and representable functors.</p>
+<p>My notation in this section will be a mixture of classical
+mathematical notation, Haskell syntax and optic names as used in, say
+the <a href="https://hackage.haskell.org/package/lens">lens library</a>.
+If it it too mathy for your taste you can skip this section and move
+onto implementations in Haskell. Also there is a <a
+href="https://gist.github.com/sonatsuer/c8fad6612a67831b745217bcf59325f0">gist</a>
+with all the code here plus some extra examples.</p>
+<p>Suppose <span class="math inline">\(r_1\)</span> and <span
+class="math inline">\(r_2\)</span> are sets –or types, if you prefer–
+representing functors <span class="math inline">\(F\)</span> and <span
+class="math inline">\(G\)</span>, respectively. That is, <span
+class="math inline">\(F(a)=a^{r_1}\)</span> and <span
+class="math inline">\(G(a)=a^{r_2}\)</span>. Let <span
+class="math inline">\(\cong\)</span> denote isomorphism. Then we have
+the following constructions:</p>
+<p><strong>Isomorphism from isomorphism:</strong> Suppose we have an
+<span class="math inline">\({\rm Iso&#39;}\,r_1\, r_2 = r_1\cong
+r_2\)</span>. Then <span class="math display">\[
 F(a) \cong a^{r_1} \cong a^{r_2} \cong G(a)
-\]</span> This gives an <span class="math inline">\({\rm Iso&#39;}\,F(a)\,G(a)\)</span>.</p>
-<p><strong>Lens from prism:</strong> Suppose we have a <span class="math inline">\({\rm Prism&#39;}\,r_1\, r_2 = \exists r. r_1 \cong r + r_2\)</span>. Then <span class="math display">\[
-F(a) \cong a^{r_1} \cong \exists r.a^{r + r_2}\cong \exists b. a^r \times a^{r_2} \cong \exists r. a^r \times G (a)
-\]</span> This gives a <span class="math inline">\({\rm Lens&#39;}\,F(a)\,G(a)\)</span>.</p>
-<p><strong>Grate from lens:</strong> Suppose we have a lens <span class="math inline">\({\rm Lens&#39;}\,r_1\, r_2 = \exists r. r_1 \cong r\times r_2\)</span>. <span class="math display">\[
-F(a) \cong a^{r_1} \cong \exists r. a^{r \times r_2} \cong \exists r. {a^{r_2}}^r \cong \exists r. G (a) ^r
-\]</span> This gives a <span class="math inline">\({\rm Grate&#39;}\,F(a)\,G(a)\)</span>.</p>
+\]</span> This gives an <span class="math inline">\({\rm
+Iso&#39;}\,F(a)\,G(a)\)</span>.</p>
+<p><strong>Lens from prism:</strong> Suppose we have a <span
+class="math inline">\({\rm Prism&#39;}\,r_1\, r_2 = \exists r. r_1 \cong
+r + r_2\)</span>. Then <span class="math display">\[
+F(a) \cong a^{r_1} \cong \exists r.a^{r + r_2}\cong \exists b. a^r
+\times a^{r_2} \cong \exists r. a^r \times G (a)
+\]</span> This gives a <span class="math inline">\({\rm
+Lens&#39;}\,F(a)\,G(a)\)</span>.</p>
+<p><strong>Grate from lens:</strong> Suppose we have a lens <span
+class="math inline">\({\rm Lens&#39;}\,r_1\, r_2 = \exists r. r_1 \cong
+r\times r_2\)</span>. <span class="math display">\[
+F(a) \cong a^{r_1} \cong \exists r. a^{r \times r_2} \cong \exists r.
+{a^{r_2}}^r \cong \exists r. G (a) ^r
+\]</span> This gives a <span class="math inline">\({\rm
+Grate&#39;}\,F(a)\,G(a)\)</span>.</p>
 <p>Now let us implement these constructions in Haskell!</p>
 <h2 id="isomorphism-from-isomorphism">Isomorphism from Isomorphism</h2>
-<p>This one is kind of free and it is not really about representable functor. Still, for the sake of completeness, I will put it here:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">transportIso ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r1
-  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="fu">~</span> r2
-  ) <span class="ot">=&gt;</span>
-  <span class="dt">Iso&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">Iso</span> (f a) (f b) (g a) (g b)
-transportIso givenIso <span class="fu">=</span> iso fromFa toFa
-  <span class="kw">where</span>
-    fromFa fa <span class="fu">=</span> Rep.tabulate <span class="fu">$</span> Rep.index fa <span class="fu">.</span> view (re givenIso)
-    toFa ga <span class="fu">=</span> Rep.tabulate <span class="fu">$</span> Rep.index ga <span class="fu">.</span> view givenIso</code></pre></div>
+<p>This one is kind of free and it is not really about representable
+functor. Still, for the sake of completeness, I will put it here:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">transportIso ::</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r1</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="op">~</span> r2</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Iso&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">Iso</span> (f a) (f b) (g a) (g b)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>transportIso givenIso <span class="ot">=</span> iso fromFa toFa</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    fromFa fa <span class="ot">=</span> Rep.tabulate <span class="op">$</span> Rep.index fa <span class="op">.</span> view (re givenIso)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    toFa ga <span class="ot">=</span> Rep.tabulate <span class="op">$</span> Rep.index ga <span class="op">.</span> view givenIso</span></code></pre></div>
 <h2 id="lens-from-prism">Lens from Prism</h2>
-<p>Creating a lens from a prism is not this straightforward but still easy.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">homemadeLensFromPrism ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r1
-  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="fu">~</span> r2
-  ) <span class="ot">=&gt;</span>
-  <span class="dt">Prism&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (g a)
-homemadeLensFromPrism restriction <span class="fu">=</span> lens getter setter
-  <span class="kw">where</span>
-    getter fa <span class="fu">=</span>
-      Rep.tabulate <span class="fu">$</span> Rep.index fa <span class="fu">.</span> review restriction
-    setter fa ga <span class="fu">=</span>
-      Rep.tabulate <span class="fu">$</span> \r1 <span class="ot">-&gt;</span>
-        <span class="kw">case</span> preview restriction r1 <span class="kw">of</span>
-          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> Rep.index fa r1
-          <span class="dt">Just</span> r2 <span class="ot">-&gt;</span> Rep.index ga r2</code></pre></div>
-<p>Note that here we obtain a simple lens. The reason is that a representable functor is a homogeneous data structure meaning that all its contents are of the same type. It is also worth mentioning that we can implement this function using the combinator <code class="sourceCode haskell">outside</code> from the lens library. However <code class="sourceCode haskell">outside</code> expects a representable profunctor and in a lot of useful cases one only has a representable functor.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">repIso ::</span> (<span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r) <span class="ot">=&gt;</span> <span class="dt">Iso</span> (f a) (f b) (r <span class="ot">-&gt;</span> a) (r <span class="ot">-&gt;</span> b)
-repIso <span class="fu">=</span> iso Rep.index Rep.tabulate
-
-<span class="ot">mkLensFromPrism ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r1
-  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="fu">~</span> r2
-  ) <span class="ot">=&gt;</span>
-  <span class="dt">Prism&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (g a)
-mkLensFromPrism pr <span class="fu">=</span> repIso <span class="fu">.</span> outside pr <span class="fu">.</span> from repIso</code></pre></div>
-<p>Now let us look a few simple examples. first of all, we can recover evaluation at a point as a lens view. As a bonus we also obtain the ability to change the value at a point.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">wrappedInIdentity ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r, <span class="dt">Eq</span> r
-  ) <span class="ot">=&gt;</span>
-  r <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (<span class="dt">Identity</span> a)
-wrappedInIdentity r <span class="fu">=</span>
-  mkLensFromPrism <span class="fu">$</span> only r
-
-<span class="ot">atPosition ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r, <span class="dt">Eq</span> r
-  ) <span class="ot">=&gt;</span>
-  r <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) a
-atPosition r <span class="fu">=</span> wrappedInIdentity r <span class="fu">.</span> coerced</code></pre></div>
-<p>This is theoretically fine but practically not that interesting. Before moving on to more practical examples I want to introduce a combinator which turns injective functions with small domains into prisms.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">mkPrismFromInjection ::</span>
-  (<span class="dt">Ord</span> a, <span class="dt">Enum</span> b, <span class="dt">Bounded</span> b
-  ) <span class="ot">=&gt;</span>
-  (b <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Prism&#39;</span> a b
-mkPrismFromInjection create <span class="fu">=</span> prism&#39; create mbRecover
-  <span class="kw">where</span>
-    mbRecover a <span class="fu">=</span>
-      Map.lookup a <span class="fu">$</span>
-        Map.fromList [(create b, b) <span class="fu">|</span> b <span class="ot">&lt;-</span> universe ]</code></pre></div>
-<p>Now combining this with <code class="sourceCode haskell">mkLensFromPrism</code> we obtain the following combinator:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">restrictByPositionMapping ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r1
-  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="fu">~</span> r2
-  , <span class="dt">Ord</span> r1, <span class="dt">Enum</span> r2, <span class="dt">Bounded</span> r2
-  ) <span class="ot">=&gt;</span>
-  g r1 <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (g a)
-restrictByPositionMapping positionMapping <span class="fu">=</span>
-  mkLensFromPrism <span class="fu">$</span> mkPrismFromInjection <span class="fu">$</span> Rep.index positionMapping</code></pre></div>
-<p>To see these in action, we need representable functors. So here are two examples: <code class="sourceCode haskell"><span class="dt">Triple</span></code> and <code class="sourceCode haskell"><span class="dt">WrappedStream</span></code>.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Triple</span> a <span class="fu">=</span> <span class="dt">Triple</span>
-  {<span class="ot"> _slot0 ::</span> a
-  ,<span class="ot"> _slot1 ::</span> a
-  ,<span class="ot"> _slot2 ::</span> a
-  } <span class="kw">deriving</span> (<span class="dt">Functor</span>, <span class="dt">Show</span>)
-
-<span class="kw">instance</span> <span class="dt">Distributive</span> <span class="dt">Triple</span> <span class="kw">where</span>
-  distribute wrappedTriple <span class="fu">=</span> <span class="dt">Triple</span> a1 a2 a3
-    <span class="kw">where</span>
-      a1 <span class="fu">=</span> _slot0 <span class="fu">&lt;$&gt;</span> wrappedTriple
-      a2 <span class="fu">=</span> _slot1 <span class="fu">&lt;$&gt;</span> wrappedTriple
-      a3 <span class="fu">=</span> _slot2 <span class="fu">&lt;$&gt;</span> wrappedTriple
-
-<span class="kw">data</span> <span class="dt">Slot</span> <span class="fu">=</span> <span class="dt">Slot0</span> <span class="fu">|</span> <span class="dt">Slot1</span> <span class="fu">|</span> <span class="dt">Slot2</span>
-  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Enum</span>, <span class="dt">Bounded</span>, <span class="dt">Show</span>)
-
-<span class="kw">instance</span> <span class="dt">Rep.Representable</span> <span class="dt">Triple</span> <span class="kw">where</span>
-  <span class="kw">type</span> <span class="dt">Rep</span> <span class="dt">Triple</span> <span class="fu">=</span> <span class="dt">Slot</span>
-  tabulate f <span class="fu">=</span>
-    <span class="dt">Triple</span> (f <span class="dt">Slot0</span>) (f <span class="dt">Slot1</span>) (f <span class="dt">Slot2</span>)
-  index (<span class="dt">Triple</span> s0 s1 s2) <span class="fu">=</span> \<span class="kw">case</span>
-    <span class="dt">Slot0</span> <span class="ot">-&gt;</span> s0
-    <span class="dt">Slot1</span> <span class="ot">-&gt;</span> s1
-    <span class="dt">Slot2</span> <span class="ot">-&gt;</span> s2
-
-<span class="co">-- newtype is to mostly avoid orphan instance warnings</span>
-<span class="kw">newtype</span> <span class="dt">WrappedStream</span> a <span class="fu">=</span> <span class="dt">WrappedStream</span> {<span class="ot"> getStream ::</span> <span class="dt">Str.Stream</span> a}
-  <span class="kw">deriving</span> <span class="dt">Functor</span>
-
-<span class="kw">instance</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> <span class="dt">Show</span> (<span class="dt">WrappedStream</span> a) <span class="kw">where</span>
-  show <span class="fu">=</span>
-    (<span class="fu">&lt;&gt;</span><span class="st">&quot; ...&quot;</span>) <span class="fu">.</span> concatMap (<span class="fu">&lt;&gt;</span><span class="st">&quot;, &quot;</span>) <span class="fu">.</span> fmap show <span class="fu">.</span> Str.take <span class="dv">20</span> <span class="fu">.</span> getStream
-
-<span class="kw">instance</span> <span class="dt">Distributive</span> <span class="dt">WrappedStream</span> <span class="kw">where</span>
-  distribute <span class="fu">=</span> <span class="dt">WrappedStream</span> <span class="fu">.</span> Str.distribute <span class="fu">.</span> fmap getStream
-
-<span class="kw">instance</span> <span class="dt">Rep.Representable</span> <span class="dt">WrappedStream</span> <span class="kw">where</span>
-  <span class="kw">type</span> <span class="dt">Rep</span> <span class="dt">WrappedStream</span> <span class="fu">=</span> <span class="dt">Natural</span>
-  tabulate f <span class="fu">=</span> <span class="dt">WrappedStream</span> <span class="fu">$</span>
-    Str.fromList [f n <span class="fu">|</span> n <span class="ot">&lt;-</span> [<span class="dv">0</span> <span class="fu">..</span>]]
-  index (<span class="dt">WrappedStream</span> str) n <span class="fu">=</span>
-    Str.head <span class="fu">$</span> Str.drop (fromIntegral n) str
-
-<span class="ot">example1 ::</span> <span class="dt">WrappedStream</span> <span class="dt">Int</span>
-example1 <span class="fu">=</span> <span class="dt">WrappedStream</span> <span class="fu">$</span> Str.fromList [<span class="dv">0</span> <span class="fu">..</span>]
-
-<span class="ot">example2 ::</span> <span class="dt">WrappedStream</span> <span class="dt">Int</span>
-example2 <span class="fu">=</span> <span class="dt">WrappedStream</span> <span class="fu">$</span> Str.fromList [<span class="dv">100</span> <span class="fu">..</span>]</code></pre></div>
+<p>Creating a lens from a prism is not this straightforward but still
+easy.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">homemadeLensFromPrism ::</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r1</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="op">~</span> r2</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Prism&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (g a)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>homemadeLensFromPrism restriction <span class="ot">=</span> lens getter setter</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    getter fa <span class="ot">=</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      Rep.tabulate <span class="op">$</span> Rep.index fa <span class="op">.</span> review restriction</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    setter fa ga <span class="ot">=</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      Rep.tabulate <span class="op">$</span> \r1 <span class="ot">-&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> preview restriction r1 <span class="kw">of</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> Rep.index fa r1</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>          <span class="dt">Just</span> r2 <span class="ot">-&gt;</span> Rep.index ga r2</span></code></pre></div>
+<p>Note that here we obtain a simple lens. The reason is that a
+representable functor is a homogeneous data structure meaning that all
+its contents are of the same type. It is also worth mentioning that we
+can implement this function using the combinator <code
+class="sourceCode haskell">outside</code> from the lens library. However
+<code class="sourceCode haskell">outside</code> expects a representable
+profunctor and in a lot of useful cases one only has a representable
+functor.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">repIso ::</span> (<span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r) <span class="ot">=&gt;</span> <span class="dt">Iso</span> (f a) (f b) (r <span class="ot">-&gt;</span> a) (r <span class="ot">-&gt;</span> b)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>repIso <span class="ot">=</span> iso Rep.index Rep.tabulate</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ot">mkLensFromPrism ::</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r1</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="op">~</span> r2</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Prism&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (g a)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>mkLensFromPrism pr <span class="ot">=</span> repIso <span class="op">.</span> outside pr <span class="op">.</span> from repIso</span></code></pre></div>
+<p>Now let us look a few simple examples. first of all, we can recover
+evaluation at a point as a lens view. As a bonus we also obtain the
+ability to change the value at a point.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">wrappedInIdentity ::</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r, <span class="dt">Eq</span> r</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (<span class="dt">Identity</span> a)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>wrappedInIdentity r <span class="ot">=</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  mkLensFromPrism <span class="op">$</span> only r</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ot">atPosition ::</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r, <span class="dt">Eq</span> r</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) a</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>atPosition r <span class="ot">=</span> wrappedInIdentity r <span class="op">.</span> coerced</span></code></pre></div>
+<p>This is theoretically fine but practically not that interesting.
+Before moving on to more practical examples I want to introduce a
+combinator which turns injective functions with small domains into
+prisms.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">mkPrismFromInjection ::</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">Ord</span> a, <span class="dt">Enum</span> b, <span class="dt">Bounded</span> b</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  (b <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Prism&#39;</span> a b</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>mkPrismFromInjection create <span class="ot">=</span> prism&#39; create mbRecover</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    mbRecover a <span class="ot">=</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      Map.lookup a <span class="op">$</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        Map.fromList [(create b, b) <span class="op">|</span> b <span class="ot">&lt;-</span> universe ]</span></code></pre></div>
+<p>Now combining this with <code
+class="sourceCode haskell">mkLensFromPrism</code> we obtain the
+following combinator:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">restrictByPositionMapping ::</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r1</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="op">~</span> r2</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Ord</span> r1, <span class="dt">Enum</span> r2, <span class="dt">Bounded</span> r2</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  g r1 <span class="ot">-&gt;</span> <span class="dt">Lens&#39;</span> (f a) (g a)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>restrictByPositionMapping positionMapping <span class="ot">=</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  mkLensFromPrism <span class="op">$</span> mkPrismFromInjection <span class="op">$</span> Rep.index positionMapping</span></code></pre></div>
+<p>To see these in action, we need representable functors. So here are
+two examples: <code
+class="sourceCode haskell"><span class="dt">Triple</span></code> and
+<code
+class="sourceCode haskell"><span class="dt">WrappedStream</span></code>.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Triple</span> a <span class="ot">=</span> <span class="dt">Triple</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> _slot0 ::</span> a</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  ,<span class="ot"> _slot1 ::</span> a</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  ,<span class="ot"> _slot2 ::</span> a</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  } <span class="kw">deriving</span> (<span class="dt">Functor</span>, <span class="dt">Show</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Distributive</span> <span class="dt">Triple</span> <span class="kw">where</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  distribute wrappedTriple <span class="ot">=</span> <span class="dt">Triple</span> a1 a2 a3</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">where</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      a1 <span class="ot">=</span> _slot0 <span class="op">&lt;$&gt;</span> wrappedTriple</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      a2 <span class="ot">=</span> _slot1 <span class="op">&lt;$&gt;</span> wrappedTriple</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      a3 <span class="ot">=</span> _slot2 <span class="op">&lt;$&gt;</span> wrappedTriple</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Slot</span> <span class="ot">=</span> <span class="dt">Slot0</span> <span class="op">|</span> <span class="dt">Slot1</span> <span class="op">|</span> <span class="dt">Slot2</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Enum</span>, <span class="dt">Bounded</span>, <span class="dt">Show</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Rep.Representable</span> <span class="dt">Triple</span> <span class="kw">where</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> <span class="dt">Rep</span> <span class="dt">Triple</span> <span class="ot">=</span> <span class="dt">Slot</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  tabulate f <span class="ot">=</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Triple</span> (f <span class="dt">Slot0</span>) (f <span class="dt">Slot1</span>) (f <span class="dt">Slot2</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">index</span> (<span class="dt">Triple</span> s0 s1 s2) <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Slot0</span> <span class="ot">-&gt;</span> s0</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Slot1</span> <span class="ot">-&gt;</span> s1</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Slot2</span> <span class="ot">-&gt;</span> s2</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">-- newtype is to mostly avoid orphan instance warnings</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">WrappedStream</span> a <span class="ot">=</span> <span class="dt">WrappedStream</span> {<span class="ot"> getStream ::</span> <span class="dt">Str.Stream</span> a}</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> <span class="dt">Functor</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> <span class="dt">Show</span> (<span class="dt">WrappedStream</span> a) <span class="kw">where</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show</span> <span class="ot">=</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    (<span class="op">&lt;&gt;</span><span class="st">&quot; ...&quot;</span>) <span class="op">.</span> <span class="fu">concatMap</span> (<span class="op">&lt;&gt;</span><span class="st">&quot;, &quot;</span>) <span class="op">.</span> <span class="fu">fmap</span> <span class="fu">show</span> <span class="op">.</span> Str.take <span class="dv">20</span> <span class="op">.</span> getStream</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Distributive</span> <span class="dt">WrappedStream</span> <span class="kw">where</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  distribute <span class="ot">=</span> <span class="dt">WrappedStream</span> <span class="op">.</span> Str.distribute <span class="op">.</span> <span class="fu">fmap</span> getStream</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Rep.Representable</span> <span class="dt">WrappedStream</span> <span class="kw">where</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> <span class="dt">Rep</span> <span class="dt">WrappedStream</span> <span class="ot">=</span> <span class="dt">Natural</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  tabulate f <span class="ot">=</span> <span class="dt">WrappedStream</span> <span class="op">$</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    Str.fromList [f n <span class="op">|</span> n <span class="ot">&lt;-</span> [<span class="dv">0</span> <span class="op">..</span>]]</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">index</span> (<span class="dt">WrappedStream</span> str) n <span class="ot">=</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    Str.head <span class="op">$</span> Str.drop (<span class="fu">fromIntegral</span> n) str</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="ot">example1 ::</span> <span class="dt">WrappedStream</span> <span class="dt">Int</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>example1 <span class="ot">=</span> <span class="dt">WrappedStream</span> <span class="op">$</span> Str.fromList [<span class="dv">0</span> <span class="op">..</span>]</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="ot">example2 ::</span> <span class="dt">WrappedStream</span> <span class="dt">Int</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>example2 <span class="ot">=</span> <span class="dt">WrappedStream</span> <span class="op">$</span> Str.fromList [<span class="dv">100</span> <span class="op">..</span>]</span></code></pre></div>
 <p>…and a few lenses on these types:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">firstThree ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">Triple</span> a)
-firstThree <span class="fu">=</span> restrictByPositionMapping <span class="fu">$</span> <span class="dt">Triple</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">2</span>
-
-<span class="ot">secondThree ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">Triple</span> a)
-secondThree <span class="fu">=</span> restrictByPositionMapping <span class="fu">$</span> <span class="dt">Triple</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span>
-
-<span class="ot">evens ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> a)
-evens <span class="fu">=</span> mkLensFromPrism <span class="fu">$</span> prism&#39; create mbRecover
-  <span class="kw">where</span>
-    create n <span class="fu">=</span> <span class="dv">2</span> <span class="fu">*</span> n
-    mbRecover n <span class="fu">=</span> <span class="kw">if</span> even n <span class="kw">then</span> <span class="dt">Just</span> (n <span class="ot">`div`</span> <span class="dv">2</span>) <span class="kw">else</span> <span class="dt">Nothing</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ot">firstThree ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">Triple</span> a)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>firstThree <span class="ot">=</span> restrictByPositionMapping <span class="op">$</span> <span class="dt">Triple</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">2</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ot">secondThree ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">Triple</span> a)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>secondThree <span class="ot">=</span> restrictByPositionMapping <span class="op">$</span> <span class="dt">Triple</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ot">evens ::</span> <span class="dt">Lens&#39;</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> a)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>evens <span class="ot">=</span> mkLensFromPrism <span class="op">$</span> prism&#39; create mbRecover</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    create n <span class="ot">=</span> <span class="dv">2</span> <span class="op">*</span> n</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    mbRecover n <span class="ot">=</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> <span class="dt">Just</span> (n <span class="ot">`div`</span> <span class="dv">2</span>) <span class="kw">else</span> <span class="dt">Nothing</span></span></code></pre></div>
 <p>Finally our combinators in actions:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- &gt;&gt;&gt; example1</span>
-<span class="co">-- 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 ^. atPosition 5</span>
-<span class="co">-- 5</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; atPosition 5 .~ 77</span>
-<span class="co">-- 0, 1, 2, 3, 4, 77, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 ^. firstThree</span>
-<span class="co">-- Triple {_slot0 = 0, _slot1 = 1, _slot2 = 2}</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; atPosition 4 .~ 0 &amp; view secondThree</span>
-<span class="co">-- Triple {_slot0 = 3, _slot1 = 0, _slot2 = 5}</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; firstThree .~ Triple 100 101 102</span>
-<span class="co">-- 100, 101, 102, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; firstThree . atPosition Slot2 .~ 999</span>
-<span class="co">-- 0, 1, 999, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example2</span>
-<span class="co">-- 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 ^. evens</span>
-<span class="co">-- 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; evens .~ example2</span>
-<span class="co">-- 100, 1, 101, 3, 102, 5, 103, 7, 104, 9, 105, 11, 106, 13, 107, 15, 108, 17, 109, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example2 &amp; evens .~ example1</span>
-<span class="co">-- 0, 101, 1, 103, 2, 105, 3, 107, 4, 109, 5, 111, 6, 113, 7, 115, 8, 117, 9, 119,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; evens . evens . evens .~ example2</span>
-<span class="co">-- 100, 1, 2, 3, 4, 5, 6, 7, 101, 9, 10, 11, 12, 13, 14, 15, 102, 17, 18, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; evens . firstThree .~ Triple 100 101 102</span>
-<span class="co">-- 100, 1, 101, 3, 102, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; example1 &amp; evens . secondThree . atPosition Slot2 .~ 1000</span>
-<span class="co">-- 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1000, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></code></pre></div>
-<p>There is also an example of a <a href="https://en.wikipedia.org/wiki/Menger_sponge">2D Menger sponge</a> in the <a href="https://gist.github.com/sonatsuer/c8fad6612a67831b745217bcf59325f0#file-lensesonrepresentables-hs-L205">gist</a> implemented using <code class="sourceCode haskell">mkLensFromPrism</code>.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 ^. atPosition 5</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">-- 5</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; atPosition 5 .~ 77</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 1, 2, 3, 4, 77, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 ^. firstThree</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Triple {_slot0 = 0, _slot1 = 1, _slot2 = 2}</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; atPosition 4 .~ 0 &amp; view secondThree</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">-- Triple {_slot0 = 3, _slot1 = 0, _slot2 = 5}</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; firstThree .~ Triple 100 101 102</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 101, 102, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; firstThree . atPosition Slot2 .~ 999</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 1, 999, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example2</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,  ...</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 ^. evens</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,  ...</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; evens .~ example2</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 1, 101, 3, 102, 5, 103, 7, 104, 9, 105, 11, 106, 13, 107, 15, 108, 17, 109, 19,  ...</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example2 &amp; evens .~ example1</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 101, 1, 103, 2, 105, 3, 107, 4, 109, 5, 111, 6, 113, 7, 115, 8, 117, 9, 119,  ...</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; evens . evens . evens .~ example2</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 1, 2, 3, 4, 5, 6, 7, 101, 9, 10, 11, 12, 13, 14, 15, 102, 17, 18, 19,  ...</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; evens . firstThree .~ Triple 100 101 102</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 1, 101, 3, 102, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; example1 &amp; evens . secondThree . atPosition Slot2 .~ 1000</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1000, 11, 12, 13, 14, 15, 16, 17, 18, 19,  ...</span></span></code></pre></div>
+<p>There is also an example of a <a
+href="https://en.wikipedia.org/wiki/Menger_sponge">2D Menger sponge</a>
+in the <a
+href="https://gist.github.com/sonatsuer/c8fad6612a67831b745217bcf59325f0#file-lensesonrepresentables-hs-L205">gist</a>
+implemented using <code
+class="sourceCode haskell">mkLensFromPrism</code>.</p>
 <h2 id="grate-from-lens">Grate from Lens</h2>
-<p>Grates are not popular optics. The lens library does not have them. So I will work with a grate representation and derive their basic properties here. Historically, the idea of a lens comes from profunctor optics. Grates are the optics <a href="https://r6research.livejournal.com/28050.html">corresponding to closed profunctors</a>. Their existential representation is given by this isomorphism: <span class="math display">\[
+<p>Grates are not popular optics. The lens library does not have them.
+So I will work with a grate representation and derive their basic
+properties here. Historically, the idea of a lens comes from profunctor
+optics. Grates are the optics <a
+href="https://r6research.livejournal.com/28050.html">corresponding to
+closed profunctors</a>. Their existential representation is given by
+this isomorphism: <span class="math display">\[
 Grate&#39;\,s\, a = \exists i. s \cong a^i.
-\]</span> So grates are essentially representable functors where you are not allowed to mention the representing object directly. The standard API we obtain after eliminating the existential quantifier of grates is a little mysterious. I will be working with this API. If you are curious you can have a look at <a href="https://oleg.fi/gists/posts/2018-12-12-find-correct-laws.html#grate">this</a> discussion about the grate API and the corresponding laws.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">GrateRep</span> s t a b <span class="fu">=</span> <span class="dt">GrateRep</span> {<span class="ot"> unGrateRep ::</span> ((s <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> t }
-
-<span class="kw">type</span> <span class="dt">GrateRep&#39;</span> s a <span class="fu">=</span> <span class="dt">GrateRep</span> s s a a</code></pre></div>
-<p>To obtain some intuition about <code>GrateRep</code>.{.haskell} let us see what we can do with it. First of all, as the existential representation suggests, every representable functor should give rise to a grate. Here is the implementation.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">represented ::</span> <span class="dt">Rep.Representable</span> f <span class="ot">=&gt;</span> <span class="dt">GrateRep</span> (f a) (f b) a b
-represented <span class="fu">=</span> <span class="dt">GrateRep</span> <span class="fu">$</span>
-  \faab <span class="ot">-&gt;</span> Rep.tabulate (\r <span class="ot">-&gt;</span> faab (<span class="ot">`Rep.index`</span> r))</code></pre></div>
-<p>Actually more is true. The <code class="sourceCode haskell"><span class="dt">Distributive</span></code> class is essentially a Haskell-98 way of talking about representables without the representing object. So can we make a grate out of a <code class="sourceCode haskell"><span class="dt">Distributive</span></code> functor? Yes! One can also give a direct implementation but I will introduce double continuation as an auxiliary type to decompose <code class="sourceCode haskell"><span class="dt">GrateRep</span></code> into meaningful pieces.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">DoubleCont</span> a b s <span class="fu">=</span> <span class="dt">DoubleCont</span> {<span class="ot"> unDoubleCont ::</span> (s <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> b }
-  <span class="kw">deriving</span> <span class="dt">Functor</span>
-
-<span class="ot">distributed ::</span> <span class="dt">Distributive</span> f <span class="ot">=&gt;</span> <span class="dt">GrateRep</span> (f a) (f b) a b
-distributed <span class="fu">=</span> <span class="dt">GrateRep</span> <span class="fu">$</span>
-  \faab <span class="ot">-&gt;</span> (<span class="fu">$</span> id) <span class="fu">.</span> unDoubleCont <span class="fu">&lt;$&gt;</span> distribute (<span class="dt">DoubleCont</span> faab)</code></pre></div>
-<p>Note the functor instance for <code class="sourceCode haskell"><span class="dt">Doublecont</span></code> made it easier to implement the grate.</p>
-<p>Ok so we have a grate, what can we do with it? To paraphrase: If you have a homogeneous container with fixed shape, what can you do with it without referring to its shape? As a trivial example, we can set all the values in te container to a fixed value. Or, more generally, we can apply the same function to all values. Maybe more interestingly, if we have two containers of the same shape we can zip them! None of these operations refer to the shape of the container, and they all can be implemented using the grate API:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">zipWith0 ::</span> <span class="dt">GrateRep</span> s t a b <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> t
-zipWith0 (<span class="dt">GrateRep</span> sabt) b <span class="fu">=</span>
-  sabt (const b)
-
-<span class="ot">zipWith1 ::</span> <span class="dt">GrateRep</span> s t a b <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> t
-zipWith1 (<span class="dt">GrateRep</span> sabt) ab s <span class="fu">=</span>
-  sabt <span class="fu">$</span> \sa <span class="ot">-&gt;</span> ab (sa s)
-
-<span class="ot">zipWith2 ::</span> <span class="dt">GrateRep</span> s t a b <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> t
-zipWith2 (<span class="dt">GrateRep</span> sabt) o s1 s2 <span class="fu">=</span>
-  sabt <span class="fu">$</span> \sa <span class="ot">-&gt;</span> o (sa s1) (sa s2)</code></pre></div>
-<p>I hope these examples give some insight about grates. Now back to our original goal: To obtain a grate from a lens. I will use functor (and contravariant) instances with respect all variables in the double continuation. However, instead of defining different newtypes around the double continuation function and define the corresponding instances I will do it in a single function.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">modifyDoubleCont ::</span>
-  (s1 <span class="ot">-&gt;</span> s2) <span class="ot">-&gt;</span>
-  (a2 <span class="ot">-&gt;</span> a1) <span class="ot">-&gt;</span>
-  (b1 <span class="ot">-&gt;</span> b2) <span class="ot">-&gt;</span>
-  ((s1 <span class="ot">-&gt;</span> a1) <span class="ot">-&gt;</span> b1) <span class="ot">-&gt;</span>
-  ((s2 <span class="ot">-&gt;</span> a2) <span class="ot">-&gt;</span> b2)
-modifyDoubleCont mapS contramapA mapB  <span class="fu">=</span>
-  (<span class="fu">.</span> (contramapA <span class="fu">.</span>)) <span class="fu">.</span> (mapB <span class="fu">.</span>) <span class="fu">.</span> (<span class="fu">.</span> (<span class="fu">.</span> mapS))</code></pre></div>
-<p>The definition may look horrible if you are not used to this kind of functions but there is a simple algorithm to derive it and you can discover it easily.</p>
-<p>And now the function <code class="sourceCode haskell">grateFromLens</code>:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">grateFromLens ::</span>
-  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r1
-  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="fu">~</span> r2
-  ) <span class="ot">=&gt;</span>
-  <span class="dt">Lens&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">GrateRep</span> (f a) (f b) (g a) (g b)
-grateFromLens lns <span class="fu">=</span> <span class="dt">GrateRep</span> <span class="fu">$</span> \fagaga <span class="ot">-&gt;</span>
-  Rep.tabulate <span class="fu">$</span>
-    \r1 <span class="ot">-&gt;</span>
-      fagaga
-        <span class="fu">&amp;</span> modifyDoubleCont Rep.index Rep.tabulate Rep.index
-        <span class="fu">&amp;</span> modifyDoubleCont id (\r1a r2 <span class="ot">-&gt;</span> r1a <span class="fu">$</span> lns <span class="fu">.~</span> r2 <span class="fu">$</span> r1) (\r2a _ <span class="ot">-&gt;</span> r2a <span class="fu">$</span> r1 <span class="fu">^.</span> lns )
-        <span class="fu">&amp;</span> (<span class="fu">$</span> id)
-        <span class="fu">&amp;</span> (<span class="fu">$</span> r1)</code></pre></div>
+\]</span> So grates are essentially representable functors where you are
+not allowed to mention the representing object directly. The standard
+API we obtain after eliminating the existential quantifier of grates is
+a little mysterious. I will be working with this API. If you are curious
+you can have a look at <a
+href="https://oleg.fi/gists/posts/2018-12-12-find-correct-laws.html#grate">this</a>
+discussion about the grate API and the corresponding laws.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">GrateRep</span> s t a b <span class="ot">=</span> <span class="dt">GrateRep</span> {<span class="ot"> unGrateRep ::</span> ((s <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> t }</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">GrateRep&#39;</span> s a <span class="ot">=</span> <span class="dt">GrateRep</span> s s a a</span></code></pre></div>
+<p>To obtain some intuition about <code>GrateRep</code>.{.haskell} let
+us see what we can do with it. First of all, as the existential
+representation suggests, every representable functor should give rise to
+a grate. Here is the implementation.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ot">represented ::</span> <span class="dt">Rep.Representable</span> f <span class="ot">=&gt;</span> <span class="dt">GrateRep</span> (f a) (f b) a b</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>represented <span class="ot">=</span> <span class="dt">GrateRep</span> <span class="op">$</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  \faab <span class="ot">-&gt;</span> Rep.tabulate (\r <span class="ot">-&gt;</span> faab (<span class="ot">`Rep.index`</span> r))</span></code></pre></div>
+<p>Actually more is true. The <code
+class="sourceCode haskell"><span class="dt">Distributive</span></code>
+class is essentially a Haskell-98 way of talking about representables
+without the representing object. So can we make a grate out of a <code
+class="sourceCode haskell"><span class="dt">Distributive</span></code>
+functor? Yes! One can also give a direct implementation but I will
+introduce double continuation as an auxiliary type to decompose <code
+class="sourceCode haskell"><span class="dt">GrateRep</span></code> into
+meaningful pieces.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">DoubleCont</span> a b s <span class="ot">=</span> <span class="dt">DoubleCont</span> {<span class="ot"> unDoubleCont ::</span> (s <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> b }</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> <span class="dt">Functor</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ot">distributed ::</span> <span class="dt">Distributive</span> f <span class="ot">=&gt;</span> <span class="dt">GrateRep</span> (f a) (f b) a b</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>distributed <span class="ot">=</span> <span class="dt">GrateRep</span> <span class="op">$</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  \faab <span class="ot">-&gt;</span> (<span class="op">$</span> <span class="fu">id</span>) <span class="op">.</span> unDoubleCont <span class="op">&lt;$&gt;</span> distribute (<span class="dt">DoubleCont</span> faab)</span></code></pre></div>
+<p>Note the functor instance for <code
+class="sourceCode haskell"><span class="dt">Doublecont</span></code>
+made it easier to implement the grate.</p>
+<p>Ok so we have a grate, what can we do with it? To paraphrase: If you
+have a homogeneous container with fixed shape, what can you do with it
+without referring to its shape? As a trivial example, we can set all the
+values in te container to a fixed value. Or, more generally, we can
+apply the same function to all values. Maybe more interestingly, if we
+have two containers of the same shape we can zip them! None of these
+operations refer to the shape of the container, and they all can be
+implemented using the grate API:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ot">zipWith0 ::</span> <span class="dt">GrateRep</span> s t a b <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> t</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>zipWith0 (<span class="dt">GrateRep</span> sabt) b <span class="ot">=</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  sabt (<span class="fu">const</span> b)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ot">zipWith1 ::</span> <span class="dt">GrateRep</span> s t a b <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> t</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>zipWith1 (<span class="dt">GrateRep</span> sabt) ab s <span class="ot">=</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  sabt <span class="op">$</span> \sa <span class="ot">-&gt;</span> ab (sa s)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ot">zipWith2 ::</span> <span class="dt">GrateRep</span> s t a b <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> t</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>zipWith2 (<span class="dt">GrateRep</span> sabt) o s1 s2 <span class="ot">=</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  sabt <span class="op">$</span> \sa <span class="ot">-&gt;</span> o (sa s1) (sa s2)</span></code></pre></div>
+<p>I hope these examples give some insight about grates. Now back to our
+original goal: To obtain a grate from a lens. I will use functor (and
+contravariant) instances with respect all variables in the double
+continuation. However, instead of defining different newtypes around the
+double continuation function and define the corresponding instances I
+will do it in a single function.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ot">modifyDoubleCont ::</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  (s1 <span class="ot">-&gt;</span> s2) <span class="ot">-&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  (a2 <span class="ot">-&gt;</span> a1) <span class="ot">-&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  (b1 <span class="ot">-&gt;</span> b2) <span class="ot">-&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  ((s1 <span class="ot">-&gt;</span> a1) <span class="ot">-&gt;</span> b1) <span class="ot">-&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  ((s2 <span class="ot">-&gt;</span> a2) <span class="ot">-&gt;</span> b2)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>modifyDoubleCont mapS contramapA mapB  <span class="ot">=</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  (<span class="op">.</span> (contramapA <span class="op">.</span>)) <span class="op">.</span> (mapB <span class="op">.</span>) <span class="op">.</span> (<span class="op">.</span> (<span class="op">.</span> mapS))</span></code></pre></div>
+<p>The definition may look horrible if you are not used to this kind of
+functions but there is a simple algorithm to derive it and you can
+discover it easily.</p>
+<p>And now the function <code
+class="sourceCode haskell">grateFromLens</code>:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ot">grateFromLens ::</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f, <span class="dt">Rep.Rep</span> f <span class="op">~</span> r1</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Rep.Representable</span> g, <span class="dt">Rep.Rep</span> g <span class="op">~</span> r2</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Lens&#39;</span> r1 r2 <span class="ot">-&gt;</span> <span class="dt">GrateRep</span> (f a) (f b) (g a) (g b)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>grateFromLens lns <span class="ot">=</span> <span class="dt">GrateRep</span> <span class="op">$</span> \fagaga <span class="ot">-&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  Rep.tabulate <span class="op">$</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    \r1 <span class="ot">-&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      fagaga</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;</span> modifyDoubleCont Rep.index Rep.tabulate Rep.index</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;</span> modifyDoubleCont <span class="fu">id</span> (\r1a r2 <span class="ot">-&gt;</span> r1a <span class="op">$</span> lns <span class="op">.~</span> r2 <span class="op">$</span> r1) (\r2a _ <span class="ot">-&gt;</span> r2a <span class="op">$</span> r1 <span class="op">^.</span> lns )</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;</span> (<span class="op">$</span> <span class="fu">id</span>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;</span> (<span class="op">$</span> r1)</span></code></pre></div>
 <p>Let us see this function in action:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">decompose3 ::</span> <span class="dt">Iso&#39;</span> <span class="dt">Natural</span> (<span class="dt">Natural</span>, <span class="dt">Slot</span>)
-decompose3 <span class="fu">=</span> iso fromN toN
-  <span class="kw">where</span>
-    fromN n <span class="fu">=</span> (n <span class="ot">`div`</span> <span class="dv">3</span>, remainderAsSlot <span class="fu">$</span> n <span class="ot">`mod`</span> <span class="dv">3</span>)
-    toN (n, slot) <span class="fu">=</span>
-      <span class="dv">3</span> <span class="fu">*</span> n <span class="fu">+</span> slotAsRemainder slot
-    slotAsRemainder <span class="fu">=</span> \<span class="kw">case</span>
-      <span class="dt">Slot0</span> <span class="ot">-&gt;</span> <span class="dv">0</span>
-      <span class="dt">Slot1</span> <span class="ot">-&gt;</span> <span class="dv">1</span>
-      <span class="dt">Slot2</span> <span class="ot">-&gt;</span> <span class="dv">2</span>
-    remainderAsSlot n
-      <span class="fu">|</span> n <span class="fu">==</span> <span class="dv">0</span>    <span class="fu">=</span> <span class="dt">Slot0</span>
-      <span class="fu">|</span> n <span class="fu">==</span> <span class="dv">1</span>    <span class="fu">=</span> <span class="dt">Slot1</span>
-      <span class="fu">|</span> otherwise <span class="fu">=</span> <span class="dt">Slot2</span>
-
-<span class="ot">divideBy3 ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Natural</span> <span class="dt">Natural</span>
-divideBy3 <span class="fu">=</span> decompose3 <span class="fu">.</span> _1
-
-<span class="ot">remainderBy3 ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Natural</span> <span class="dt">Slot</span>
-remainderBy3 <span class="fu">=</span> decompose3 <span class="fu">.</span> _2
-
-<span class="ot">divideBy3Grate ::</span> <span class="dt">GrateRep</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> b) (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> b)
-divideBy3Grate <span class="fu">=</span> grateFromLens divideBy3
-
-<span class="ot">remainderBy3Grate ::</span> <span class="dt">GrateRep</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> b) (<span class="dt">Triple</span> a) (<span class="dt">Triple</span> b)
-remainderBy3Grate <span class="fu">=</span> grateFromLens remainderBy3
-
-<span class="co">-- first three examples give you the usual zip.</span>
-<span class="co">-- &gt;&gt;&gt; zipWith2 represented (+) example1 example2</span>
-<span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (zipWith2 represented (+)) example1 example2</span>
-<span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (zipWith2 represented (+)) example1 example2</span>
-<span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span>
-
-<span class="co">-- These are more interesting</span>
-
-<span class="ot">liftWrapped2 ::</span>
-  (<span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a) <span class="ot">-&gt;</span>
-  <span class="dt">WrappedStream</span> a <span class="ot">-&gt;</span> <span class="dt">WrappedStream</span> a <span class="ot">-&gt;</span> <span class="dt">WrappedStream</span> a
-liftWrapped2 binaryOp w1 w2 <span class="fu">=</span> <span class="dt">WrappedStream</span> <span class="fu">$</span> on binaryOp getStream w1 w2
-
-<span class="co">-- &gt;&gt;&gt; liftWrapped2 Str.interleave example1 example2</span>
-<span class="co">-- 0, 100, 1, 101, 2, 102, 3, 103, 4, 104, 5, 105, 6, 106, 7, 107, 8, 108, 9, 109,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (liftWrapped2 Str.interleave) example1 example2</span>
-<span class="co">-- 0, 1, 2, 100, 101, 102, 3, 4, 5, 103, 104, 105, 6, 7, 8, 106, 107, 108, 9, 10,  ...</span>
-
-<span class="ot">pickAlternating ::</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a
-pickAlternating str1 str2 <span class="fu">=</span> Str.zip3 str1 str2 (Str.fromList [<span class="dv">0</span><span class="ot"> ::</span> <span class="dt">Int</span> <span class="fu">..</span>]) <span class="fu">&lt;&amp;&gt;</span>
-  \(a, b, n) <span class="ot">-&gt;</span> <span class="kw">if</span> even n <span class="kw">then</span> a <span class="kw">else</span> b
-
-<span class="co">-- &gt;&gt;&gt; liftWrapped2 pickAlternating example1 example2</span>
-<span class="co">-- 0, 101, 2, 103, 4, 105, 6, 107, 8, 109, 10, 111, 12, 113, 14, 115, 16, 117, 18, 119,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (liftWrapped2 pickAlternating) example1 example2</span>
-<span class="co">-- 0, 1, 2, 103, 104, 105, 6, 7, 8, 109, 110, 111, 12, 13, 14, 115, 116, 117, 18, 19,  ...</span>
-
-<span class="ot">crissCross ::</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a
-crissCross (<span class="dt">Str.Cons</span> _x1 (<span class="dt">Str.Cons</span> y1 rest1)) (<span class="dt">Str.Cons</span> x2 (<span class="dt">Str.Cons</span> _y2 rest2)) <span class="fu">=</span>
-  y1 <span class="fu">Str.&lt;:&gt;</span> x2 <span class="fu">Str.&lt;:&gt;</span> crissCross rest1 rest2
-
-<span class="co">-- &gt;&gt;&gt; liftWrapped2 crissCross example1 example2</span>
-<span class="co">-- 1, 100, 3, 102, 5, 104, 7, 106, 9, 108, 11, 110, 13, 112, 15, 114, 17, 116, 19, 118,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (liftWrapped2 crissCross) example1 example2</span>
-<span class="co">-- 3, 4, 5, 100, 101, 102, 9, 10, 11, 106, 107, 108, 15, 16, 17, 112, 113, 114, 21, 22,  ...</span>
-
-<span class="ot">shiftByEndo ::</span>
-  ( <span class="dt">Rep.Representable</span> f
-  , <span class="dt">Rep.Rep</span> f <span class="fu">~</span> r
-  ) <span class="ot">=&gt;</span>
-  <span class="dt">Endo</span> r <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b
-shiftByEndo (<span class="dt">Endo</span> endo) binaryOp fa1 <span class="fu">=</span>
-  zipWith2 represented binaryOp (Rep.tabulate <span class="fu">$</span> Rep.index fa1 <span class="fu">.</span> endo)
-
-<span class="ot">swapNeightbors ::</span> <span class="dt">Endo</span> <span class="dt">Natural</span>
-swapNeightbors <span class="fu">=</span> <span class="dt">Endo</span> <span class="fu">$</span> \n <span class="ot">-&gt;</span> <span class="kw">if</span> even n <span class="kw">then</span> n <span class="fu">+</span> <span class="dv">1</span> <span class="kw">else</span> n <span class="fu">-</span> <span class="dv">1</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (shiftByEndo swapNeightbors (+)) example1 example2</span>
-<span class="co">-- 103, 105, 107, 103, 105, 107, 115, 117, 119, 115, 117, 119, 127, 129, 131, 127, 129, 131, 139, 141,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo id) (+)) example1 example2</span>
-<span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo $ const Slot0) (+)) example1 example2</span>
-<span class="co">-- 100, 101, 102, 106, 107, 108, 112, 113, 114, 118, 119, 120, 124, 125, 126, 130, 131, 132, 136, 137,  ...</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo $ const Slot1) (+)) example1 example2</span>
-<span class="co">-- 101, 102, 103, 107, 108, 109, 113, 114, 115, 119, 120, 121, 125, 126, 127, 131, 132, 133, 137, 138,  ...</span>
-
-<span class="ot">rotateSlot ::</span> <span class="dt">Slot</span> <span class="ot">-&gt;</span> <span class="dt">Slot</span>
-rotateSlot <span class="fu">=</span> \<span class="kw">case</span>
-  <span class="dt">Slot0</span> <span class="ot">-&gt;</span> <span class="dt">Slot1</span>
-  <span class="dt">Slot1</span> <span class="ot">-&gt;</span> <span class="dt">Slot2</span>
-  <span class="dt">Slot2</span> <span class="ot">-&gt;</span> <span class="dt">Slot0</span>
-
-<span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo rotateSlot) (+)) example1 example2</span>
-<span class="co">-- 101, 103, 102, 107, 109, 108, 113, 115, 114, 119, 121, 120, 125, 127, 126, 131, 133, 132, 137, 139,  ...</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ot">decompose3 ::</span> <span class="dt">Iso&#39;</span> <span class="dt">Natural</span> (<span class="dt">Natural</span>, <span class="dt">Slot</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>decompose3 <span class="ot">=</span> iso fromN toN</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    fromN n <span class="ot">=</span> (n <span class="ot">`div`</span> <span class="dv">3</span>, remainderAsSlot <span class="op">$</span> n <span class="ot">`mod`</span> <span class="dv">3</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    toN (n, slot) <span class="ot">=</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="dv">3</span> <span class="op">*</span> n <span class="op">+</span> slotAsRemainder slot</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    slotAsRemainder <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Slot0</span> <span class="ot">-&gt;</span> <span class="dv">0</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Slot1</span> <span class="ot">-&gt;</span> <span class="dv">1</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Slot2</span> <span class="ot">-&gt;</span> <span class="dv">2</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    remainderAsSlot n</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>      <span class="op">|</span> n <span class="op">==</span> <span class="dv">0</span>    <span class="ot">=</span> <span class="dt">Slot0</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">|</span> n <span class="op">==</span> <span class="dv">1</span>    <span class="ot">=</span> <span class="dt">Slot1</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>      <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Slot2</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="ot">divideBy3 ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Natural</span> <span class="dt">Natural</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>divideBy3 <span class="ot">=</span> decompose3 <span class="op">.</span> _1</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="ot">remainderBy3 ::</span> <span class="dt">Lens&#39;</span> <span class="dt">Natural</span> <span class="dt">Slot</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>remainderBy3 <span class="ot">=</span> decompose3 <span class="op">.</span> _2</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="ot">divideBy3Grate ::</span> <span class="dt">GrateRep</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> b) (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> b)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>divideBy3Grate <span class="ot">=</span> grateFromLens divideBy3</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="ot">remainderBy3Grate ::</span> <span class="dt">GrateRep</span> (<span class="dt">WrappedStream</span> a) (<span class="dt">WrappedStream</span> b) (<span class="dt">Triple</span> a) (<span class="dt">Triple</span> b)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>remainderBy3Grate <span class="ot">=</span> grateFromLens remainderBy3</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">-- first three examples give you the usual zip.</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 represented (+) example1 example2</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (zipWith2 represented (+)) example1 example2</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (zipWith2 represented (+)) example1 example2</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co">-- These are more interesting</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="ot">liftWrapped2 ::</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a) <span class="ot">-&gt;</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>  <span class="dt">WrappedStream</span> a <span class="ot">-&gt;</span> <span class="dt">WrappedStream</span> a <span class="ot">-&gt;</span> <span class="dt">WrappedStream</span> a</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>liftWrapped2 binaryOp w1 w2 <span class="ot">=</span> <span class="dt">WrappedStream</span> <span class="op">$</span> on binaryOp getStream w1 w2</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; liftWrapped2 Str.interleave example1 example2</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 100, 1, 101, 2, 102, 3, 103, 4, 104, 5, 105, 6, 106, 7, 107, 8, 108, 9, 109,  ...</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (liftWrapped2 Str.interleave) example1 example2</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 1, 2, 100, 101, 102, 3, 4, 5, 103, 104, 105, 6, 7, 8, 106, 107, 108, 9, 10,  ...</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="ot">pickAlternating ::</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>pickAlternating str1 str2 <span class="ot">=</span> Str.zip3 str1 str2 (Str.fromList [<span class="dv">0</span><span class="ot"> ::</span> <span class="dt">Int</span> <span class="op">..</span>]) <span class="op">&lt;&amp;&gt;</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>  \(a, b, n) <span class="ot">-&gt;</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> a <span class="kw">else</span> b</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; liftWrapped2 pickAlternating example1 example2</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 101, 2, 103, 4, 105, 6, 107, 8, 109, 10, 111, 12, 113, 14, 115, 16, 117, 18, 119,  ...</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (liftWrapped2 pickAlternating) example1 example2</span></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="co">-- 0, 1, 2, 103, 104, 105, 6, 7, 8, 109, 110, 111, 12, 13, 14, 115, 116, 117, 18, 19,  ...</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a><span class="ot">crissCross ::</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a <span class="ot">-&gt;</span> <span class="dt">Str.Stream</span> a</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>crissCross (<span class="dt">Str.Cons</span> _x1 (<span class="dt">Str.Cons</span> y1 rest1)) (<span class="dt">Str.Cons</span> x2 (<span class="dt">Str.Cons</span> _y2 rest2)) <span class="ot">=</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>  y1 <span class="op">Str.&lt;:&gt;</span> x2 <span class="op">Str.&lt;:&gt;</span> crissCross rest1 rest2</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; liftWrapped2 crissCross example1 example2</span></span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1, 100, 3, 102, 5, 104, 7, 106, 9, 108, 11, 110, 13, 112, 15, 114, 17, 116, 19, 118,  ...</span></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (liftWrapped2 crissCross) example1 example2</span></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3, 4, 5, 100, 101, 102, 9, 10, 11, 106, 107, 108, 15, 16, 17, 112, 113, 114, 21, 22,  ...</span></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a><span class="ot">shiftByEndo ::</span></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Rep.Representable</span> f</span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Rep.Rep</span> f <span class="op">~</span> r</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Endo</span> r <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>shiftByEndo (<span class="dt">Endo</span> endo) binaryOp fa1 <span class="ot">=</span></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>  zipWith2 represented binaryOp (Rep.tabulate <span class="op">$</span> Rep.index fa1 <span class="op">.</span> endo)</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a><span class="ot">swapNeightbors ::</span> <span class="dt">Endo</span> <span class="dt">Natural</span></span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>swapNeightbors <span class="ot">=</span> <span class="dt">Endo</span> <span class="op">$</span> \n <span class="ot">-&gt;</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> n <span class="op">+</span> <span class="dv">1</span> <span class="kw">else</span> n <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 divideBy3Grate (shiftByEndo swapNeightbors (+)) example1 example2</span></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="co">-- 103, 105, 107, 103, 105, 107, 115, 117, 119, 115, 117, 119, 127, 129, 131, 127, 129, 131, 139, 141,  ...</span></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo id) (+)) example1 example2</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138,  ...</span></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo $ const Slot0) (+)) example1 example2</span></span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a><span class="co">-- 100, 101, 102, 106, 107, 108, 112, 113, 114, 118, 119, 120, 124, 125, 126, 130, 131, 132, 136, 137,  ...</span></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo $ const Slot1) (+)) example1 example2</span></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="co">-- 101, 102, 103, 107, 108, 109, 113, 114, 115, 119, 120, 121, 125, 126, 127, 131, 132, 133, 137, 138,  ...</span></span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="ot">rotateSlot ::</span> <span class="dt">Slot</span> <span class="ot">-&gt;</span> <span class="dt">Slot</span></span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>rotateSlot <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Slot0</span> <span class="ot">-&gt;</span> <span class="dt">Slot1</span></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Slot1</span> <span class="ot">-&gt;</span> <span class="dt">Slot2</span></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Slot2</span> <span class="ot">-&gt;</span> <span class="dt">Slot0</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; zipWith2 remainderBy3Grate (shiftByEndo (Endo rotateSlot) (+)) example1 example2</span></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a><span class="co">-- 101, 103, 102, 107, 109, 108, 113, 115, 114, 119, 121, 120, 125, 127, 126, 131, 133, 132, 137, 139,  ...</span></span></code></pre></div>
 <p>I think this is enough.</p>
 <html>
   <head>

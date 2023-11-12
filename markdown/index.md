@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Making prisms out of predicates with Liquid Haskell](predicate-to-prism.html)
+  (November 12, 2023)
+
 - [Optics in Clojure](optics-in-clojure.html)
   (May 18, 2023)
 
