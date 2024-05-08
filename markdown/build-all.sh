@@ -5,7 +5,7 @@ do
   echo "Doing $file"
   name=${file%.md}
   stripped="${name##*/}"
-  ./markdown/build-post.sh $stripped
+  ./markdown/build-post.sh "$stripped"
 done
 echo "Doing the index"
 ./markdown/build-index.sh

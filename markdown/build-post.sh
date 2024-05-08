@@ -6,4 +6,4 @@ pandoc --mathjax \
        -H ./assets/extra-header.html \
        -A ./assets/footer.html \
        --title-prefix 'Blog of S.Süer' \
-       ./markdown/posts/$1.md -o ./$1.html
+       ./markdown/posts/"$1".md -o ./"$1".html
