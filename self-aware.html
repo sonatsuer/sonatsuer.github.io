@@ -8,92 +8,56 @@
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
+    ul.task-list{list-style: none;}
   </style>
   <link rel="stylesheet" href="./assets/format.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <link rel="icon" href="assets/logo.png">
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
-  type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">Self Aware Programs</h1>
 </header>
 <h1 id="a-classical-exercise">A Classical Exercise</h1>
-<p>A computer program which produces its own source code is called a
-quine, named after the logician Willard Van Orman Quine.</p>
-<p><strong>Exercise:</strong> Write a quine in your favorite programming
-language.</p>
-<p>If you haven’t solved this exercise before, I urge you to stop right
-now and give it a try.</p>
-<p>To give you an idea of why this is an interesting problem, let us try
-to solve it in a naive way. Instead of using an actual programming
-language I will use pseudocode to keep things simple.</p>
+<p>A computer program which produces its own source code is called a quine, named after the logician Willard Van Orman Quine.</p>
+<p><strong>Exercise:</strong> Write a quine in your favorite programming language.</p>
+<p>If you haven’t solved this exercise before, I urge you to stop right now and give it a try.</p>
+<p>To give you an idea of why this is an interesting problem, let us try to solve it in a naive way. Instead of using an actual programming language I will use pseudocode to keep things simple.</p>
 <p>The obvious candidate of a quine is</p>
 <pre><code>Print your own source code</code></pre>
-<p>This looks like cheating but actually there are languages which allow
-this. For instance</p>
+<p>This looks like cheating but actually there are languages which allow this. For instance</p>
 <pre><code>10 List</code></pre>
-<p>is a valid GWBasic program which, when run, prints
-<code>10 List</code> on the screen. Actually, in GWBasic, <em>any</em>
-code which starts with <code>10 List</code> is a quine.</p>
-<p>So, to make things less trivial and more generic, let us restrict
-ourselves to text manipulations. In this case, the first candidate
-is</p>
+<p>is a valid GWBasic program which, when run, prints <code>10 List</code> on the screen. Actually, in GWBasic, <em>any</em> code which starts with <code>10 List</code> is a quine.</p>
+<p>So, to make things less trivial and more generic, let us restrict ourselves to text manipulations. In this case, the first candidate is</p>
 <pre><code>Print &quot;Print&quot;</code></pre>
-<p>The output of this code is simply <code>Print</code>. So it doesn’t
-work. Seeing this, you may try</p>
+<p>The output of this code is simply <code>Print</code>. So it doesn’t work. Seeing this, you may try</p>
 <pre><code>Print &quot;Print &quot;Print&quot;&quot;</code></pre>
-<p>This time the output is <code>Print "Print"</code>. Failed again.
-Actually, any code of the form
-<code>Print "&lt;any kind of fixed text&gt;"</code> will fail as the
-source code is strictly longer than the text it prints. Now here is an
-idea to circumvent this: We can use the the given text, or its parts,
-more than once! So let us try a program like this:</p>
+<p>This time the output is <code>Print "Print"</code>. Failed again. Actually, any code of the form <code>Print "&lt;any kind of fixed text&gt;"</code> will fail as the source code is strictly longer than the text it prints. Now here is an idea to circumvent this: We can use the the given text, or its parts, more than once! So let us try a program like this:</p>
 <pre><code>Let A be the following text:
 &quot;&lt;there is going to be a text here&gt;&quot;
 &lt;there are going to be commands here explaining what to do with A&gt;</code></pre>
-<p>As we will construct the source code using the parts of the text A,
-the first line of the code should be a part of A. So our program should
-look like this:</p>
+<p>As we will construct the source code using the parts of the text A, the first line of the code should be a part of A. So our program should look like this:</p>
 <pre><code>Let A be the following text:
 &quot;Let A be the following text:
 &lt;there are going to be more lines here&gt;&quot;
 &lt;there are going to be commands here explaining what to do with A&gt;</code></pre>
-<p>Of course, we will print the first line. Thus we should have a
-program like this:</p>
+<p>Of course, we will print the first line. Thus we should have a program like this:</p>
 <pre><code>Let A be the following text:
 &quot;Let A be the following text:
 &lt;there are going to be more lines here&gt;&quot;
 Print the first line of A
 &lt;there are going to be more commands here&gt;</code></pre>
-<p>Obviously the command <code>Print the first line of A</code> should
-appear somewhere in A. So let’s add it to A to obtain</p>
+<p>Obviously the command <code>Print the first line of A</code> should appear somewhere in A. So let’s add it to A to obtain</p>
 <pre><code>Let A be the following text:
 &quot;Let A be the following text:
 Print the first line of A
 &lt;there are going to be more lines here&gt;&quot;
 Print the first line of A
 &lt;there are going to be more commands here&gt;</code></pre>
-<p>Now the second printing command should print what comes after the
-first line. But this is simply the text A in quotation. Therefore we
-should have</p>
+<p>Now the second printing command should print what comes after the first line. But this is simply the text A in quotation. Therefore we should have</p>
 <pre><code>Let A be the following text:
 &quot;Let A be the following text:
 Print the first line of A
@@ -110,9 +74,7 @@ Print A in quotation
 Print the first line of A
 Print A in quotation
 &lt;there are going to be more commands here&gt;</code></pre>
-<p>Note that, up until now, all the steps we took were pretty much
-forced. The final step will be a little different and require a tid bit
-of creativity. Here is our finished quine:</p>
+<p>Note that, up until now, all the steps we took were pretty much forced. The final step will be a little different and require a tid bit of creativity. Here is our finished quine:</p>
 <pre><code>Let A be the following text:
 &quot;Let A be the following text:
 Print the first line of A
@@ -121,137 +83,49 @@ Print A except for its first line&quot;
 Print the first line of A
 Print A in quotation
 Print A except for its first line</code></pre>
-<p>As an exercise, you may translate this quine into a real programming
-language. Even though the quine above has the essential idea, you may
-still need to deal with a few language specific details such as escaping
-quotation marks. Here is one for you in Haskell meant to be evaluated in
-repl.</p>
+<p>As an exercise, you may translate this quine into a real programming language. Even though the quine above has the essential idea, you may still need to deal with a few language specific details such as escaping quotation marks. Here is one for you in Haskell meant to be evaluated in repl.</p>
 <pre><code>let x = [&quot;let x = &quot;, &quot; in putStr (x !! 0) &gt;&gt; putStr (show x) &gt;&gt; putStr (x !! 1)&quot;] in putStr (x !! 0) &gt;&gt; putStr (show x) &gt;&gt; putStr (x !! 1)</code></pre>
-<p>Now this was fun, bu also ad-hoc. The natural question to ask here
-whether there is a principled way of writing, not only quines, but
-programs which have some kind of access to their own source code. The
-answer is yes and this follows from one of the most fundamental results
-in recursion theory, the recursion theorem.</p>
+<p>Now this was fun, bu also ad-hoc. The natural question to ask here whether there is a principled way of writing, not only quines, but programs which have some kind of access to their own source code. The answer is yes and this follows from one of the most fundamental results in recursion theory, the recursion theorem.</p>
 <h1 id="kleenes-recursion-theorem">Kleene’s Recursion Theorem</h1>
-<p>I want to work with a Turing complete programming language. Luckily,
-what we need is essentially what I described in the first section of <a
-href="https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html">Kolmogorov
-Complexity (1/2)</a>. The differences are that we do not need <span
-class="math inline">\(\mathcal{L}\)</span> to contain UTF-8 characters
-and we do not need an assumption on the way we represent natural
-numbers.</p>
-<p>Let <span class="math inline">\(\mathcal{M}\)</span> be the set of
-all strings from <span class="math inline">\(\mathcal{L}\)</span> and
-let <span class="math inline">\(\mathcal{C}(n)\)</span> be the set of
-all source codes expecting <span class="math inline">\(n\)</span>
-inputs, where <span class="math inline">\(n\)</span> is a natural
-number. Then, for each <span
-class="math inline">\(c\in\mathcal{C}(n)\)</span>, we have a partial
-function <span class="math inline">\(f_c\)</span> from <span
-class="math inline">\(\mathcal{M}^n\)</span> to <span
-class="math inline">\(\mathcal{M}\)</span>, which is simply the partial
-function computed by the source code <span
-class="math inline">\(c\)</span>. These functions are called the
-computable partial functions.</p>
+<p>I want to work with a Turing complete programming language. Luckily, what we need is essentially what I described in the first section of <a href="https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html">Kolmogorov Complexity (1/2)</a>. The differences are that we do not need <span class="math inline">\(\mathcal{L}\)</span> to contain UTF-8 characters and we do not need an assumption on the way we represent natural numbers.</p>
+<p>Let <span class="math inline">\(\mathcal{M}\)</span> be the set of all strings from <span class="math inline">\(\mathcal{L}\)</span> and let <span class="math inline">\(\mathcal{C}(n)\)</span> be the set of all source codes expecting <span class="math inline">\(n\)</span> inputs, where <span class="math inline">\(n\)</span> is a natural number. Then, for each <span class="math inline">\(c\in\mathcal{C}(n)\)</span>, we have a partial function <span class="math inline">\(f_c\)</span> from <span class="math inline">\(\mathcal{M}^n\)</span> to <span class="math inline">\(\mathcal{M}\)</span>, which is simply the partial function computed by the source code <span class="math inline">\(c\)</span>. These functions are called the computable partial functions.</p>
 <p>Let us start with a simple but useful lemma.</p>
-<p><strong>Lemma:</strong> There is a computable function <span
-class="math inline">\(s\)</span> such that for any <span
-class="math inline">\(x\in\mathcal{M}\)</span> and <span
-class="math inline">\(c\in\mathcal{C}(2)\)</span> we have <span
-class="math inline">\(s(c,x)\in\mathcal{C}(1)\)</span> and <span
-class="math display">\[
+<p><strong>Lemma:</strong> There is a computable function <span class="math inline">\(s\)</span> such that for any <span class="math inline">\(x\in\mathcal{M}\)</span> and <span class="math inline">\(c\in\mathcal{C}(2)\)</span> we have <span class="math inline">\(s(c,x)\in\mathcal{C}(1)\)</span> and <span class="math display">\[
    f_c(x,y) = f_{s(c,x)}(y).
 \]</span></p>
-<p><strong>Proof:</strong> Let <span
-class="math inline">\(x\in\mathcal{M}\)</span> and <span
-class="math inline">\(c\in\mathcal{C}(2)\)</span> be given. As <span
-class="math inline">\(c\in\mathcal{C}(2)\)</span>, <span
-class="math inline">\(c\)</span> should look like this:</p>
+<p><strong>Proof:</strong> Let <span class="math inline">\(x\in\mathcal{M}\)</span> and <span class="math inline">\(c\in\mathcal{C}(2)\)</span> be given. As <span class="math inline">\(c\in\mathcal{C}(2)\)</span>, <span class="math inline">\(c\)</span> should look like this:</p>
 <pre><code>Ask for a value from the user and store it as A
 Ask for a value from the user and store it as B
 &lt;Some commands&gt;</code></pre>
-<p>All <span class="math inline">\(s\)</span> will need to do is to
-convert this code into the following one:</p>
+<p>All <span class="math inline">\(s\)</span> will need to do is to convert this code into the following one:</p>
 <pre><code>Let A be x
 Ask for a value from the user and store it as B
 &lt;Some commands&gt;</code></pre>
-<p>In other words, it should hard-code the value <span
-class="math inline">\(x\)</span>. It is not difficult to imagine an
-algorithm doing this. Thus, by appealing to the Church-Turing
-hypothesis, we are done. <span
-class="math inline">\(\square\)</span></p>
+<p>In other words, it should hard-code the value <span class="math inline">\(x\)</span>. It is not difficult to imagine an algorithm doing this. Thus, by appealing to the Church-Turing hypothesis, we are done. <span class="math inline">\(\square\)</span></p>
 <p>Now we can prove the recursion theorem.</p>
-<p><strong>Theorem (Kleene):</strong> Let <span
-class="math inline">\(f(x,y)\)</span> be a partial two-variable
-computable function. Then there is a <span
-class="math inline">\(c\in\mathcal{C}(1)\)</span> such that <span
-class="math display">\[
+<p><strong>Theorem (Kleene):</strong> Let <span class="math inline">\(f(x,y)\)</span> be a partial two-variable computable function. Then there is a <span class="math inline">\(c\in\mathcal{C}(1)\)</span> such that <span class="math display">\[
   f(c,y) = f_c(y)
 \]</span> holds for all <span class="math inline">\(y\)</span>.</p>
-<p><strong>Proof:</strong> Let <span
-class="math inline">\(a\in\mathcal{C}(2)\)</span> be such that <span
-class="math inline">\(f = f_a\)</span>. Such an <span
-class="math inline">\(a\)</span> exists because this is what computable
-means. Now, by the lemma, we already have something close, namely <span
-class="math display">\[
+<p><strong>Proof:</strong> Let <span class="math inline">\(a\in\mathcal{C}(2)\)</span> be such that <span class="math inline">\(f = f_a\)</span>. Such an <span class="math inline">\(a\)</span> exists because this is what computable means. Now, by the lemma, we already have something close, namely <span class="math display">\[
   f(x,y) = f_a(x,y) = f_{s(a,x)}(y).
-\]</span> So, if we could find a solution for <span
-class="math inline">\(x = s(a,x)\)</span>, then we would be done.
-However, in this equation, we have some control over <span
-class="math inline">\(x\)</span> but the other parameter <span
-class="math inline">\(a\)</span> is very heavily constrained since <span
-class="math inline">\(f = f_a\)</span>.</p>
-<p>Now comes the brilliant idea: instead of working with <span
-class="math inline">\(x\)</span> let us work with a computable function
-of <span class="math inline">\(x\)</span>. Consider <span
-class="math inline">\(f(g(x),y)\)</span> for a not yet determined
-computable function. As both <span class="math inline">\(f\)</span> and
-<span class="math inline">\(g\)</span> are computable, so is this new
-function. Therefore there is a <span
-class="math inline">\(b\in\mathcal{C}(2)\)</span> such that <span
-class="math inline">\(f_b(x,y) = f(g(x),y)\)</span>. Now we have <span
-class="math display">\[
+\]</span> So, if we could find a solution for <span class="math inline">\(x = s(a,x)\)</span>, then we would be done. However, in this equation, we have some control over <span class="math inline">\(x\)</span> but the other parameter <span class="math inline">\(a\)</span> is very heavily constrained since <span class="math inline">\(f = f_a\)</span>.</p>
+<p>Now comes the brilliant idea: instead of working with <span class="math inline">\(x\)</span> let us work with a computable function of <span class="math inline">\(x\)</span>. Consider <span class="math inline">\(f(g(x),y)\)</span> for a not yet determined computable function. As both <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are computable, so is this new function. Therefore there is a <span class="math inline">\(b\in\mathcal{C}(2)\)</span> such that <span class="math inline">\(f_b(x,y) = f(g(x),y)\)</span>. Now we have <span class="math display">\[
   f(g(x),y) = f_b(x,y) = f_{s(b,x)}(y)
-\]</span> so the equation we need to solve in this case is <span
-class="math display">\[
+\]</span> so the equation we need to solve in this case is <span class="math display">\[
   g(x) = s(b, x)
-\]</span> instead of <span class="math inline">\(x = s(a,x)\)</span>.
-Introducing <span class="math inline">\(g\)</span> into the problem gave
-us some room because now we can choose both <span
-class="math inline">\(x\)</span> <em>and</em> <span
-class="math inline">\(g\)</span>. Squinting at the equation for a few
-seconds, we see that there is a trivial solution, namely <span
-class="math inline">\(g(x) = s(x,x)\)</span> and <span
-class="math inline">\(x = b\)</span>! We were lucky! (Just kidding, I
-planned all of this.)</p>
-<p>Let us summarize this “stream of consciousness” into a more
-traditional proof. Let <span
-class="math inline">\(b\in\mathcal{C}(2)\)</span> be such that <span
-class="math inline">\(f_b(x,y) = f(s(x,x),y)\)</span> and let <span
-class="math inline">\(c = s(b,b)\)</span>. Then <span
-class="math display">\[\begin{align}
+\]</span> instead of <span class="math inline">\(x = s(a,x)\)</span>. Introducing <span class="math inline">\(g\)</span> into the problem gave us some room because now we can choose both <span class="math inline">\(x\)</span> <em>and</em> <span class="math inline">\(g\)</span>. Squinting at the equation for a few seconds, we see that there is a trivial solution, namely <span class="math inline">\(g(x) = s(x,x)\)</span> and <span class="math inline">\(x = b\)</span>! We were lucky! (Just kidding, I planned all of this.)</p>
+<p>Let us summarize this “stream of consciousness” into a more traditional proof. Let <span class="math inline">\(b\in\mathcal{C}(2)\)</span> be such that <span class="math inline">\(f_b(x,y) = f(s(x,x),y)\)</span> and let <span class="math inline">\(c = s(b,b)\)</span>. Then <span class="math display">\[\begin{align}
 f(c,y) &amp; = f (s (b,b), y) \newline
        &amp; = f_b (b, y) \newline
        &amp; = f_{s(b,b)}(y) \newline
        &amp; = f_c(y)
-\end{align}\]</span> This finishes the proof. <span
-class="math inline">\(\square\)</span></p>
+\end{align}\]</span> This finishes the proof. <span class="math inline">\(\square\)</span></p>
 <p>Let us look at example to appreciate the power of this theorem.</p>
-<p><strong>Example:</strong> There is a <span
-class="math inline">\(c\in\mathcal{C}(1)\)</span> such <span
-class="math inline">\(f_c(y) = c\)</span> for all <span
-class="math inline">\(y\)</span>. Note that <span
-class="math inline">\(c\)</span> is just a quine. Let <span
-class="math inline">\(f(x,y) = x\)</span>. Obviously <span
-class="math inline">\(f\)</span> is computable. Thus, by the recursion
-theorem, there is a <span class="math inline">\(c\)</span> such that
-<span class="math display">\[
+<p><strong>Example:</strong> There is a <span class="math inline">\(c\in\mathcal{C}(1)\)</span> such <span class="math inline">\(f_c(y) = c\)</span> for all <span class="math inline">\(y\)</span>. Note that <span class="math inline">\(c\)</span> is just a quine. Let <span class="math inline">\(f(x,y) = x\)</span>. Obviously <span class="math inline">\(f\)</span> is computable. Thus, by the recursion theorem, there is a <span class="math inline">\(c\)</span> such that <span class="math display">\[
   f_c(y) = f(c, y) = c
 \]</span> for all <span class="math inline">\(y\)</span>.</p>
 <p>Here is another one.</p>
-<p><strong>Example:</strong> There is a <span
-class="math inline">\(c\in\mathcal{C}(1)\)</span> such <span
-class="math display">\[
+<p><strong>Example:</strong> There is a <span class="math inline">\(c\in\mathcal{C}(1)\)</span> such <span class="math display">\[
   f_c(y) =
   \begin{cases}
    \text{reversed } c, \text{ if $c$ is longer than $y$} \newline
@@ -264,31 +138,13 @@ class="math display">\[
    \text{collected works of Shakespeare}, \text{ otherwise}
   \end{cases}
 \]</span> and apply the recursion theorem.</p>
-<p>The pattern here is clear: If you want to find a code in <span
-class="math inline">\(\mathcal{C}(1)\)</span> which accesses its own
-source code, just write a code in <span
-class="math inline">\(\mathcal{C}(2)\)</span> which asks for its own
-source code as input from the user. The recursion theorem takes care of
-the rest. From now on, I will freely use a subroutine
-<code>access your own code</code> and assume that you can implement it
-using the recursion theorem.</p>
+<p>The pattern here is clear: If you want to find a code in <span class="math inline">\(\mathcal{C}(1)\)</span> which accesses its own source code, just write a code in <span class="math inline">\(\mathcal{C}(2)\)</span> which asks for its own source code as input from the user. The recursion theorem takes care of the rest. From now on, I will freely use a subroutine <code>access your own code</code> and assume that you can implement it using the recursion theorem.</p>
 <h1 id="unsolvable-problems">Unsolvable Problems</h1>
-<p>Now we know how to fake an access-your-own-code subroutine. You might
-think that we can write amazing programs by using it but from a
-practical point of view such a subroutine is pretty useless. So what can
-we do with it? Well, mathematical logic of course! (See the last
-paragraph of <a
-href="https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html">Kolmogorov
-Complexity (1/2)</a>)</p>
-<p>As a warmup exercise, let us prove the unsolvability of the halting
-problem using the recursion theorem. Of course there is a much simpler
-proof via diagonalization but, as I said, this is a warmup exercise.
-Suppose that the halting problem <em>is</em> solvable. This means that
-the function defined by <span class="math display">\[
+<p>Now we know how to fake an access-your-own-code subroutine. You might think that we can write amazing programs by using it but from a practical point of view such a subroutine is pretty useless. So what can we do with it? Well, mathematical logic of course! (See the last paragraph of <a href="https://sonatsuer.github.io/kolmogorov-complexity/2018/05/21/kolmogorov-complexity-1.html">Kolmogorov Complexity (1/2)</a>)</p>
+<p>As a warmup exercise, let us prove the unsolvability of the halting problem using the recursion theorem. Of course there is a much simpler proof via diagonalization but, as I said, this is a warmup exercise. Suppose that the halting problem <em>is</em> solvable. This means that the function defined by <span class="math display">\[
   f(c, x) =
   \begin{cases}
-  \text{yes, }\, \text{if $c$ is in $\mathcal{C}(1)$ and $f_c(x)$ is
-defined} \newline
+  \text{yes, }\, \text{if $c$ is in $\mathcal{C}(1)$ and $f_c(x)$ is defined} \newline
   \text{no, }\, \text{otherwise}
   \end{cases}
 \]</span> is computable. Now consider the following algorithm:</p>
@@ -300,84 +156,37 @@ if f(S, X) = no
 if f(S, X) = yes
   print &quot;I am supposed to halt!&quot;
   loop forever</code></pre>
-<p>This program looks at its code, and sees —using the function <span
-class="math inline">\(f\)</span>— whether it will halt, and then does
-exactly the opposite. So it halts if and only if it does not halt!
-Contradiction.</p>
-<p>Before proving another impossibility result, let we will prove a
-fixed point version the recursion theorem, sometimes called the second
-recursion theorem.</p>
-<p><strong>Theorem:</strong> Let <span class="math inline">\(g\)</span>
-be a total computable function with a single variable such that <span
-class="math inline">\(g(c)\in\mathcal{C}(1)\)</span> for all <span
-class="math inline">\(c\in\mathcal{C}(1)\)</span>. Then there is a <span
-class="math inline">\(S\in\mathcal{C}(1)\)</span> such that <span
-class="math inline">\(f_S = f_{g(S)}\)</span>.</p>
-<p>Such an <span class="math inline">\(S\)</span> is called a fixed
-point of <span class="math inline">\(g\)</span>.</p>
+<p>This program looks at its code, and sees —using the function <span class="math inline">\(f\)</span>— whether it will halt, and then does exactly the opposite. So it halts if and only if it does not halt! Contradiction.</p>
+<p>Before proving another impossibility result, let we will prove a fixed point version the recursion theorem, sometimes called the second recursion theorem.</p>
+<p><strong>Theorem:</strong> Let <span class="math inline">\(g\)</span> be a total computable function with a single variable such that <span class="math inline">\(g(c)\in\mathcal{C}(1)\)</span> for all <span class="math inline">\(c\in\mathcal{C}(1)\)</span>. Then there is a <span class="math inline">\(S\in\mathcal{C}(1)\)</span> such that <span class="math inline">\(f_S = f_{g(S)}\)</span>.</p>
+<p>Such an <span class="math inline">\(S\)</span> is called a fixed point of <span class="math inline">\(g\)</span>.</p>
 <p><strong>Proof:</strong> Consider the following code:</p>
 <pre><code>Ask for a value from the user and store it as X
 Access your own code and call it S
 Simulate g(S) running on input X</code></pre>
-<p>Let us call this code <code>S</code>, just like the program itself
-does. Now for any given <code>X</code>, if we run <code>S</code> on
-input <code>X</code>, we get what <code>g(S)</code> does on input
-<code>X</code>. But this simply means that on any <code>X</code>, the
-codes <code>S</code> and <code>g(S)</code> have the same behavior. So we
-are done. <span class="math inline">\(\square\)</span></p>
+<p>Let us call this code <code>S</code>, just like the program itself does. Now for any given <code>X</code>, if we run <code>S</code> on input <code>X</code>, we get what <code>g(S)</code> does on input <code>X</code>. But this simply means that on any <code>X</code>, the codes <code>S</code> and <code>g(S)</code> have the same behavior. So we are done. <span class="math inline">\(\square\)</span></p>
 <p>Now we can prove a classical result due to Henry Gordon Rice.</p>
-<p><strong>Theorem:</strong> Let <span
-class="math inline">\(\mathcal{A}\)</span> be a decidable subset of
-<span class="math inline">\(\mathcal{C}(1)\)</span> such that <span
-class="math inline">\(\mathcal{A}\not= \emptyset,
-\mathcal{C}(1)\)</span>. Then there are <span
-class="math inline">\(a,b\in\mathcal{C}(1)\)</span> such that <span
-class="math inline">\(a\in \mathcal{A}\)</span>, <span
-class="math inline">\(b\in \mathcal{C}(1)\setminus\mathcal{A}\)</span>
-and <span class="math inline">\(f_a = f_b\)</span>.</p>
-<p><strong>Proof:</strong> Fix <span class="math inline">\(a&#39;\in
-\mathcal{A}\)</span>, <span class="math inline">\(b&#39;\in
-\mathcal{C}(1)\setminus\mathcal{A}\)</span>. Define <span
-class="math display">\[
+<p><strong>Theorem:</strong> Let <span class="math inline">\(\mathcal{A}\)</span> be a decidable subset of <span class="math inline">\(\mathcal{C}(1)\)</span> such that <span class="math inline">\(\mathcal{A}\not= \emptyset, \mathcal{C}(1)\)</span>. Then there are <span class="math inline">\(a,b\in\mathcal{C}(1)\)</span> such that <span class="math inline">\(a\in \mathcal{A}\)</span>, <span class="math inline">\(b\in \mathcal{C}(1)\setminus\mathcal{A}\)</span> and <span class="math inline">\(f_a = f_b\)</span>.</p>
+<p><strong>Proof:</strong> Fix <span class="math inline">\(a&#39;\in \mathcal{A}\)</span>, <span class="math inline">\(b&#39;\in \mathcal{C}(1)\setminus\mathcal{A}\)</span>. Define <span class="math display">\[
   g(c) =
   \begin{cases}
   a&#39;\text{ if } c\in\mathcal{A} \newline
   b&#39;\text{ if } c\not\in\mathcal{A}
   \end{cases}
-\]</span> As <span class="math inline">\(\mathcal{A}\)</span> is
-decidable, <span class="math inline">\(g\)</span> is computable. Let
-<span class="math inline">\(c\)</span> be a fixed point of <span
-class="math inline">\(g\)</span>. Then <span class="math inline">\(f_c =
-f_{g(c)}\)</span>. Moreover, by construction, <span
-class="math inline">\(c\)</span> and <span
-class="math inline">\(g(c)\)</span> cannot be both in <span
-class="math inline">\(\mathcal{A}\)</span>. This finishes the proof.
-<span class="math inline">\(\square\)</span></p>
-<p>This is a remarkable theorem, because it says that there is no
-decidable semantic property! For instance the following sets are all
-undecidable: <span class="math display">\[
+\]</span> As <span class="math inline">\(\mathcal{A}\)</span> is decidable, <span class="math inline">\(g\)</span> is computable. Let <span class="math inline">\(c\)</span> be a fixed point of <span class="math inline">\(g\)</span>. Then <span class="math inline">\(f_c = f_{g(c)}\)</span>. Moreover, by construction, <span class="math inline">\(c\)</span> and <span class="math inline">\(g(c)\)</span> cannot be both in <span class="math inline">\(\mathcal{A}\)</span>. This finishes the proof. <span class="math inline">\(\square\)</span></p>
+<p>This is a remarkable theorem, because it says that there is no decidable semantic property! For instance the following sets are all undecidable: <span class="math display">\[
   \begin{align}
-  &amp; \{c\in\mathcal{C}(1) | \text{domain of $f_c$ has 73 elements}
-\}, \newline
+  &amp; \{c\in\mathcal{C}(1) | \text{domain of $f_c$ has 73 elements} \}, \newline
   &amp; \{c\in\mathcal{C}(1) | \text{$f_c$ is total} \}, \newline
-  &amp; \{c\in\mathcal{C}(1) | \text{$f_c$ turns an even-length string
-to an odd-length string} \}, \newline
+  &amp; \{c\in\mathcal{C}(1) | \text{$f_c$ turns an even-length string to an odd-length string} \}, \newline
   &amp; \{c\in\mathcal{C}(1) | \text{$f_c$ is constant} \}, \newline
-  &amp; \{c\in\mathcal{C}(1) | \text{$f_c(x)$ has the characters a and 7
-for all $x$} \}, \newline
-  &amp; \{c\in\mathcal{C}(1) | \text{$f_c(x)$ is longer than $x$ for all
-$x$} \}, \newline
+  &amp; \{c\in\mathcal{C}(1) | \text{$f_c(x)$ has the characters a and 7 for all $x$} \}, \newline
+  &amp; \{c\in\mathcal{C}(1) | \text{$f_c(x)$ is longer than $x$ for all $x$} \}, \newline
   &amp; \ldots
   \end{align}
 \]</span></p>
-<p>For our final example, we need a definition. Call an element <span
-class="math inline">\(c\in\mathcal{C}(1)\)</span> minimal if for any
-shorter <span class="math inline">\(c&#39;\in\mathcal{C}(1)\)</span> we
-have <span class="math inline">\(f_c \not= f_{c&#39;}\)</span>. It is
-not difficult to prove that minimality is not a decidable property. I
-will leave the details to you.</p>
-<p><em>Hint:</em> Again, suppose that minimality <em>is</em> decidable
-and consider the following code:</p>
+<p>For our final example, we need a definition. Call an element <span class="math inline">\(c\in\mathcal{C}(1)\)</span> minimal if for any shorter <span class="math inline">\(c&#39;\in\mathcal{C}(1)\)</span> we have <span class="math inline">\(f_c \not= f_{c&#39;}\)</span>. It is not difficult to prove that minimality is not a decidable property. I will leave the details to you.</p>
+<p><em>Hint:</em> Again, suppose that minimality <em>is</em> decidable and consider the following code:</p>
 <pre><code>Ask for a value from the user and store it as X
 Access your own code and call it S
 Construct a minimal M longer than S and call it W

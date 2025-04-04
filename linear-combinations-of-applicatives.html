@@ -8,23 +8,13 @@
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    /* CSS for syntax highlighting */
+    ul.task-list{list-style: none;}
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -59,7 +49,7 @@
     code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
     code span.at { color: #7d9029; } /* Attribute */
     code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { color: #008000; } /* BuiltIn */
+    code span.bu { } /* BuiltIn */
     code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
     code span.ch { color: #4070a0; } /* Char */
     code span.cn { color: #880000; } /* Constant */
@@ -72,7 +62,7 @@
     code span.ex { } /* Extension */
     code span.fl { color: #40a070; } /* Float */
     code span.fu { color: #06287e; } /* Function */
-    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.im { } /* Import */
     code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
     code span.kw { color: #007020; font-weight: bold; } /* Keyword */
     code span.op { color: #666666; } /* Operator */
@@ -86,467 +76,257 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="./assets/format.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <link rel="icon" href="assets/logo.png">
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
-  type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">Linear Combinations of Applicatives</h1>
 </header>
-<p><span
-class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \
-\smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span
-class="math inline">\(\newcommand{\dar}[1]{\bigg\downarrow\raise.5ex{\rlap{\scriptstyle#1}}}\)</span></p>
+<p><span class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span class="math inline">\(\newcommand{\dar}[1]{\bigg\downarrow\raise.5ex{\rlap{\scriptstyle#1}}}\)</span></p>
 <h2 id="motivation">Motivation</h2>
-<p>In Haskell, we very rarely write <code
-class="sourceCode haskell"><span class="dt">Functor</span></code>
-instances. The reason is that on a given type constructor of the
-appropriate kind, there is at most one <code
-class="sourceCode haskell"><span class="dt">Functor</span></code>
-instance and it can be derived automatically. There is no analog of this
-for <code
-class="sourceCode haskell"><span class="dt">Applicatives</span></code>.
-A lot of functors support many <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>
-instances. A well known example is the list type with its standard and
-zippy <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>
-instances. This raises a natural question: What are some natural ways to
-construct <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>
-functors?</p>
-<p>Of course this question is/was tackled by many people, for instance
-by Ross Peterson in a <a
-href="https://www.researchgate.net/publication/262327811_Constructing_Applicative_Functors">paper</a>,
-Edward Kmett in a Comonoad Reader <a
-href="http://ekmett.github.io/reader/2012/abstracting-with-applicatives/index.html">post</a>
-and more recently by Iceland Jack in a Reddit <a
-href="https://www.reddit.com/r/haskell/comments/wyg656/comment/im75b4k/?context=3">post</a>.
-Here I will give yet another method to construct Applicatives.</p>
-<p>If you want to skip the mathematics, you can directly jump to the
-Either-ish examples section. This is where Haskell code starts. The code
-in that section and more –a small test suite and a few more examples–
-are available as a <a
-href="https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e">gist</a>.</p>
+<p>In Haskell, we very rarely write <code class="sourceCode haskell"><span class="dt">Functor</span></code> instances. The reason is that on a given type constructor of the appropriate kind, there is at most one <code class="sourceCode haskell"><span class="dt">Functor</span></code> instance and it can be derived automatically. There is no analog of this for <code class="sourceCode haskell"><span class="dt">Applicatives</span></code>. A lot of functors support many <code class="sourceCode haskell"><span class="dt">Applicative</span></code> instances. A well known example is the list type with its standard and zippy <code class="sourceCode haskell"><span class="dt">Applicative</span></code> instances. This raises a natural question: What are some natural ways to construct <code class="sourceCode haskell"><span class="dt">Applicative</span></code> functors?</p>
+<p>Of course this question is/was tackled by many people, for instance by Ross Peterson in a <a href="https://www.researchgate.net/publication/262327811_Constructing_Applicative_Functors">paper</a>, Edward Kmett in a Comonoad Reader <a href="http://ekmett.github.io/reader/2012/abstracting-with-applicatives/index.html">post</a> and more recently by Iceland Jack in a Reddit <a href="https://www.reddit.com/r/haskell/comments/wyg656/comment/im75b4k/?context=3">post</a>. Here I will give yet another method to construct Applicatives.</p>
+<p>If you want to skip the mathematics, you can directly jump to the Either-ish examples section. This is where Haskell code starts. The code in that section and more –a small test suite and a few more examples– are available as a <a href="https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e">gist</a>.</p>
 <h2 id="the-construction">The Construction</h2>
-<p>From now on I will assume some familiarity with lax monoidal
-functors. The relation to Haskell’s <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>
-class is explained, for instance, <a
-href="http://blog.ezyang.com/2012/08/applicative-functors/">here</a></p>
-<p>We will be working in the category of sets, so no domain theory will
-be necessary. Let <span
-class="math inline">\(\mathcal{M}=(M,\cdot,1)\)</span> be a monoid.
-Consider a family of lax monoidal functors <span
-class="math inline">\(\{F_m\}_{m\in M}\)</span>. We wil identify each
-element <span class="math inline">\(m\in M\)</span> with the constant
-functor <span class="math inline">\(x\mapsto\{m\}\)</span>. Now let us
-define: <span class="math display">\[
+<p>From now on I will assume some familiarity with lax monoidal functors. The relation to Haskell’s <code class="sourceCode haskell"><span class="dt">Applicative</span></code> class is explained, for instance, <a href="http://blog.ezyang.com/2012/08/applicative-functors/">here</a></p>
+<p>We will be working in the category of sets, so no domain theory will be necessary. Let <span class="math inline">\(\mathcal{M}=(M,\cdot,1)\)</span> be a monoid. Consider a family of lax monoidal functors <span class="math inline">\(\{F_m\}_{m\in M}\)</span>. We wil identify each element <span class="math inline">\(m\in M\)</span> with the constant functor <span class="math inline">\(x\mapsto\{m\}\)</span>. Now let us define: <span class="math display">\[
 F(x) = \sum_{m\in M} m\times F_m(x).
-\]</span> We want to turn <span class="math inline">\(F\)</span> into a
-lax monoidal functor from sets to sets where the monoidal structure is
-<span class="math inline">\(\times\)</span>. We need a unit, that is an
-element <span class="math display">\[
+\]</span> We want to turn <span class="math inline">\(F\)</span> into a lax monoidal functor from sets to sets where the monoidal structure is <span class="math inline">\(\times\)</span>. We need a unit, that is an element <span class="math display">\[
 \epsilon \in F(1)
-\]</span> and a multiplication, that is a family of natural
-transformations <span class="math display">\[
+\]</span> and a multiplication, that is a family of natural transformations <span class="math display">\[
 \odot \colon F(x)\times F(y) \to F(x\times y)
-\]</span> indexed by sets <span class="math inline">\(x\)</span> and
-<span class="math inline">\(y\)</span> satisfying certain compatibility
-conditions. I will not reproduce the conditions here, you can have a
-look at this nLab <a
-href="https://ncatlab.org/nlab/show/monoidal+functor">entry</a>.</p>
-<p>Let <span class="math inline">\(\epsilon_n\)</span> be the unit of
-<span class="math inline">\(F_n\)</span> and let <span
-class="math inline">\(\odot_n\)</span> be the multiplication of <span
-class="math inline">\(F_n\)</span>. It is easy to define a unit for
-<span class="math inline">\(F\)</span>: Let <span
-class="math inline">\(\epsilon = (1, \epsilon_1)\)</span>.
-Multiplication is a little bit more tricky. Let <span
-class="math inline">\(a\in F(x)\)</span> and <span
-class="math inline">\(b\in F(y)\)</span>. We want to define <span
-class="math inline">\(a\odot b\)</span>. Since <span
-class="math inline">\(F\)</span> is a sum, there are <span
-class="math inline">\(m,n\in M\)</span>, <span
-class="math inline">\(a_m\in F_m(x)\)</span> and <span
-class="math inline">\(b_n\in F_n(y)\)</span> such that <span
-class="math inline">\(a = (m, a_m)\)</span> and <span
-class="math inline">\(b = (n, b_n)\)</span>. First let us choose the
-summand in which <span class="math inline">\(a\odot b\)</span> will
-fall. A very natural candidate is <span class="math inline">\((m\cdot
-n)\times F_{m\cdot n}(x\times y)\)</span>. So <span
-class="math inline">\(a\odot b\)</span> will be of the form <span
-class="math inline">\((m\cdot n, c_{m\cdot n})\)</span> for some <span
-class="math inline">\(c_{m\cdot n}\in F_{m\cdot n}(x\times y)\)</span>.
-One way of doing that is to push <span
-class="math inline">\(a_m\)</span> into <span
-class="math inline">\(F_{m\cdot n}(x)\)</span>, <span
-class="math inline">\(b_n\)</span> into <span
-class="math inline">\(F_{m\cdot n}(y)\)</span> and then combine them by
-<span class="math inline">\(\odot_{m\cdot n}\)</span>. Let us give names
-to the functions we use to push the elements: <span
-class="math display">\[
-L(m, n)\in {\rm Hom}(F_m, F_{m\cdot n}),\;\;\; R(m, n)\in (F_n,
-F_{m\cdot n})
-\]</span> Here <span class="math inline">\({\rm Hom}\)</span> is in the
-category of lax monoidal functors with monoidal natural transformations.
-Then we can write down a formula for <span
-class="math inline">\(\odot\)</span> as follows: <span
-class="math display">\[
-(m, a_m) \odot (n, b_n) = (m\cdot n, L(m, n)(a_m) \odot_{m\cdot n} R(m,
-n)(b_n))
+\]</span> indexed by sets <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> satisfying certain compatibility conditions. I will not reproduce the conditions here, you can have a look at this nLab <a href="https://ncatlab.org/nlab/show/monoidal+functor">entry</a>.</p>
+<p>Let <span class="math inline">\(\epsilon_n\)</span> be the unit of <span class="math inline">\(F_n\)</span> and let <span class="math inline">\(\odot_n\)</span> be the multiplication of <span class="math inline">\(F_n\)</span>. It is easy to define a unit for <span class="math inline">\(F\)</span>: Let <span class="math inline">\(\epsilon = (1, \epsilon_1)\)</span>. Multiplication is a little bit more tricky. Let <span class="math inline">\(a\in F(x)\)</span> and <span class="math inline">\(b\in F(y)\)</span>. We want to define <span class="math inline">\(a\odot b\)</span>. Since <span class="math inline">\(F\)</span> is a sum, there are <span class="math inline">\(m,n\in M\)</span>, <span class="math inline">\(a_m\in F_m(x)\)</span> and <span class="math inline">\(b_n\in F_n(y)\)</span> such that <span class="math inline">\(a = (m, a_m)\)</span> and <span class="math inline">\(b = (n, b_n)\)</span>. First let us choose the summand in which <span class="math inline">\(a\odot b\)</span> will fall. A very natural candidate is <span class="math inline">\((m\cdot n)\times F_{m\cdot n}(x\times y)\)</span>. So <span class="math inline">\(a\odot b\)</span> will be of the form <span class="math inline">\((m\cdot n, c_{m\cdot n})\)</span> for some <span class="math inline">\(c_{m\cdot n}\in F_{m\cdot n}(x\times y)\)</span>. One way of doing that is to push <span class="math inline">\(a_m\)</span> into <span class="math inline">\(F_{m\cdot n}(x)\)</span>, <span class="math inline">\(b_n\)</span> into <span class="math inline">\(F_{m\cdot n}(y)\)</span> and then combine them by <span class="math inline">\(\odot_{m\cdot n}\)</span>. Let us give names to the functions we use to push the elements: <span class="math display">\[
+L(m, n)\in {\rm Hom}(F_m, F_{m\cdot n}),\;\;\; R(m, n)\in (F_n, F_{m\cdot n})
+\]</span> Here <span class="math inline">\({\rm Hom}\)</span> is in the category of lax monoidal functors with monoidal natural transformations. Then we can write down a formula for <span class="math inline">\(\odot\)</span> as follows: <span class="math display">\[
+(m, a_m) \odot (n, b_n) = (m\cdot n, L(m, n)(a_m) \odot_{m\cdot n} R(m, n)(b_n))
 \]</span></p>
-<p>Of course we cannot choose <span class="math inline">\(L\)</span> and
-<span class="math inline">\(R\)</span> arbitrarily. It turns out that
-they need to satisfy the equations <span class="math inline">\(L(a, 1) =
-{\rm Id}\)</span> and <span class="math inline">\(R(1, a) = {\rm
-Id}\)</span>. Moreover the following diagrams should commute:</p>
+<p>Of course we cannot choose <span class="math inline">\(L\)</span> and <span class="math inline">\(R\)</span> arbitrarily. It turns out that they need to satisfy the equations <span class="math inline">\(L(a, 1) = {\rm Id}\)</span> and <span class="math inline">\(R(1, a) = {\rm Id}\)</span>. Moreover the following diagrams should commute:</p>
 <p><span class="math display">\[
 \begin{array}{c}
 F_a &amp; \ras{\;\;\;L(a,b)\;\;\;} &amp; F_{a\cdot b} \newline
 \dar{L(a, b\cdot c)} &amp; &amp; \dar{L(a\cdot b, c)} \newline
-F_{a\cdot(b\cdot c)} &amp; \ras{\;\;{\rm Id}\;\;} &amp; F_{(a\cdot
-b)\cdot c} \newline
+F_{a\cdot(b\cdot c)} &amp; \ras{\;\;{\rm Id}\;\;} &amp; F_{(a\cdot b)\cdot c} \newline
 \end{array}
 \kern5em
 \begin{array}{c}
 F_b &amp; \ras{\;\;\;R(a,b)\;\;\;} &amp; F_{a\cdot b} \newline
 \dar{L(b, c)} &amp; &amp; \dar{L(a\cdot b, c)} \newline
-F_{b\cdot c} &amp; \ras{\;\;R(a, b\cdot c)\;\;} &amp; F_{a\cdot b\cdot
-c} \newline
+F_{b\cdot c} &amp; \ras{\;\;R(a, b\cdot c)\;\;} &amp; F_{a\cdot b\cdot c} \newline
 \end{array}
 \kern5em
 \begin{array}{c}
 F_c &amp; \ras{\;\;\;R(a,b)\;\;\;} &amp; F_{b\cdot c} \newline
 \dar{R(a\cdot b, c)} &amp; &amp; \dar{R(a, b\cdot c)} \newline
-F_{(a\cdot b)\cdot c} &amp; \ras{\;\;{\rm Id}\;\;} &amp; F_{a\cdot
-(b\cdot c)} \newline
+F_{(a\cdot b)\cdot c} &amp; \ras{\;\;{\rm Id}\;\;} &amp; F_{a\cdot (b\cdot c)} \newline
 \end{array}
 \]</span></p>
-<p>Nice and symmetric. It looks like a categorified version of a
-bi-action. I will leave it to you to find a <em>“It’s just a blah in the
-category of blöh.”</em> kind of characterization.</p>
+<p>Nice and symmetric. It looks like a categorified version of a bi-action. I will leave it to you to find a <em>“It’s just a blah in the category of blöh.”</em> kind of characterization.</p>
 <h2 id="examples">Examples</h2>
-<p>I will not give an implementation of the general construction as it
-talks about arbitrary type level monoids. It can be done for
-<em>some</em> monoids but frankly I think it is not worth the trouble.
-Instead, I will give several implementations corresponding to special
-cases.</p>
+<p>I will not give an implementation of the general construction as it talks about arbitrary type level monoids. It can be done for <em>some</em> monoids but frankly I think it is not worth the trouble. Instead, I will give several implementations corresponding to special cases.</p>
 <h3 id="list-ish-examples">List-ish Examples</h3>
-<p>Let us begin with an easy example. Consider the monoid <span
-class="math inline">\(\mathcal{N}_\infty = (\mathbb{N}\cup\{\infty\},
-\min, \infty)\)</span>. Let <span class="math display">\[
+<p>Let us begin with an easy example. Consider the monoid <span class="math inline">\(\mathcal{N}_\infty = (\mathbb{N}\cup\{\infty\}, \min, \infty)\)</span>. Let <span class="math display">\[
 \mathcal{Z}(x) = \sum_{n\in \mathcal{N}_\infty} m\times V_m(x)
-\]</span> where <span class="math inline">\(V_n(x)\)</span> is the
-functor of vectors of length <span class="math inline">\(n\)</span>. We
-view each <span class="math inline">\(V_n\)</span> as lax monoidal
-functor where <span class="math inline">\(\odot\)</span> is given by
-‘zipping’ and the unit is given by replicating. If we define <span
-class="math display">\[
+\]</span> where <span class="math inline">\(V_n(x)\)</span> is the functor of vectors of length <span class="math inline">\(n\)</span>. We view each <span class="math inline">\(V_n\)</span> as lax monoidal functor where <span class="math inline">\(\odot\)</span> is given by ‘zipping’ and the unit is given by replicating. If we define <span class="math display">\[
 L(m,n) = R(n,m) \in {\rm Hom}(F_m, F_{\min\{m,\, n\}})
-\]</span> by truncating then all the conditions we mentioned in the last
-chapter are satisfied. The lax monoidal structure we get on <span
-class="math inline">\(F\)</span> is the zippy version.</p>
-<p>One can also obtained the lax monoidal structure induced by the list
-monad in a similar way. Consider the multiplicative monoid <span
-class="math inline">\(\mathcal{N}_*=(\mathbb{N}\cup\{\infty\}, *,
-1)\)</span>. Let <span class="math inline">\(V_n\)</span> be as in the
-previous example. Define <span class="math display">\[
+\]</span> by truncating then all the conditions we mentioned in the last chapter are satisfied. The lax monoidal structure we get on <span class="math inline">\(F\)</span> is the zippy version.</p>
+<p>One can also obtained the lax monoidal structure induced by the list monad in a similar way. Consider the multiplicative monoid <span class="math inline">\(\mathcal{N}_*=(\mathbb{N}\cup\{\infty\}, *, 1)\)</span>. Let <span class="math inline">\(V_n\)</span> be as in the previous example. Define <span class="math display">\[
 \mathcal{L}(x) = \sum_{n\in \mathcal{N}_*} m\times V_m(x)
-\]</span> Note that <span class="math inline">\(Z\)</span> and <span
-class="math inline">\(L\)</span> are isomorphic as functors but we will
-endow <span class="math inline">\(\mathcal{L}\)</span> with a different
-lax monoidal structure. We need to define the maps <span
-class="math inline">\(L\)</span> and <span
-class="math inline">\(R\)</span>. First suppose <span
-class="math inline">\(m\)</span> and <span
-class="math inline">\(n\)</span> are finite. Define <span
-class="math display">\[
+\]</span> Note that <span class="math inline">\(Z\)</span> and <span class="math inline">\(L\)</span> are isomorphic as functors but we will endow <span class="math inline">\(\mathcal{L}\)</span> with a different lax monoidal structure. We need to define the maps <span class="math inline">\(L\)</span> and <span class="math inline">\(R\)</span>. First suppose <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> are finite. Define <span class="math display">\[
 L(m, n)(v) = nv_1\smallfrown nv_2 \smallfrown\cdots\smallfrown n v_m
 \]</span> and <span class="math display">\[
 R(m, n)(v) = mv
-\]</span> where <span class="math inline">\(v_i\)</span> denotes the
-<span class="math inline">\(i\)</span>-th component of a vector, <span
-class="math inline">\(\smallfrown\)</span> denotes vector concatenation
-and <span class="math inline">\(nv\)</span> denotes <span
-class="math inline">\(n\)</span> copies of <span
-class="math inline">\(v\)</span> concatenated. So, for instance, <span
-class="math display">\[
+\]</span> where <span class="math inline">\(v_i\)</span> denotes the <span class="math inline">\(i\)</span>-th component of a vector, <span class="math inline">\(\smallfrown\)</span> denotes vector concatenation and <span class="math inline">\(nv\)</span> denotes <span class="math inline">\(n\)</span> copies of <span class="math inline">\(v\)</span> concatenated. So, for instance, <span class="math display">\[
 L(3,2)(v_1, v_2, v_3) = (v_1,v_1,v_2,v_2,v_3,v_3)
 \;\;\text{ and }\;\;
 R(3,4)(v_1,v_2) = (v_1,v_2,v_1,v_2,v_1,v_2)
 \]</span></p>
-<p>I leave the case of infinite vectors as <del>an exercise</del> a fun
-puzzle.</p>
-<p>I think a remark on implementations is in order. It might be tempting
-to model these functors as dependent sums –which Haskell supports to an
-extent– then implement the general construction and transfer it to
-regular lists. However, this is not really possible because the list
-type in Haskell is <em>not</em> isomorphic to a dependent sum of
-fixed-length vectors. On the dependent sum type we can implement the
-<code class="sourceCode haskell">isFinite</code> predicate simply by
-pattern matching. On the other hand, for lists, this would practically
-mean solving the halting problem.</p>
+<p>I leave the case of infinite vectors as <del>an exercise</del> a fun puzzle.</p>
+<p>I think a remark on implementations is in order. It might be tempting to model these functors as dependent sums –which Haskell supports to an extent– then implement the general construction and transfer it to regular lists. However, this is not really possible because the list type in Haskell is <em>not</em> isomorphic to a dependent sum of fixed-length vectors. On the dependent sum type we can implement the <code class="sourceCode haskell">isFinite</code> predicate simply by pattern matching. On the other hand, for lists, this would practically mean solving the halting problem.</p>
 <h3 id="either-ish-examples">Either-ish Examples</h3>
-<p>So let us move to more practical examples. First let us reduce the
-dependent sum to a regular sum. Suppose the family <span
-class="math inline">\(\{F_m\}_{m\in M}\)</span> contains only finitely
-many functors, say, <span class="math inline">\(G_1,\ldots,G_k\)</span>.
-Then we can group the duplicated functors to obtain the following
-equivalent form: <span class="math display">\[
+<p>So let us move to more practical examples. First let us reduce the dependent sum to a regular sum. Suppose the family <span class="math inline">\(\{F_m\}_{m\in M}\)</span> contains only finitely many functors, say, <span class="math inline">\(G_1,\ldots,G_k\)</span>. Then we can group the duplicated functors to obtain the following equivalent form: <span class="math display">\[
 F(x) = \sum_{i=1}^k M_k\times G_k(x)
-\]</span> where <span class="math inline">\(M_k = \{m\in M | F_m =
-G_k\}\)</span>. Note that if <span class="math inline">\(G_1,\ldots,
-G_k\)</span> are distinct then <span class="math inline">\(M =
-\bigsqcup_{i=1}^k M_i\)</span>. This looks much more manageable.</p>
-<p>For the sake of simplicity we will assume that <span
-class="math inline">\(k=2\)</span>. So <span
-class="math inline">\(M=M_1\sqcup M_2\)</span> and <span
-class="math display">\[
+\]</span> where <span class="math inline">\(M_k = \{m\in M | F_m = G_k\}\)</span>. Note that if <span class="math inline">\(G_1,\ldots, G_k\)</span> are distinct then <span class="math inline">\(M = \bigsqcup_{i=1}^k M_i\)</span>. This looks much more manageable.</p>
+<p>For the sake of simplicity we will assume that <span class="math inline">\(k=2\)</span>. So <span class="math inline">\(M=M_1\sqcup M_2\)</span> and <span class="math display">\[
 F(x) = M_1\times G_1 + M_2\times G_2
-\]</span> To simplify things even further we will also assume that there
-are <span class="math inline">\(\eta_{12}\colon G_1\to G_2\)</span> and
-<span class="math inline">\(\eta_{21}\colon G_2\to G_1\)</span> and the
-functions <span class="math inline">\(L(m,n)\)</span> and <span
-class="math inline">\(R(m,n)\)</span> only take identity and these
-natural transformations as values. After these assumptions we can start
-writing code.</p>
-<p>First let us recall the lax monoidal interface to <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>
-functors. We will be writing sample computations with this
-interface.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">unit ::</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> f ()</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>unit <span class="ot">=</span> <span class="fu">pure</span> ()</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ot">(**) ::</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f (a, b)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>(<span class="op">**</span>) <span class="ot">=</span> liftA2 (,)</span></code></pre></div>
-<p>Since we will be working with only two functors we can define a usual
-sum type to represent the functor <span class="math inline">\(F\)</span>
-and implement <span class="math inline">\(\odot\)</span> in this
-case:</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Carrier</span> m1 g1 m2 g2 x <span class="ot">=</span> <span class="dt">L</span> m1 (g1 x) <span class="op">|</span> <span class="dt">R</span> m2 (g2 x)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Functor</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> (<span class="op">~&gt;</span>) f g <span class="ot">=</span> <span class="kw">forall</span> a<span class="op">.</span> f a <span class="ot">-&gt;</span> g a</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ot">transferBinary ::</span> <span class="dt">Iso&#39;</span> a b <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>transferBinary i o a1 a2 <span class="ot">=</span> view i <span class="op">$</span> review i a1 <span class="ot">`o`</span> review i a2</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ot">alignFunctors ::</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">Applicative</span> g1, <span class="dt">Applicative</span> g2, <span class="dt">Semigroup</span> m</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">=&gt;</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Iso&#39;</span> m (<span class="dt">Either</span> m1 m2) <span class="ot">-&gt;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  (g1 <span class="op">~&gt;</span> g2) <span class="ot">-&gt;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  (g2 <span class="op">~&gt;</span> g1) <span class="ot">-&gt;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  (x <span class="ot">-&gt;</span> y <span class="ot">-&gt;</span> z) <span class="ot">-&gt;</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Carrier</span> m1 g1 m2 g2 x <span class="ot">-&gt;</span> <span class="dt">Carrier</span> m1 g1 m2 g2 y <span class="ot">-&gt;</span> <span class="dt">Carrier</span> m1 g1 m2 g2 z</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>alignFunctors i eta12 eta21 o c1 c2 <span class="ot">=</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> (c1, c2) <span class="kw">of</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">L</span> a1 fx, <span class="dt">L</span> a2 fy) <span class="ot">-&gt;</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> <span class="dt">Left</span> a1 <span class="ot">`tro`</span> <span class="dt">Left</span> a2 <span class="kw">of</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o fx fy)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o (eta12 fx) (eta12 fy))</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">L</span> a1 fx, <span class="dt">R</span> b2 gy) <span class="ot">-&gt;</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> <span class="dt">Left</span> a1 <span class="ot">`tro`</span> <span class="dt">Right</span> b2 <span class="kw">of</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o fx (eta21 gy))</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o (eta12 fx) gy)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">R</span> b1 gx, <span class="dt">L</span> a2 fy) <span class="ot">-&gt;</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> <span class="dt">Right</span> b1 <span class="ot">`tro`</span> <span class="dt">Left</span> a2 <span class="kw">of</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o (eta21 gx) fy)</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o gx (eta12 fy))</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">R</span> b1 gx, <span class="dt">R</span> b2 gy) <span class="ot">-&gt;</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> <span class="dt">Right</span> b1 <span class="ot">`tro`</span> <span class="dt">Right</span> b2 <span class="kw">of</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o (eta21 gx) (eta21 gy))</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o gx gy)</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    tro <span class="ot">=</span> transferBinary i (<span class="op">&lt;&gt;</span>)</span></code></pre></div>
-<p>Our first concrete example is a homemade validation <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>.The
-validation requires a semigroup to accumulate failure cases. We can
-complete that to a monoid by adding a new element as an identity. Then
-the old elements and the new element form a decomposition of the monoid
-into a disjoint union. In this way we can define the usual <a
-href="https://hackage.haskell.org/package/validation">validation</a>
-<code
-class="sourceCode haskell"><span class="dt">Applicative</span></code> as
-a special case of the construction. Here is the code:</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">AddUnit</span> m <span class="ot">=</span> <span class="dt">AddUnit_OldElement</span> m <span class="op">|</span> <span class="dt">AddUnit_NewUnit</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">addUnitIso ::</span> <span class="dt">Iso&#39;</span> (<span class="dt">AddUnit</span> m) (<span class="dt">Either</span> m ())</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>addUnitIso <span class="ot">=</span> iso fromAddUnit toAddUnit</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    fromAddUnit <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">AddUnit_OldElement</span> m <span class="ot">-&gt;</span> <span class="dt">Left</span> m</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">AddUnit_NewUnit</span> <span class="ot">-&gt;</span> <span class="dt">Right</span> ()</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    toAddUnit <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Left</span> m <span class="ot">-&gt;</span> <span class="dt">AddUnit_OldElement</span> m</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Right</span> () <span class="ot">-&gt;</span> <span class="dt">AddUnit_NewUnit</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Semigroup</span> m <span class="ot">=&gt;</span> <span class="dt">Semigroup</span> (<span class="dt">AddUnit</span> m) <span class="kw">where</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">AddUnit_OldElement</span> x) <span class="op">&lt;&gt;</span> (<span class="dt">AddUnit_OldElement</span> y) <span class="ot">=</span> <span class="dt">AddUnit_OldElement</span> (x <span class="op">&lt;&gt;</span> y)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">AddUnit_NewUnit</span> <span class="op">&lt;&gt;</span> y <span class="ot">=</span> y</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&lt;&gt;</span> <span class="dt">AddUnit_NewUnit</span> <span class="ot">=</span> x</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Semigroup</span> m <span class="ot">=&gt;</span> <span class="dt">Monoid</span> (<span class="dt">AddUnit</span> m) <span class="kw">where</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mempty</span> <span class="ot">=</span> <span class="dt">AddUnit_NewUnit</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">ClassicalValidation</span> m a <span class="ot">=</span> <span class="dt">Failure</span> m <span class="op">|</span> <span class="dt">Success</span> a</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span>(<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Functor</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ot">classicalValidationIso ::</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Iso&#39;</span> (<span class="dt">Carrier</span> m (<span class="dt">Const</span> ()) () <span class="dt">Identity</span> a) (<span class="dt">ClassicalValidation</span> m a)</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>classicalValidationIso <span class="ot">=</span> iso toClassical fromClassical</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    toClassical <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>      <span class="dt">L</span> m _ <span class="ot">-&gt;</span> <span class="dt">Failure</span> m</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>      <span class="dt">R</span> _ (<span class="dt">Identity</span> a) <span class="ot">-&gt;</span> <span class="dt">Success</span> a</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    fromClassical <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Failure</span> m <span class="ot">-&gt;</span> <span class="dt">L</span> m (<span class="dt">Const</span> ())</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Success</span> a <span class="ot">-&gt;</span> <span class="dt">R</span> () (<span class="dt">Identity</span> a)</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">NaturalIso</span> f g <span class="ot">=</span> <span class="kw">forall</span> x<span class="op">.</span> <span class="dt">Iso&#39;</span> (f x) (g x)</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="ot">transferBinarfyF ::</span> <span class="dt">NaturalIso</span> f g <span class="ot">-&gt;</span> (f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f c) <span class="ot">-&gt;</span> g a <span class="ot">-&gt;</span> g b <span class="ot">-&gt;</span> g c</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>transferBinarfyF i o a1 a2 <span class="ot">=</span>  view i <span class="op">$</span> review i a1 <span class="ot">`o`</span> review i a2</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Semigroup</span> m <span class="ot">=&gt;</span> <span class="dt">Applicative</span> (<span class="dt">ClassicalValidation</span> m) <span class="kw">where</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> <span class="ot">=</span> <span class="dt">Success</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  liftA2 o x y <span class="ot">=</span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> co <span class="ot">=</span> alignFunctors addUnitIso <span class="fu">undefined</span> (<span class="fu">pure</span> <span class="op">.</span> runIdentity) o</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span> transferBinarfyF classicalValidationIso co x y</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; unit :: ClassicalValidation String ()</span></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">-- Success ()</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Success &#39;a&#39; ** Success &#39;b&#39;</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">-- Success (&#39;a&#39;,&#39;b&#39;)</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Success &#39;a&#39; ** Failure &quot;e&quot;</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co">-- Failure &quot;e&quot;</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Failure &quot;e&quot; ** Success &#39;b&#39;</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co">-- Failure &quot;e&quot;</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Failure &quot;e1&quot; ** Failure &quot;e2&quot;</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="co">-- Failure &quot;e1e2&quot;</span></span></code></pre></div>
-<p>Let us address a few things quickly. First, there is an <code
-class="sourceCode haskell"><span class="fu">undefined</span></code> in
-the <code
-class="sourceCode haskell"><span class="dt">Applicative</span></code>
-instance definition. The reason is that we never need to go from <code
-class="sourceCode haskell">g1</code> to <code
-class="sourceCode haskell">g2</code> so undefined is never called. To
-see why it is the case look at the multiplication of <code
-class="sourceCode haskell"><span class="dt">AddUnit</span> m</code>. In
-that monoid, multiplication of any element with an old element (from
-both sides) is again an old element. In algebra we say that the old
-elements form a two sided ideal.</p>
-<p>Second, the point of this implementation is illustrating a point. If
-you really need an implementation the best way is to inline/specialize
-the <code class="sourceCode haskell">alignFunctors</code> and eliminate
-the <code
-class="sourceCode haskell"><span class="fu">undefined</span></code>.</p>
-<p>Now we will construct a potentially useful applicative. The idea is
-that if you decompose a monoid into disjoint sets, the set containing
-the unit is a partial monoid. The converse is also true. If you have a
-partial monoid then you can turn that into a monoid by adding a new
-absorbing element. Here is an implementation with a sample partial
-monoid.</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="dt">PartialMonoid</span> pm <span class="kw">where</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">  pu ::</span> pm</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ot">  pop ::</span> pm <span class="ot">-&gt;</span> pm <span class="ot">-&gt;</span> <span class="dt">Maybe</span> pm</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">UpToThree</span> <span class="ot">=</span> <span class="dt">Zero</span> <span class="op">|</span> <span class="dt">One</span> <span class="op">|</span> <span class="dt">Two</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Enum</span>, <span class="dt">Bounded</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> <span class="dt">UpToThree</span> <span class="kw">where</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  pu <span class="ot">=</span> <span class="dt">Zero</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  a1 <span class="ot">`pop`</span> a2 <span class="ot">=</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> n <span class="ot">=</span> <span class="fu">fromEnum</span> a1 <span class="op">+</span> <span class="fu">fromEnum</span> a2</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span> <span class="kw">if</span> n <span class="op">&gt;</span> <span class="dv">2</span> <span class="kw">then</span> <span class="dt">Nothing</span> <span class="kw">else</span> <span class="dt">Just</span> <span class="op">$</span> <span class="fu">toEnum</span> n</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">AddAbsorbing</span> m <span class="ot">=</span> <span class="dt">AddAbsorbing_OldElement</span> m <span class="op">|</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ot">addAbsorbingIso ::</span> <span class="dt">Iso&#39;</span> (<span class="dt">AddAbsorbing</span> m) (<span class="dt">Either</span> m ())</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>addAbsorbingIso <span class="ot">=</span> iso fromAddAbsorbing toAddAbsorbing</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    fromAddAbsorbing <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">AddAbsorbing_OldElement</span> m <span class="ot">-&gt;</span> <span class="dt">Left</span> m</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="ot">-&gt;</span> <span class="dt">Right</span> ()</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    toAddAbsorbing <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Left</span> m <span class="ot">-&gt;</span> <span class="dt">AddAbsorbing_OldElement</span> m</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Right</span> () <span class="ot">-&gt;</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> m <span class="ot">=&gt;</span> <span class="dt">Semigroup</span> (<span class="dt">AddAbsorbing</span> m) <span class="kw">where</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">AddAbsorbing_OldElement</span> x) <span class="op">&lt;&gt;</span> (<span class="dt">AddAbsorbing_OldElement</span> y) <span class="ot">=</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">maybe</span> <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="dt">AddAbsorbing_OldElement</span> (x <span class="ot">`pop`</span> y)</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="op">&lt;&gt;</span> _ <span class="ot">=</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">&lt;&gt;</span> <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="ot">=</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> m <span class="ot">=&gt;</span> <span class="dt">Monoid</span> (<span class="dt">AddAbsorbing</span> m) <span class="kw">where</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mempty</span> <span class="ot">=</span> <span class="dt">AddAbsorbing_OldElement</span> pu</span></code></pre></div>
-<p>This gives us all we need to define an applicative where less than
-perfect success cases can accumulate and deteriorate into an error.
-Probably it is well known to a lot of people but I had never seen it
-before.</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Overflow</span> pm a <span class="ot">=</span> <span class="dt">Contained</span> pm a <span class="op">|</span> <span class="dt">Overflown</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Functor</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ot">overflowIso ::</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Iso&#39;</span> (<span class="dt">Carrier</span> pm <span class="dt">Identity</span> () (<span class="dt">Const</span> ()) a) (<span class="dt">Overflow</span> pm a)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>overflowIso <span class="ot">=</span> iso toOverflow fromOverflow</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    toOverflow <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">L</span> pm (<span class="dt">Identity</span> a) <span class="ot">-&gt;</span> <span class="dt">Contained</span> pm a</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">R</span> _ _ <span class="ot">-&gt;</span> <span class="dt">Overflown</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    fromOverflow <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Contained</span> pm a <span class="ot">-&gt;</span> <span class="dt">L</span> pm (<span class="dt">Identity</span> a)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Overflown</span> <span class="ot">-&gt;</span> <span class="dt">R</span> () (<span class="dt">Const</span> ())</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> pm <span class="ot">=&gt;</span> <span class="dt">Applicative</span> (<span class="dt">Overflow</span> pm) <span class="kw">where</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> <span class="ot">=</span> <span class="dt">Contained</span> pu</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  liftA2 o x y <span class="ot">=</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> co <span class="ot">=</span> alignFunctors addAbsorbingIso (<span class="fu">pure</span> <span class="op">.</span> runIdentity) <span class="fu">undefined</span> o</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span> transferBinarfyF overflowIso co x y</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; unit :: Overflow UpToThree ()</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">-- Contained Zero ()</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Contained One &#39;a&#39; ** Contained One &#39;b&#39;</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">-- Contained Two (&#39;a&#39;,&#39;b&#39;)</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Contained One &#39;a&#39; ** Contained Two &#39;b&#39;</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">-- Overflown</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Contained One &#39;a&#39; ** Overflown</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">-- Overflown</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">-- &gt;&gt;&gt; Overflown ** Contained One &#39;a&#39;</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">-- Overflown</span></span></code></pre></div>
-<p>Again we have an <code class="haskel">undefined</code> in the
-definition but this time in the opposite direction. This time the reason
-is the ideal consisting of the absorbing element.</p>
-<p>The machinery –even the version with only two functors and one lax
-monoidal morphism– is stronger than the examples above illustrate. For
-instance we can create an applicative which supports overflow style
-failure and validation style error accumulation. <a
-href="https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e#file-applicativeexperiments-linearcombinations-hs-L275">Here</a>
-is an implementation. We can even define <del>utterly useless</del>
-exotic variants of validation and overflow. We can even construct an
-example where both lax monoidal morphisms are needed and they are
-<em>not</em> inverse to each other. These are all implemented in the <a
-href="https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e">gist</a>.</p>
+\]</span> To simplify things even further we will also assume that there are <span class="math inline">\(\eta_{12}\colon G_1\to G_2\)</span> and <span class="math inline">\(\eta_{21}\colon G_2\to G_1\)</span> and the functions <span class="math inline">\(L(m,n)\)</span> and <span class="math inline">\(R(m,n)\)</span> only take identity and these natural transformations as values. After these assumptions we can start writing code.</p>
+<p>First let us recall the lax monoidal interface to <code class="sourceCode haskell"><span class="dt">Applicative</span></code> functors. We will be writing sample computations with this interface.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ot">unit ::</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> f ()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>unit <span class="ot">=</span> <span class="fu">pure</span> ()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="ot">(**) ::</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f (a, b)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>(<span class="op">**</span>) <span class="ot">=</span> liftA2 (,)</span></code></pre></div>
+<p>Since we will be working with only two functors we can define a usual sum type to represent the functor <span class="math inline">\(F\)</span> and implement <span class="math inline">\(\odot\)</span> in this case:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Carrier</span> m1 g1 m2 g2 x <span class="ot">=</span> <span class="dt">L</span> m1 (g1 x) <span class="op">|</span> <span class="dt">R</span> m2 (g2 x)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Functor</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="kw">type</span> (<span class="op">~&gt;</span>) f g <span class="ot">=</span> <span class="kw">forall</span> a<span class="op">.</span> f a <span class="ot">-&gt;</span> g a</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="ot">transferBinary ::</span> <span class="dt">Iso&#39;</span> a b <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>transferBinary i o a1 a2 <span class="ot">=</span> view i <span class="op">$</span> review i a1 <span class="ot">`o`</span> review i a2</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="ot">alignFunctors ::</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>  (<span class="dt">Applicative</span> g1, <span class="dt">Applicative</span> g2, <span class="dt">Semigroup</span> m</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>  ) <span class="ot">=&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>  <span class="dt">Iso&#39;</span> m (<span class="dt">Either</span> m1 m2) <span class="ot">-&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>  (g1 <span class="op">~&gt;</span> g2) <span class="ot">-&gt;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>  (g2 <span class="op">~&gt;</span> g1) <span class="ot">-&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>  (x <span class="ot">-&gt;</span> y <span class="ot">-&gt;</span> z) <span class="ot">-&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>  <span class="dt">Carrier</span> m1 g1 m2 g2 x <span class="ot">-&gt;</span> <span class="dt">Carrier</span> m1 g1 m2 g2 y <span class="ot">-&gt;</span> <span class="dt">Carrier</span> m1 g1 m2 g2 z</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a>alignFunctors i eta12 eta21 o c1 c2 <span class="ot">=</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a>  <span class="kw">case</span> (c1, c2) <span class="kw">of</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a>    (<span class="dt">L</span> a1 fx, <span class="dt">L</span> a2 fy) <span class="ot">-&gt;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a>      <span class="kw">case</span> <span class="dt">Left</span> a1 <span class="ot">`tro`</span> <span class="dt">Left</span> a2 <span class="kw">of</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o fx fy)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o (eta12 fx) (eta12 fy))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true"></a>    (<span class="dt">L</span> a1 fx, <span class="dt">R</span> b2 gy) <span class="ot">-&gt;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true"></a>      <span class="kw">case</span> <span class="dt">Left</span> a1 <span class="ot">`tro`</span> <span class="dt">Right</span> b2 <span class="kw">of</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o fx (eta21 gy))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o (eta12 fx) gy)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true"></a>    (<span class="dt">R</span> b1 gx, <span class="dt">L</span> a2 fy) <span class="ot">-&gt;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true"></a>      <span class="kw">case</span> <span class="dt">Right</span> b1 <span class="ot">`tro`</span> <span class="dt">Left</span> a2 <span class="kw">of</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o (eta21 gx) fy)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o gx (eta12 fy))</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true"></a>    (<span class="dt">R</span> b1 gx, <span class="dt">R</span> b2 gy) <span class="ot">-&gt;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true"></a>      <span class="kw">case</span> <span class="dt">Right</span> b1 <span class="ot">`tro`</span> <span class="dt">Right</span> b2 <span class="kw">of</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true"></a>        <span class="dt">Left</span> a <span class="ot">-&gt;</span> <span class="dt">L</span> a (liftA2 o (eta21 gx) (eta21 gy))</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true"></a>        <span class="dt">Right</span> b <span class="ot">-&gt;</span> <span class="dt">R</span> b (liftA2 o gx gy)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true"></a>    tro <span class="ot">=</span> transferBinary i (<span class="op">&lt;&gt;</span>)</span></code></pre></div>
+<p>Our first concrete example is a homemade validation <code class="sourceCode haskell"><span class="dt">Applicative</span></code>.The validation requires a semigroup to accumulate failure cases. We can complete that to a monoid by adding a new element as an identity. Then the old elements and the new element form a decomposition of the monoid into a disjoint union. In this way we can define the usual <a href="https://hackage.haskell.org/package/validation">validation</a> <code class="sourceCode haskell"><span class="dt">Applicative</span></code> as a special case of the construction. Here is the code:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">AddUnit</span> m <span class="ot">=</span> <span class="dt">AddUnit_OldElement</span> m <span class="op">|</span> <span class="dt">AddUnit_NewUnit</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="ot">addUnitIso ::</span> <span class="dt">Iso&#39;</span> (<span class="dt">AddUnit</span> m) (<span class="dt">Either</span> m ())</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>addUnitIso <span class="ot">=</span> iso fromAddUnit toAddUnit</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    fromAddUnit <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>      <span class="dt">AddUnit_OldElement</span> m <span class="ot">-&gt;</span> <span class="dt">Left</span> m</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>      <span class="dt">AddUnit_NewUnit</span> <span class="ot">-&gt;</span> <span class="dt">Right</span> ()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>    toAddUnit <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>      <span class="dt">Left</span> m <span class="ot">-&gt;</span> <span class="dt">AddUnit_OldElement</span> m</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>      <span class="dt">Right</span> () <span class="ot">-&gt;</span> <span class="dt">AddUnit_NewUnit</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">Semigroup</span> m <span class="ot">=&gt;</span> <span class="dt">Semigroup</span> (<span class="dt">AddUnit</span> m) <span class="kw">where</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>  (<span class="dt">AddUnit_OldElement</span> x) <span class="op">&lt;&gt;</span> (<span class="dt">AddUnit_OldElement</span> y) <span class="ot">=</span> <span class="dt">AddUnit_OldElement</span> (x <span class="op">&lt;&gt;</span> y)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>  <span class="dt">AddUnit_NewUnit</span> <span class="op">&lt;&gt;</span> y <span class="ot">=</span> y</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>  x <span class="op">&lt;&gt;</span> <span class="dt">AddUnit_NewUnit</span> <span class="ot">=</span> x</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">Semigroup</span> m <span class="ot">=&gt;</span> <span class="dt">Monoid</span> (<span class="dt">AddUnit</span> m) <span class="kw">where</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>  <span class="fu">mempty</span> <span class="ot">=</span> <span class="dt">AddUnit_NewUnit</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">ClassicalValidation</span> m a <span class="ot">=</span> <span class="dt">Failure</span> m <span class="op">|</span> <span class="dt">Success</span> a</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a>  <span class="kw">deriving</span>(<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Functor</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a><span class="ot">classicalValidationIso ::</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a>  <span class="dt">Iso&#39;</span> (<span class="dt">Carrier</span> m (<span class="dt">Const</span> ()) () <span class="dt">Identity</span> a) (<span class="dt">ClassicalValidation</span> m a)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a>classicalValidationIso <span class="ot">=</span> iso toClassical fromClassical</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>    toClassical <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a>      <span class="dt">L</span> m _ <span class="ot">-&gt;</span> <span class="dt">Failure</span> m</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a>      <span class="dt">R</span> _ (<span class="dt">Identity</span> a) <span class="ot">-&gt;</span> <span class="dt">Success</span> a</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a>    fromClassical <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a>      <span class="dt">Failure</span> m <span class="ot">-&gt;</span> <span class="dt">L</span> m (<span class="dt">Const</span> ())</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a>      <span class="dt">Success</span> a <span class="ot">-&gt;</span> <span class="dt">R</span> () (<span class="dt">Identity</span> a)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a><span class="kw">type</span> <span class="dt">NaturalIso</span> f g <span class="ot">=</span> <span class="kw">forall</span> x<span class="op">.</span> <span class="dt">Iso&#39;</span> (f x) (g x)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="ot">transferBinarfyF ::</span> <span class="dt">NaturalIso</span> f g <span class="ot">-&gt;</span> (f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f c) <span class="ot">-&gt;</span> g a <span class="ot">-&gt;</span> g b <span class="ot">-&gt;</span> g c</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a>transferBinarfyF i o a1 a2 <span class="ot">=</span>  view i <span class="op">$</span> review i a1 <span class="ot">`o`</span> review i a2</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">Semigroup</span> m <span class="ot">=&gt;</span> <span class="dt">Applicative</span> (<span class="dt">ClassicalValidation</span> m) <span class="kw">where</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a>  <span class="fu">pure</span> <span class="ot">=</span> <span class="dt">Success</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a>  liftA2 o x y <span class="ot">=</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a>    <span class="kw">let</span> co <span class="ot">=</span> alignFunctors addUnitIso <span class="fu">undefined</span> (<span class="fu">pure</span> <span class="op">.</span> runIdentity) o</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a>     <span class="kw">in</span> transferBinarfyF classicalValidationIso co x y</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; unit :: ClassicalValidation String ()</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true"></a><span class="co">-- Success ()</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Success &#39;a&#39; ** Success &#39;b&#39;</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true"></a><span class="co">-- Success (&#39;a&#39;,&#39;b&#39;)</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Success &#39;a&#39; ** Failure &quot;e&quot;</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true"></a><span class="co">-- Failure &quot;e&quot;</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Failure &quot;e&quot; ** Success &#39;b&#39;</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true"></a><span class="co">-- Failure &quot;e&quot;</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Failure &quot;e1&quot; ** Failure &quot;e2&quot;</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true"></a><span class="co">-- Failure &quot;e1e2&quot;</span></span></code></pre></div>
+<p>Let us address a few things quickly. First, there is an <code class="sourceCode haskell"><span class="fu">undefined</span></code> in the <code class="sourceCode haskell"><span class="dt">Applicative</span></code> instance definition. The reason is that we never need to go from <code class="sourceCode haskell">g1</code> to <code class="sourceCode haskell">g2</code> so undefined is never called. To see why it is the case look at the multiplication of <code class="sourceCode haskell"><span class="dt">AddUnit</span> m</code>. In that monoid, multiplication of any element with an old element (from both sides) is again an old element. In algebra we say that the old elements form a two sided ideal.</p>
+<p>Second, the point of this implementation is illustrating a point. If you really need an implementation the best way is to inline/specialize the <code class="sourceCode haskell">alignFunctors</code> and eliminate the <code class="sourceCode haskell"><span class="fu">undefined</span></code>.</p>
+<p>Now we will construct a potentially useful applicative. The idea is that if you decompose a monoid into disjoint sets, the set containing the unit is a partial monoid. The converse is also true. If you have a partial monoid then you can turn that into a monoid by adding a new absorbing element. Here is an implementation with a sample partial monoid.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">class</span> <span class="dt">PartialMonoid</span> pm <span class="kw">where</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="ot">  pu ::</span> pm</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="ot">  pop ::</span> pm <span class="ot">-&gt;</span> pm <span class="ot">-&gt;</span> <span class="dt">Maybe</span> pm</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">UpToThree</span> <span class="ot">=</span> <span class="dt">Zero</span> <span class="op">|</span> <span class="dt">One</span> <span class="op">|</span> <span class="dt">Two</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Enum</span>, <span class="dt">Bounded</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> <span class="dt">UpToThree</span> <span class="kw">where</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>  pu <span class="ot">=</span> <span class="dt">Zero</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>  a1 <span class="ot">`pop`</span> a2 <span class="ot">=</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>    <span class="kw">let</span> n <span class="ot">=</span> <span class="fu">fromEnum</span> a1 <span class="op">+</span> <span class="fu">fromEnum</span> a2</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>     <span class="kw">in</span> <span class="kw">if</span> n <span class="op">&gt;</span> <span class="dv">2</span> <span class="kw">then</span> <span class="dt">Nothing</span> <span class="kw">else</span> <span class="dt">Just</span> <span class="op">$</span> <span class="fu">toEnum</span> n</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">AddAbsorbing</span> m <span class="ot">=</span> <span class="dt">AddAbsorbing_OldElement</span> m <span class="op">|</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a><span class="ot">addAbsorbingIso ::</span> <span class="dt">Iso&#39;</span> (<span class="dt">AddAbsorbing</span> m) (<span class="dt">Either</span> m ())</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>addAbsorbingIso <span class="ot">=</span> iso fromAddAbsorbing toAddAbsorbing</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a>    fromAddAbsorbing <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a>      <span class="dt">AddAbsorbing_OldElement</span> m <span class="ot">-&gt;</span> <span class="dt">Left</span> m</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true"></a>      <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="ot">-&gt;</span> <span class="dt">Right</span> ()</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true"></a>    toAddAbsorbing <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true"></a>      <span class="dt">Left</span> m <span class="ot">-&gt;</span> <span class="dt">AddAbsorbing_OldElement</span> m</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true"></a>      <span class="dt">Right</span> () <span class="ot">-&gt;</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> m <span class="ot">=&gt;</span> <span class="dt">Semigroup</span> (<span class="dt">AddAbsorbing</span> m) <span class="kw">where</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true"></a>  (<span class="dt">AddAbsorbing_OldElement</span> x) <span class="op">&lt;&gt;</span> (<span class="dt">AddAbsorbing_OldElement</span> y) <span class="ot">=</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true"></a>    <span class="fu">maybe</span> <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="dt">AddAbsorbing_OldElement</span> (x <span class="ot">`pop`</span> y)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true"></a>  <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="op">&lt;&gt;</span> _ <span class="ot">=</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true"></a>  _ <span class="op">&lt;&gt;</span> <span class="dt">AddAbsorbing_NewAbsorbing</span> <span class="ot">=</span> <span class="dt">AddAbsorbing_NewAbsorbing</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> m <span class="ot">=&gt;</span> <span class="dt">Monoid</span> (<span class="dt">AddAbsorbing</span> m) <span class="kw">where</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true"></a>  <span class="fu">mempty</span> <span class="ot">=</span> <span class="dt">AddAbsorbing_OldElement</span> pu</span></code></pre></div>
+<p>This gives us all we need to define an applicative where less than perfect success cases can accumulate and deteriorate into an error. Probably it is well known to a lot of people but I had never seen it before.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Overflow</span> pm a <span class="ot">=</span> <span class="dt">Contained</span> pm a <span class="op">|</span> <span class="dt">Overflown</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Functor</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="ot">overflowIso ::</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>  <span class="dt">Iso&#39;</span> (<span class="dt">Carrier</span> pm <span class="dt">Identity</span> () (<span class="dt">Const</span> ()) a) (<span class="dt">Overflow</span> pm a)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>overflowIso <span class="ot">=</span> iso toOverflow fromOverflow</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>    toOverflow <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>      <span class="dt">L</span> pm (<span class="dt">Identity</span> a) <span class="ot">-&gt;</span> <span class="dt">Contained</span> pm a</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>      <span class="dt">R</span> _ _ <span class="ot">-&gt;</span> <span class="dt">Overflown</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a>    fromOverflow <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a>      <span class="dt">Contained</span> pm a <span class="ot">-&gt;</span> <span class="dt">L</span> pm (<span class="dt">Identity</span> a)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a>      <span class="dt">Overflown</span> <span class="ot">-&gt;</span> <span class="dt">R</span> () (<span class="dt">Const</span> ())</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a><span class="kw">instance</span> <span class="dt">PartialMonoid</span> pm <span class="ot">=&gt;</span> <span class="dt">Applicative</span> (<span class="dt">Overflow</span> pm) <span class="kw">where</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a>  <span class="fu">pure</span> <span class="ot">=</span> <span class="dt">Contained</span> pu</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a>  liftA2 o x y <span class="ot">=</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a>    <span class="kw">let</span> co <span class="ot">=</span> alignFunctors addAbsorbingIso (<span class="fu">pure</span> <span class="op">.</span> runIdentity) <span class="fu">undefined</span> o</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a>     <span class="kw">in</span> transferBinarfyF overflowIso co x y</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; unit :: Overflow UpToThree ()</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a><span class="co">-- Contained Zero ()</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Contained One &#39;a&#39; ** Contained One &#39;b&#39;</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true"></a><span class="co">-- Contained Two (&#39;a&#39;,&#39;b&#39;)</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Contained One &#39;a&#39; ** Contained Two &#39;b&#39;</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true"></a><span class="co">-- Overflown</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Contained One &#39;a&#39; ** Overflown</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true"></a><span class="co">-- Overflown</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true"></a><span class="co">-- &gt;&gt;&gt; Overflown ** Contained One &#39;a&#39;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true"></a><span class="co">-- Overflown</span></span></code></pre></div>
+<p>Again we have an <code class="haskel">undefined</code> in the definition but this time in the opposite direction. This time the reason is the ideal consisting of the absorbing element.</p>
+<p>The machinery –even the version with only two functors and one lax monoidal morphism– is stronger than the examples above illustrate. For instance we can create an applicative which supports overflow style failure and validation style error accumulation. <a href="https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e#file-applicativeexperiments-linearcombinations-hs-L275">Here</a> is an implementation. We can even define <del>utterly useless</del> exotic variants of validation and overflow. We can even construct an example where both lax monoidal morphisms are needed and they are <em>not</em> inverse to each other. These are all implemented in the <a href="https://gist.github.com/sonatsuer/f535501fbc1c793a1ecde83d4ded149e">gist</a>.</p>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">

@@ -1,5 +1,6 @@
 #!/bin/bash
-pandoc --mathjax \
+pandoc --mathjax=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js \
+       --standalone \
        --highlight-style pygments \
        -c ./assets/format.css \
        -H ./assets/extra-header.html \

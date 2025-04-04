@@ -8,23 +8,13 @@
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    /* CSS for syntax highlighting */
+    ul.task-list{list-style: none;}
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -59,7 +49,7 @@
     code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
     code span.at { color: #7d9029; } /* Attribute */
     code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { color: #008000; } /* BuiltIn */
+    code span.bu { } /* BuiltIn */
     code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
     code span.ch { color: #4070a0; } /* Char */
     code span.cn { color: #880000; } /* Constant */
@@ -72,7 +62,7 @@
     code span.ex { } /* Extension */
     code span.fl { color: #40a070; } /* Float */
     code span.fu { color: #06287e; } /* Function */
-    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.im { } /* Import */
     code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
     code span.kw { color: #007020; font-weight: bold; } /* Keyword */
     code span.op { color: #666666; } /* Operator */
@@ -86,251 +76,69 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="./assets/format.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <link rel="icon" href="assets/logo.png">
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
-  type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Leaking Implementation Details (For
-Mathematicians)</h1>
+<h1 class="title">Leaking Implementation Details (For Mathematicians)</h1>
 </header>
 <h2 id="motivation">Motivation</h2>
-<p>You are in your office, trying to teach how to evaluate <span
-class="math inline">\(\int \sin^2(x)\cos^3(x)dx\)</span> to a pre-med
-student. Suddenly you hear someone scream: <em>“Implementation details
-are leaking!”</em> The pre-med and you look at each other with puzzled
-eyes. Then you hear it again: <em>“It is everywhere! It even got into
-the specs!”</em> This time you recognize the voice. It is your computer
-scientist friend from across the hallway. You put your hand on the
-shoulder of the pre-med and say <em>“You are right kiddo. You will be a
-real doctor, you don’t need any of these…”</em> and leave the room to
-help your friend. However, there is a small problem. Being a
-mathematician, you do not know what it means to leak implementation
-details.</p>
+<p>You are in your office, trying to teach how to evaluate <span class="math inline">\(\int \sin^2(x)\cos^3(x)dx\)</span> to a pre-med student. Suddenly you hear someone scream: <em>“Implementation details are leaking!”</em> The pre-med and you look at each other with puzzled eyes. Then you hear it again: <em>“It is everywhere! It even got into the specs!”</em> This time you recognize the voice. It is your computer scientist friend from across the hallway. You put your hand on the shoulder of the pre-med and say <em>“You are right kiddo. You will be a real doctor, you don’t need any of these…”</em> and leave the room to help your friend. However, there is a small problem. Being a mathematician, you do not know what it means to leak implementation details.</p>
 <p>So you call me and I tell you this:</p>
 <h2 id="examples-from-mathematics">Examples from mathematics</h2>
 <p>Let’s begin with a somewhat strange question:</p>
 <blockquote>
-<p>Is <span class="math inline">\(e\)</span> a subset of <span
-class="math inline">\(\pi\)</span>?</p>
+<p>Is <span class="math inline">\(e\)</span> a subset of <span class="math inline">\(\pi\)</span>?</p>
 </blockquote>
-<p>Our gut feeling tells us that this is absurd and one shouldn’t ask
-such questions even though it is formally valid in a foundational theory
-in which all objects are sets, such as ZFC. There is one context,
-however, in which this question may come up. If you are teaching an
-introductory course in real analysis and you are constructing real
-numbers as left Dedekind cuts then, since the order on <span
-class="math inline">\(\mathbb{R}\)</span> is given by inclusion, you may
-ask whether <span class="math inline">\(e\)</span> is a subset of <span
-class="math inline">\(\pi\)</span> as a sanity check. After this course,
-your students should of course forget about how the reals are
-constructed and refer to <span class="math inline">\(\mathbb{R}\)</span>
-as a complete ordered field.</p>
-<p>This practice is very common in programming, too. For a programmer,
-Dedekind reals are an implementation and the axioms of the complete
-ordered fields form an API, that is an <em>application program
-interface</em> together with a specification. We interact with reals
-only through these axioms. So the fact that inclusion is the order
-relation on Dedekind reals is an implementation detail, and if you use
-this fact while doing real analysis then you are leaking an
-implementation detail.</p>
-<p>This particular example seems very intuitive but there are more
-subtle cases. Thinking in terms of an API and a specification instead of
-a fixed implementation, also known as abstract thinking, can be tricky
-especially when the problem at hand is presented in terms of a concrete
-implementation. To illustrate the point, I will talk about two
-problems.</p>
+<p>Our gut feeling tells us that this is absurd and one shouldn’t ask such questions even though it is formally valid in a foundational theory in which all objects are sets, such as ZFC. There is one context, however, in which this question may come up. If you are teaching an introductory course in real analysis and you are constructing real numbers as left Dedekind cuts then, since the order on <span class="math inline">\(\mathbb{R}\)</span> is given by inclusion, you may ask whether <span class="math inline">\(e\)</span> is a subset of <span class="math inline">\(\pi\)</span> as a sanity check. After this course, your students should of course forget about how the reals are constructed and refer to <span class="math inline">\(\mathbb{R}\)</span> as a complete ordered field.</p>
+<p>This practice is very common in programming, too. For a programmer, Dedekind reals are an implementation and the axioms of the complete ordered fields form an API, that is an <em>application program interface</em> together with a specification. We interact with reals only through these axioms. So the fact that inclusion is the order relation on Dedekind reals is an implementation detail, and if you use this fact while doing real analysis then you are leaking an implementation detail.</p>
+<p>This particular example seems very intuitive but there are more subtle cases. Thinking in terms of an API and a specification instead of a fixed implementation, also known as abstract thinking, can be tricky especially when the problem at hand is presented in terms of a concrete implementation. To illustrate the point, I will talk about two problems.</p>
 <p>Here is the first one:</p>
 <blockquote>
-<p>Is there an embedding of <span class="math inline">\((\mathbb{R},
-\leq)\)</span> into <span class="math inline">\((\wp(\mathbb{N}),
-\subseteq )\)</span>, where <span class="math inline">\(\wp\)</span>
-stands for power set?</p>
+<p>Is there an embedding of <span class="math inline">\((\mathbb{R}, \leq)\)</span> into <span class="math inline">\((\wp(\mathbb{N}), \subseteq )\)</span>, where <span class="math inline">\(\wp\)</span> stands for power set?</p>
 </blockquote>
-<p>The answer is yes and the proof is easy, though I have seen students
-as well as professional mathematicians being surprised by this fact. I
-believe the reason is that <span
-class="math inline">\(\wp(\mathbb{N})\)</span> has a discrete
-<em>feeling</em> to it as <span
-class="math inline">\(\mathbb{N}\)</span> is discretely ordered. So one
-expects that it cannot contain a copy of <span
-class="math inline">\(\mathbb{R}\)</span>. However <span
-class="math inline">\(\wp\)</span> does not use the order structure on
-<span class="math inline">\(\mathbb{N}\)</span> and <span
-class="math inline">\(\wp(\mathbb{N})\)</span> is isomorphic to <span
-class="math inline">\(\wp(A)\)</span> for any countably infinite set
-<span class="math inline">\(A\)</span>. In that regard, choice of <span
-class="math inline">\(\mathbb{N}\)</span> is an implementation detail
-and the source of confusion seems to be the fact that it is leaking at a
-pedagogical level. If the answer is still not clear after this
-discussion, just use Dedekind cuts with <span
-class="math inline">\(\wp(\mathbb{Q})\)</span>.</p>
+<p>The answer is yes and the proof is easy, though I have seen students as well as professional mathematicians being surprised by this fact. I believe the reason is that <span class="math inline">\(\wp(\mathbb{N})\)</span> has a discrete <em>feeling</em> to it as <span class="math inline">\(\mathbb{N}\)</span> is discretely ordered. So one expects that it cannot contain a copy of <span class="math inline">\(\mathbb{R}\)</span>. However <span class="math inline">\(\wp\)</span> does not use the order structure on <span class="math inline">\(\mathbb{N}\)</span> and <span class="math inline">\(\wp(\mathbb{N})\)</span> is isomorphic to <span class="math inline">\(\wp(A)\)</span> for any countably infinite set <span class="math inline">\(A\)</span>. In that regard, choice of <span class="math inline">\(\mathbb{N}\)</span> is an implementation detail and the source of confusion seems to be the fact that it is leaking at a pedagogical level. If the answer is still not clear after this discussion, just use Dedekind cuts with <span class="math inline">\(\wp(\mathbb{Q})\)</span>.</p>
 <p>The second question is a little famous:</p>
 <blockquote>
-<p>Given two dice <span class="math inline">\(A\)</span> and <span
-class="math inline">\(B\)</span> with arbitrary natural numbers on their
-faces, we say that <span class="math inline">\(A\)</span> beats <span
-class="math inline">\(B\)</span> if, when rolled together, <span
-class="math inline">\(A\)</span> is more likely to be higher than <span
-class="math inline">\(B\)</span>. Can we have three dice <span
-class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>
-and <span class="math inline">\(C\)</span> such that <span
-class="math inline">\(A\)</span> beats <span
-class="math inline">\(B\)</span>, <span class="math inline">\(B\)</span>
-beats <span class="math inline">\(C\)</span> and <span
-class="math inline">\(C\)</span> beats <span
-class="math inline">\(A\)</span>?</p>
+<p>Given two dice <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> with arbitrary natural numbers on their faces, we say that <span class="math inline">\(A\)</span> beats <span class="math inline">\(B\)</span> if, when rolled together, <span class="math inline">\(A\)</span> is more likely to be higher than <span class="math inline">\(B\)</span>. Can we have three dice <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span> and <span class="math inline">\(C\)</span> such that <span class="math inline">\(A\)</span> beats <span class="math inline">\(B\)</span>, <span class="math inline">\(B\)</span> beats <span class="math inline">\(C\)</span> and <span class="math inline">\(C\)</span> beats <span class="math inline">\(A\)</span>?</p>
 </blockquote>
-<p>The answer to this question, which is much more counterintuitive, is
-also yes. Actually here is an example: <span class="math display">\[
+<p>The answer to this question, which is much more counterintuitive, is also yes. Actually here is an example: <span class="math display">\[
 A\colon 2,2,4,4,9,9;\;\; B\colon 1,1,6,6,8,8;\;\; C\colon 3,3,5,5,7,7.
-\]</span> More than once I have seen people claiming that this is
-impossible by arguing that the expected values would violate
-transitivity of the order relation on reals. The problem with this
-argument, other than being false, is that expected value is meaningful
-for <em>numbers</em> as it involves an average. However, when you look
-at the statement of the problem you see that only the order on natural
-numbers is used so one could formulate the question with any infinite
-linearly ordered set. So using structure other than the order is leaking
-implementation details.</p>
-<p>The moral of the story is that putting your problem behind an
-abstract API may clarify it. Mathematicians do it intuitively.
-Programmers, on the other hand, usually approach the problem much more
-methodically. So let’s see a toy example from programming.</p>
-<h2 id="interfaces-and-haskell-smart-constructors">Interfaces and
-Haskell: Smart constructors</h2>
-<p>I will use the programming language Haskell trying to explain the
-relevant syntax. Haskell programs are organized as trees of modules.
-Each module implements some functionality. Modules can access their
-child modules modules to import functionality exported by them. On the
-other hand a module does not necessarily export everything it
-implements. In other words, each module can define its API. This is one
-of the standard ways of encapsulating implementation details. Let’s look
-at a concrete example.</p>
-<p>Suppose you need some sort of counter in your program that you can
-increase at will. One obvious solution would be to use integers. However
-integers can take negative values or we can multiply integers, which are
-not really meaningful for a counter. so using naked integers is not a
-good idea. Instead we will implement our counter in a module and use
-integers as the underlying object but hide it from the users
-outside.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Counter</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  ( initialCounter</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  , increase</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  , undo</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  , getCount</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="kw">where</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Counter</span> <span class="ot">=</span> <span class="dt">MkCounter</span> <span class="dt">Int</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ot">initialCounter ::</span> <span class="dt">Counter</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>initialCounter <span class="ot">=</span> <span class="dt">MkCounter</span> <span class="dv">0</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ot">increase ::</span> <span class="dt">Counter</span> <span class="ot">-&gt;</span> <span class="dt">Counter</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>increase (<span class="dt">MkCounter</span> n) <span class="ot">=</span> <span class="kw">if</span> n <span class="op">==</span> <span class="fu">maxBound</span> <span class="kw">then</span> <span class="fu">error</span> <span class="st">&quot;Overflow&quot;</span> <span class="kw">else</span> <span class="dt">MkCounter</span> (n <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ot">undo ::</span> <span class="dt">Counter</span> <span class="ot">-&gt;</span> <span class="dt">Counter</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>undo (<span class="dt">MkCounter</span> n) <span class="ot">=</span> <span class="fu">max</span> <span class="dv">0</span> (n <span class="op">-</span> <span class="dv">1</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ot">getCount ::</span> <span class="dt">Counter</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>getCount (<span class="dt">MkCounter</span> n) <span class="ot">=</span> n</span></code></pre></div>
-<p>Let’s talk about this piece of code. We define a module named <code
-class="sourceCode haskell"><span class="dt">Counter</span></code> which
-defines a type named <code
-class="sourceCode haskell"><span class="dt">Counter</span></code>. The
-subtlety here is that <code
-class="sourceCode haskell"><span class="dt">MkCounter</span></code> is
-<em>not</em> exported. This means that even if we can talk about values
-of type <code
-class="sourceCode haskell"><span class="dt">Counter</span></code>
-outside this module, we cannot use pattern match to extract the integer
-inside, or put an arbitrary integer in a <code
-class="sourceCode haskell"><span class="dt">Counter</span></code>.
-Instead, we have to use <code
-class="sourceCode haskell">initialCounter</code> to construct a counter,
-<code class="sourceCode haskell">increase</code> and <code
-class="sourceCode haskell">undo</code> to manipulate counters and <code
-class="sourceCode haskell">getCount</code> to access the value in the
-counter. Interacting with the <code
-class="sourceCode haskell"><span class="dt">Counter</span></code> type
-using only this api guarantees that the integer held by the counter is
-never negative.</p>
-<p>Now is a good time to introduce some terminology. The constructor
-<code class="sourceCode haskell">initialCounter</code> is called a smart
-constructor. The property of being nonnegative is called an invariant of
-the type. The functions <code class="sourceCode haskell">increase</code>
-and <code class="sourceCode haskell">undo</code> are said to preserve
-the invariant. The idea is to expose a type through its smart
-constructors and invariant-preserving manipulators. One can find this
-idea applied in, say, the containers like maps and sets where the
-underlying type is some kind of tree.</p>
-<p>I should say at his point that I chose smart constructors because
-they are easy to explain. They come with certain <a
-href="https://lexi-lambda.github.io/blog/2020/11/01/names-are-not-type-safety/">caveats</a>
-which I will not go into in this post. So if you decide to make use this
-method take a look at the down sides. I omitted other methods like <a
-href="https://en.wikibooks.org/wiki/Haskell/Existentially_quantified_types">existential
-types</a> which can hide everything about a type except for that it
-exists and <a
-href="https://wiki.haskell.org/Typeclassopedia">typeclasses</a> which
-allow you to hide an entire class of structures behind an API. I also
-wrote this post from a theory-free point of view but there is deep and
-beautiful mathematics behind <a
-href="https://www.cs.bham.ac.uk/~udr/papers/logical-relations-and-parametricity.pdf">information
-hiding</a> if you are interested.</p>
-<h2 id="when-to-leak-implementation-details">When to leak implementation
-details</h2>
-<p>After reading all these you might think that leaking implementation
-details should be avoided at all costs. Well, not really. Look at these
-type signatures from the <code
-class="sourceCode haskell"><span class="dt">Data.Set</span></code>
-library of Haskell:</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">singleton ::</span> a <span class="ot">-&gt;</span> <span class="dt">Set</span> a</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ot">insert ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Set</span> a <span class="ot">-&gt;</span> <span class="dt">Set</span> a</span></code></pre></div>
-<p>They roughly correspond to the functions <span
-class="math inline">\({\rm singleton}(x) = \{x\}\)</span> and <span
-class="math inline">\({\rm insert}(x, A) = \{x\}\cup A\)</span>. The
-first signature looks okay but that <code
-class="sourceCode haskell"><span class="dt">Ord</span> a</code> in the
-second one looks odd. It is a typeclass constraint saying that this
-function requires the type <code class="sourceCode haskell">a</code>
-have a linear order on it. It is there because the underlying tree
-structure has an invariant expressed in terms of an order relation: at a
-branching point, all nodes on the left branch should be less then all
-nodes on the right branch. It is needed for efficiency. With this
-invariant, for instance, membership can be decided in logarithmic time
-as opposed to linear time by employing a divide and conquer type
-strategy. But this means we are letting an implementation detail leak
-through the API! Of course one can build a library to represent sets
-without mentioning order relations but it would be unusable because it
-would be too slow. So yes, the implementation detail leaks but for a
-very good reason. It is a very common theme. The initial design of a
-system has clear cut abstraction boundaries but optimization –or some
-other cross cutting concern– breaches those boundaries.</p>
-<p>We have similar practices in mathematics, too. Sometimes we pick a
-representation of an object and work with it because it is easier due to
-some extra structure of the particular representation. For instance the
-tension between synthetic and analytic geometry can be read as an
-instance of this trade-off. Here is a somewhat advanced example.
-Concrete categories, that is, categories with a faithful functor into
-<span class="math inline">\({\rm Set}\)</span> are sometimes easier to
-work with as element chasing arguments are available. But the standard
-API of category theory has arrows but no elements. So sometimes we
-employ a big theorem like the <a
-href="https://ncatlab.org/nlab/show/Freyd-Mitchell+embedding+theorem">Freyd-Mitchell
-theorem</a> which, in this case,essentially says that an abelian
-category can be viewed as full subcategory of an <span
-class="math inline">\(R\)</span>-module category. This allows us to use
-assumptions like “morphisms are functions” which are not compatible with
-the API of categories.</p>
+\]</span> More than once I have seen people claiming that this is impossible by arguing that the expected values would violate transitivity of the order relation on reals. The problem with this argument, other than being false, is that expected value is meaningful for <em>numbers</em> as it involves an average. However, when you look at the statement of the problem you see that only the order on natural numbers is used so one could formulate the question with any infinite linearly ordered set. So using structure other than the order is leaking implementation details.</p>
+<p>The moral of the story is that putting your problem behind an abstract API may clarify it. Mathematicians do it intuitively. Programmers, on the other hand, usually approach the problem much more methodically. So let’s see a toy example from programming.</p>
+<h2 id="interfaces-and-haskell-smart-constructors">Interfaces and Haskell: Smart constructors</h2>
+<p>I will use the programming language Haskell trying to explain the relevant syntax. Haskell programs are organized as trees of modules. Each module implements some functionality. Modules can access their child modules modules to import functionality exported by them. On the other hand a module does not necessarily export everything it implements. In other words, each module can define its API. This is one of the standard ways of encapsulating implementation details. Let’s look at a concrete example.</p>
+<p>Suppose you need some sort of counter in your program that you can increase at will. One obvious solution would be to use integers. However integers can take negative values or we can multiply integers, which are not really meaningful for a counter. so using naked integers is not a good idea. Instead we will implement our counter in a module and use integers as the underlying object but hide it from the users outside.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">module</span> <span class="dt">Counter</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>  ( initialCounter</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>  , increase</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>  , undo</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>  , getCount</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>  ) <span class="kw">where</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">Counter</span> <span class="ot">=</span> <span class="dt">MkCounter</span> <span class="dt">Int</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a><span class="ot">initialCounter ::</span> <span class="dt">Counter</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>initialCounter <span class="ot">=</span> <span class="dt">MkCounter</span> <span class="dv">0</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="ot">increase ::</span> <span class="dt">Counter</span> <span class="ot">-&gt;</span> <span class="dt">Counter</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>increase (<span class="dt">MkCounter</span> n) <span class="ot">=</span> <span class="kw">if</span> n <span class="op">==</span> <span class="fu">maxBound</span> <span class="kw">then</span> <span class="fu">error</span> <span class="st">&quot;Overflow&quot;</span> <span class="kw">else</span> <span class="dt">MkCounter</span> (n <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="ot">undo ::</span> <span class="dt">Counter</span> <span class="ot">-&gt;</span> <span class="dt">Counter</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>undo (<span class="dt">MkCounter</span> n) <span class="ot">=</span> <span class="fu">max</span> <span class="dv">0</span> (n <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a><span class="ot">getCount ::</span> <span class="dt">Counter</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>getCount (<span class="dt">MkCounter</span> n) <span class="ot">=</span> n</span></code></pre></div>
+<p>Let’s talk about this piece of code. We define a module named <code class="sourceCode haskell"><span class="dt">Counter</span></code> which defines a type named <code class="sourceCode haskell"><span class="dt">Counter</span></code>. The subtlety here is that <code class="sourceCode haskell"><span class="dt">MkCounter</span></code> is <em>not</em> exported. This means that even if we can talk about values of type <code class="sourceCode haskell"><span class="dt">Counter</span></code> outside this module, we cannot use pattern match to extract the integer inside, or put an arbitrary integer in a <code class="sourceCode haskell"><span class="dt">Counter</span></code>. Instead, we have to use <code class="sourceCode haskell">initialCounter</code> to construct a counter, <code class="sourceCode haskell">increase</code> and <code class="sourceCode haskell">undo</code> to manipulate counters and <code class="sourceCode haskell">getCount</code> to access the value in the counter. Interacting with the <code class="sourceCode haskell"><span class="dt">Counter</span></code> type using only this api guarantees that the integer held by the counter is never negative.</p>
+<p>Now is a good time to introduce some terminology. The constructor <code class="sourceCode haskell">initialCounter</code> is called a smart constructor. The property of being nonnegative is called an invariant of the type. The functions <code class="sourceCode haskell">increase</code> and <code class="sourceCode haskell">undo</code> are said to preserve the invariant. The idea is to expose a type through its smart constructors and invariant-preserving manipulators. One can find this idea applied in, say, the containers like maps and sets where the underlying type is some kind of tree.</p>
+<p>I should say at his point that I chose smart constructors because they are easy to explain. They come with certain <a href="https://lexi-lambda.github.io/blog/2020/11/01/names-are-not-type-safety/">caveats</a> which I will not go into in this post. So if you decide to make use this method take a look at the down sides. I omitted other methods like <a href="https://en.wikibooks.org/wiki/Haskell/Existentially_quantified_types">existential types</a> which can hide everything about a type except for that it exists and <a href="https://wiki.haskell.org/Typeclassopedia">typeclasses</a> which allow you to hide an entire class of structures behind an API. I also wrote this post from a theory-free point of view but there is deep and beautiful mathematics behind <a href="https://www.cs.bham.ac.uk/~udr/papers/logical-relations-and-parametricity.pdf">information hiding</a> if you are interested.</p>
+<h2 id="when-to-leak-implementation-details">When to leak implementation details</h2>
+<p>After reading all these you might think that leaking implementation details should be avoided at all costs. Well, not really. Look at these type signatures from the <code class="sourceCode haskell"><span class="dt">Data.Set</span></code> library of Haskell:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">singleton ::</span> a <span class="ot">-&gt;</span> <span class="dt">Set</span> a</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ot">insert ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Set</span> a <span class="ot">-&gt;</span> <span class="dt">Set</span> a</span></code></pre></div>
+<p>They roughly correspond to the functions <span class="math inline">\({\rm singleton}(x) = \{x\}\)</span> and <span class="math inline">\({\rm insert}(x, A) = \{x\}\cup A\)</span>. The first signature looks okay but that <code class="sourceCode haskell"><span class="dt">Ord</span> a</code> in the second one looks odd. It is a typeclass constraint saying that this function requires the type <code class="sourceCode haskell">a</code> have a linear order on it. It is there because the underlying tree structure has an invariant expressed in terms of an order relation: at a branching point, all nodes on the left branch should be less then all nodes on the right branch. It is needed for efficiency. With this invariant, for instance, membership can be decided in logarithmic time as opposed to linear time by employing a divide and conquer type strategy. But this means we are letting an implementation detail leak through the API! Of course one can build a library to represent sets without mentioning order relations but it would be unusable because it would be too slow. So yes, the implementation detail leaks but for a very good reason. It is a very common theme. The initial design of a system has clear cut abstraction boundaries but optimization –or some other cross cutting concern– breaches those boundaries.</p>
+<p>We have similar practices in mathematics, too. Sometimes we pick a representation of an object and work with it because it is easier due to some extra structure of the particular representation. For instance the tension between synthetic and analytic geometry can be read as an instance of this trade-off. Here is a somewhat advanced example. Concrete categories, that is, categories with a faithful functor into <span class="math inline">\({\rm Set}\)</span> are sometimes easier to work with as element chasing arguments are available. But the standard API of category theory has arrows but no elements. So sometimes we employ a big theorem like the <a href="https://ncatlab.org/nlab/show/Freyd-Mitchell+embedding+theorem">Freyd-Mitchell theorem</a> which, in this case,essentially says that an abelian category can be viewed as full subcategory of an <span class="math inline">\(R\)</span>-module category. This allows us to use assumptions like “morphisms are functions” which are not compatible with the API of categories.</p>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">

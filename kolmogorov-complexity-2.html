@@ -8,253 +8,70 @@
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
+    ul.task-list{list-style: none;}
   </style>
   <link rel="stylesheet" href="./assets/format.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <link rel="icon" href="assets/logo.png">
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
-  type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">Kolmogorov Complexity (2 of 2)</h1>
 </header>
 <h2 id="a-crash-course-in-logic">A Crash Course in Logic</h2>
-<p>In this post we wil apply th Kolmogorov complexity to logic. To be
-more precise, we will answer to classical questions about foundations of
-mathematics. But first, let’s clarify what we mean by foundations.</p>
-<p>For simplicity and definiteness we will stick with set theory (with
-first order logic) as our foundational theory. The idea is to express
-<em>every</em> notion we use in mathematics in terms of sets using a
-formal language. Our formal language will have only two primitive
-notions, namely equality, which we will denote by <span
-class="math inline">\(=\)</span> and membership, which we will denote by
-<span class="math inline">\(\in\)</span>. Both equality and membership
-will be binary relations on sets.</p>
-<p>Other than these two, we will have the following symbols in our
-language: <span class="math display">\[
-  \forall,\, \exists,\, \wedge,\, \vee,\, \neg,\, \rightarrow,\,
-\leftrightarrow,\, (,\, ),\, x,\, &#39;.
+<p>In this post we wil apply th Kolmogorov complexity to logic. To be more precise, we will answer to classical questions about foundations of mathematics. But first, let’s clarify what we mean by foundations.</p>
+<p>For simplicity and definiteness we will stick with set theory (with first order logic) as our foundational theory. The idea is to express <em>every</em> notion we use in mathematics in terms of sets using a formal language. Our formal language will have only two primitive notions, namely equality, which we will denote by <span class="math inline">\(=\)</span> and membership, which we will denote by <span class="math inline">\(\in\)</span>. Both equality and membership will be binary relations on sets.</p>
+<p>Other than these two, we will have the following symbols in our language: <span class="math display">\[
+  \forall,\, \exists,\, \wedge,\, \vee,\, \neg,\, \rightarrow,\, \leftrightarrow,\, (,\, ),\, x,\, &#39;.
 \]</span></p>
-<p>The last symbol, namely <span class="math inline">\(&#39;\)</span> is
-used to obtain an unbounded number of variables from the single variable
-symbol <span class="math inline">\(x\)</span> as follows: <span
-class="math display">\[
-  x&#39;,\, x&#39;&#39;\, x&#39;&#39;&#39;\, x&#39;&#39;&#39;&#39;\,
-x&#39;&#39;&#39;&#39;&#39;\, x&#39;&#39;&#39;&#39;&#39;&#39;\, \ldots
-\]</span> However, for ease of reading, we will use lower case Roman
-letters such as <span class="math inline">\(x,y,z,t,\ldots\)</span>
-instead of <span class="math inline">\(x&#39;,\, x&#39;&#39;\,
-x&#39;&#39;&#39;,\ldots\)</span> The point here is that even though our
-alphabet has finitely many symbols, we can talk about infinitely many
-variables.</p>
-<p>When we talk about sets, we will use only <em>meaningful</em> or well
-formed strings in these symbols. I will not define what exactly well
-formed means but you can assume that a well formed formula is a string
-in our symbols which can be parsed according to some grammar.
-Intuitively, strings like <span class="math display">\[
+<p>The last symbol, namely <span class="math inline">\(&#39;\)</span> is used to obtain an unbounded number of variables from the single variable symbol <span class="math inline">\(x\)</span> as follows: <span class="math display">\[
+  x&#39;,\, x&#39;&#39;\, x&#39;&#39;&#39;\, x&#39;&#39;&#39;&#39;\, x&#39;&#39;&#39;&#39;&#39;\, x&#39;&#39;&#39;&#39;&#39;&#39;\, \ldots
+\]</span> However, for ease of reading, we will use lower case Roman letters such as <span class="math inline">\(x,y,z,t,\ldots\)</span> instead of <span class="math inline">\(x&#39;,\, x&#39;&#39;\, x&#39;&#39;&#39;,\ldots\)</span> The point here is that even though our alphabet has finitely many symbols, we can talk about infinitely many variables.</p>
+<p>When we talk about sets, we will use only <em>meaningful</em> or well formed strings in these symbols. I will not define what exactly well formed means but you can assume that a well formed formula is a string in our symbols which can be parsed according to some grammar. Intuitively, strings like <span class="math display">\[
   \forall )( \rightarrow xx \;\;\text{ or }\;\; &#39;&#39;\vee x \wedge
 \]</span> are not well formed but <span class="math display">\[
-  \forall x \forall y (( \forall t (t\in x)\leftrightarrow (t\in y))
-\leftrightarrow x = y)
-\]</span> is well formed. Actually this second formula says that two
-sets are equal if and only if they have the same elements. Note that
-meaningful does not mean true. For instance <span
-class="math display">\[
+  \forall x \forall y (( \forall t (t\in x)\leftrightarrow (t\in y)) \leftrightarrow x = y)
+\]</span> is well formed. Actually this second formula says that two sets are equal if and only if they have the same elements. Note that meaningful does not mean true. For instance <span class="math display">\[
   \exists x\forall y (y\in x)
-\]</span> is meaningful and says that there is set which contains all
-sets. However, it is not true in most set theories.</p>
-<p>One important property of well formed formulas is that there is an
-algorithm which can decide whether an arbitrary string is well formed or
-not.</p>
-<p>We want to be able to prove statements about mathematical using our
-language. After all, this is supposed to be a foundational theory. Since
-we have statements, namely the well formed formulas, only two pieces are
-missing now: assumptions (or axioms) and a notion of proof.</p>
-<p>Again for definiteness, we will work with the axioms of ZFC
-(Zermalo-Frenkel-Choice) set theory. The actual axioms are not important
-but you can look them up if you are curious. The important fact about
-the axioms is the following: There is an algorithm which can decide
-whether an arbitrary string is an axiom.</p>
-<p>Finally a proof of a well formed formula <span
-class="math inline">\(varphi\)</span> is simply a sequence of well
-formed formulas <span
-class="math inline">\(\varphi_1,\varphi_2,\ldots,\varphi_n\)</span> such
-that <span class="math inline">\(\varphi_n = \varphi\)</span> and each
-<span class="math inline">\(\varphi_i\)</span> is either an axiom or it
-is obtained from earlier elements in the sequence using deduction rules.
-Deduction rules here are rules like “from <span
-class="math inline">\(\varphi\rightarrow\psi\)</span> and <span
-class="math inline">\(\varphi\)</span> deduce <span
-class="math inline">\(\psi\)</span>”. You guessed it, the actual rules
-are not important but the important fact about proofs is that there is
-algorithm which can decide whether an arbitrary sequence of strings is a
-proof or not.</p>
-<p>A theorem of ZFC is a well formed formula which has a proof. Now you
-might think that there is an algorithm which can decide whether an
-arbitrary string is a theorem of ZFC. However, as we will see soon, this
-is not true. The best you can do is to <em>enumerate</em> all theorems
-of ZFC. In other words there is an algorithm which generates an infinite
-list containing <em>all</em> theorems of ZFC. You can probably guess the
-algorithm: Generate all finite sequences of well formed formulas in,
-say, lexicographic ordering. If the sequence happens to be a proof, add
-the proven formula to the list.</p>
-<p>If you have not heard of recursively enumerable sets before, you
-might want to think about why this is weaker than having an algorithm
-which can decide whether an arbitrary string is a theorem.</p>
-<h2 id="chaitins-incompleteness-theorem">Chaitin’s Incompleteness
-Theorem</h2>
-<p>At this point, you might ask the following question: We have only
-talked about sets so far but we were looking for a foundational theory
-for all of mathematics. Is this really enough? The answer is yes. This
-may look strange because it seems that there objects in mathematics
-which are clearly not sets. For instance <span
-class="math inline">\(\pi\)</span> is not a set, it is a number. The
-trick is that <span class="math inline">\(pi\)</span>, and all
-mathematical objects for that matter, can be <em>encoded</em> as
-sets.</p>
-<p>Here are a few examples to give you an idea. We can define <span
-class="math display">\[
+\]</span> is meaningful and says that there is set which contains all sets. However, it is not true in most set theories.</p>
+<p>One important property of well formed formulas is that there is an algorithm which can decide whether an arbitrary string is well formed or not.</p>
+<p>We want to be able to prove statements about mathematical using our language. After all, this is supposed to be a foundational theory. Since we have statements, namely the well formed formulas, only two pieces are missing now: assumptions (or axioms) and a notion of proof.</p>
+<p>Again for definiteness, we will work with the axioms of ZFC (Zermalo-Frenkel-Choice) set theory. The actual axioms are not important but you can look them up if you are curious. The important fact about the axioms is the following: There is an algorithm which can decide whether an arbitrary string is an axiom.</p>
+<p>Finally a proof of a well formed formula <span class="math inline">\(varphi\)</span> is simply a sequence of well formed formulas <span class="math inline">\(\varphi_1,\varphi_2,\ldots,\varphi_n\)</span> such that <span class="math inline">\(\varphi_n = \varphi\)</span> and each <span class="math inline">\(\varphi_i\)</span> is either an axiom or it is obtained from earlier elements in the sequence using deduction rules. Deduction rules here are rules like “from <span class="math inline">\(\varphi\rightarrow\psi\)</span> and <span class="math inline">\(\varphi\)</span> deduce <span class="math inline">\(\psi\)</span>”. You guessed it, the actual rules are not important but the important fact about proofs is that there is algorithm which can decide whether an arbitrary sequence of strings is a proof or not.</p>
+<p>A theorem of ZFC is a well formed formula which has a proof. Now you might think that there is an algorithm which can decide whether an arbitrary string is a theorem of ZFC. However, as we will see soon, this is not true. The best you can do is to <em>enumerate</em> all theorems of ZFC. In other words there is an algorithm which generates an infinite list containing <em>all</em> theorems of ZFC. You can probably guess the algorithm: Generate all finite sequences of well formed formulas in, say, lexicographic ordering. If the sequence happens to be a proof, add the proven formula to the list.</p>
+<p>If you have not heard of recursively enumerable sets before, you might want to think about why this is weaker than having an algorithm which can decide whether an arbitrary string is a theorem.</p>
+<h2 id="chaitins-incompleteness-theorem">Chaitin’s Incompleteness Theorem</h2>
+<p>At this point, you might ask the following question: We have only talked about sets so far but we were looking for a foundational theory for all of mathematics. Is this really enough? The answer is yes. This may look strange because it seems that there objects in mathematics which are clearly not sets. For instance <span class="math inline">\(\pi\)</span> is not a set, it is a number. The trick is that <span class="math inline">\(pi\)</span>, and all mathematical objects for that matter, can be <em>encoded</em> as sets.</p>
+<p>Here are a few examples to give you an idea. We can define <span class="math display">\[
   0 = \emptyset,\; 1 = \{0\},\; 2 = \{0,1\},\; 3 = \{0,1,2\},\ldots
-\]</span> So a natural number is the set of smaller natural numbers. For
-two sets <span class="math inline">\(x\)</span> and <span
-class="math inline">\(y\)</span> we can define <span
-class="math display">\[
+\]</span> So a natural number is the set of smaller natural numbers. For two sets <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> we can define <span class="math display">\[
   (x,y) = \{ \{x\}, \{x,y\}\}
-\]</span> and prove that this actually works like an ordered pair
-(Exercise: Do it!). Once you have ordered pairs, you can have Cartesian
-products, relations and functions etc.</p>
-<p>From now on I will assume that we agreed on encodings of all the
-notions in mathematics as sets. Note that notions like well formed
-formula, proof and algorithm are also encoded in this way. So ZFC is
-capable of talking about Kolmogorov complexity, or even itself.</p>
-<p>Here comes the big theorem of this post. Recall that <span
-class="math inline">\(K\)</span> denotes the Kolmogorov complexity.</p>
+\]</span> and prove that this actually works like an ordered pair (Exercise: Do it!). Once you have ordered pairs, you can have Cartesian products, relations and functions etc.</p>
+<p>From now on I will assume that we agreed on encodings of all the notions in mathematics as sets. Note that notions like well formed formula, proof and algorithm are also encoded in this way. So ZFC is capable of talking about Kolmogorov complexity, or even itself.</p>
+<p>Here comes the big theorem of this post. Recall that <span class="math inline">\(K\)</span> denotes the Kolmogorov complexity.</p>
 <blockquote>
-<p><em>There is a constant <span class="math inline">\(L\)</span> such
-that for no <span class="math inline">\(\sigma\)</span>, the statement
-<span class="math inline">\(K(\sigma) &gt; L\)</span> is a theorem of
-ZFC.</em></p>
+<p><em>There is a constant <span class="math inline">\(L\)</span> such that for no <span class="math inline">\(\sigma\)</span>, the statement <span class="math inline">\(K(\sigma) &gt; L\)</span> is a theorem of ZFC.</em></p>
 </blockquote>
-<p>Suppose not. Then for any natural number <span
-class="math inline">\(n\)</span> there is a <span
-class="math inline">\(\sigma_n\)</span> such that <span
-class="math inline">\(K(\sigma_n)\ &gt; n\)</span> is a theorem of ZFC.
-This implies that there is a computable function <span
-class="math inline">\(f\)</span> such that for each natural number <span
-class="math inline">\(n\)</span> the inequality <span
-class="math inline">\(K(f(n)) &gt; n\)</span> is a theorem of ZFC.
-Indeed, given any <span class="math inline">\(n\)</span>, using the fact
-that theorems of ZFC are enumerable, search for a theorem of the form
-<span class="math inline">\(K(\sigma) &gt; n\)</span>. By assumption
-this search will end even though the list is infinite. Define <span
-class="math inline">\(f(n)\)</span> to be the first such <span
-class="math inline">\(\sigma\)</span> you find. But this is the first
-step in the argument which we proves the incomputability of <span
-class="math inline">\(K\)</span> in the previous post! You can simply
-copy the rest of the proof here.</p>
-<p>Let us stop here and look at what we have proved. In ZFC, there is an
-upper bound on the <em>provable</em> Kolmogorov complexity. However,
-there is no upper bound on Kolmogorov complexity! Therefore there are
-some true statements of the form <span class="math inline">\(K(\sigma)
-&gt; k\)</span> which are not theorems of ZFC. This means that ZFC is
-incomplete, in the sense that it cannot capture all true statements.
-This is Chaitin’s version of Gödel’s first incompleteness theorem.</p>
-<h2 id="gödels-second-incompleteness-theorem">Gödel’s Second
-Incompleteness Theorem</h2>
-<p>We have been making an implicit assumption about our foundational
-theory, namely that it was consistent. In other words, we assumed that
-no contradiction is a theorem of ZFC. A contradiction is a vacuously
-false statement like <span class="math inline">\(\exists x (\neg x =
-x)\)</span>, by the way. This is equivalent to assuming that not all
-well formed formulas are theorems of ZFC as everything can be deduced
-from a contradiction. Obviously, this is a must have for a foundational
-theory.</p>
-<p>Recall that ZFC can prove statements about itself. So wouldn’t it be
-nice to actually have a proof of this assumption in ZFC? This would be
-proving the consistency of our foundational theory within the theory
-itself, showing that the theory is self sufficient. Certainly Hilbert
-wanted to do it. However his efforts were crashed by, Gödel who proved
-that no sufficiently rich theory can prove its own consistency. Here
-sufficiently rich roughly means strong enough to interpret arithmetic.
-Now we will give a modern proof of this theorem using Kolmogorov
-complexity. The proof is due to Shira Kritchman and Ran Raz.</p>
+<p>Suppose not. Then for any natural number <span class="math inline">\(n\)</span> there is a <span class="math inline">\(\sigma_n\)</span> such that <span class="math inline">\(K(\sigma_n)\ &gt; n\)</span> is a theorem of ZFC. This implies that there is a computable function <span class="math inline">\(f\)</span> such that for each natural number <span class="math inline">\(n\)</span> the inequality <span class="math inline">\(K(f(n)) &gt; n\)</span> is a theorem of ZFC. Indeed, given any <span class="math inline">\(n\)</span>, using the fact that theorems of ZFC are enumerable, search for a theorem of the form <span class="math inline">\(K(\sigma) &gt; n\)</span>. By assumption this search will end even though the list is infinite. Define <span class="math inline">\(f(n)\)</span> to be the first such <span class="math inline">\(\sigma\)</span> you find. But this is the first step in the argument which we proves the incomputability of <span class="math inline">\(K\)</span> in the previous post! You can simply copy the rest of the proof here.</p>
+<p>Let us stop here and look at what we have proved. In ZFC, there is an upper bound on the <em>provable</em> Kolmogorov complexity. However, there is no upper bound on Kolmogorov complexity! Therefore there are some true statements of the form <span class="math inline">\(K(\sigma) &gt; k\)</span> which are not theorems of ZFC. This means that ZFC is incomplete, in the sense that it cannot capture all true statements. This is Chaitin’s version of Gödel’s first incompleteness theorem.</p>
+<h2 id="gödels-second-incompleteness-theorem">Gödel’s Second Incompleteness Theorem</h2>
+<p>We have been making an implicit assumption about our foundational theory, namely that it was consistent. In other words, we assumed that no contradiction is a theorem of ZFC. A contradiction is a vacuously false statement like <span class="math inline">\(\exists x (\neg x = x)\)</span>, by the way. This is equivalent to assuming that not all well formed formulas are theorems of ZFC as everything can be deduced from a contradiction. Obviously, this is a must have for a foundational theory.</p>
+<p>Recall that ZFC can prove statements about itself. So wouldn’t it be nice to actually have a proof of this assumption in ZFC? This would be proving the consistency of our foundational theory within the theory itself, showing that the theory is self sufficient. Certainly Hilbert wanted to do it. However his efforts were crashed by, Gödel who proved that no sufficiently rich theory can prove its own consistency. Here sufficiently rich roughly means strong enough to interpret arithmetic. Now we will give a modern proof of this theorem using Kolmogorov complexity. The proof is due to Shira Kritchman and Ran Raz.</p>
 <p>Their proof is loosely based on the surprise examination paradox:</p>
 <blockquote>
-<p>In your introduction to logic class, you announce that the students
-will have an exam next week, but they will not know the exact day of the
-exam. So the exam cannot be on Friday because otherwise, the students
-will know that the exam will be on Friday after not having an exam on
-Thursday. Similarly the exam cannot be on Thursday, Wednesday, Tuesday
-or Monday.</p>
+<p>In your introduction to logic class, you announce that the students will have an exam next week, but they will not know the exact day of the exam. So the exam cannot be on Friday because otherwise, the students will know that the exam will be on Friday after not having an exam on Thursday. Similarly the exam cannot be on Thursday, Wednesday, Tuesday or Monday.</p>
 </blockquote>
-<p>Let <span class="math inline">\(L\)</span> be as in Chaitin’s
-theorem. Let <span class="math inline">\(\ell = c^{L + 1}\)</span> where
-<span class="math inline">\(c\geq 2\)</span> is the number of symbols we
-use in our fixed programming language. Define <span
-class="math display">\[
-  \mathcal{K} = \{\sigma\, \colon K(\sigma) &gt; L,\, \ell(\sigma) \leq
-\ell \}
+<p>Let <span class="math inline">\(L\)</span> be as in Chaitin’s theorem. Let <span class="math inline">\(\ell = c^{L + 1}\)</span> where <span class="math inline">\(c\geq 2\)</span> is the number of symbols we use in our fixed programming language. Define <span class="math display">\[
+  \mathcal{K} = \{\sigma\, \colon K(\sigma) &gt; L,\, \ell(\sigma) \leq \ell \}
   \;\;\text{ and }\;\;
   k = |\mathcal{K}|
-\]</span> The number <span class="math inline">\(k\)</span> will roughly
-correspond to the day on which the exam will take place counted from the
-end of the week. Clearly <span class="math inline">\(k\geq 1\)</span> as
-there are less than <span class="math inline">\(\ell\)</span> many
-programs of size <span class="math inline">\(L\)</span>. Moreover, this
-observation is also a theorem of ZFC as it is simple counting.</p>
-<p>Now let us prove that <span class="math inline">\(k \geq 2\)</span>.
-Suppose not. Then <span class="math inline">\(k=1\)</span>. Let <span
-class="math inline">\(\sigma_0\)</span> be the unique element of <span
-class="math inline">\(\mathcal{K}\)</span>. Using the fact that the
-theorems of ZFC are enumerable, look for proofs of statements of the
-form <span class="math inline">\(K(\sigma) \leq L\)</span> for <span
-class="math inline">\(\ell(\sigma) \leq \ell\)</span>. By assumption,
-for all <span class="math inline">\(\sigma\not=\sigma_0\)</span> we have
-such a proof. So when we have <span class="math inline">\(\ell -
-1\)</span> proofs, the remaining string should be <span
-class="math inline">\(\sigma_0\)</span> which has to have complexity
-greater than <span class="math inline">\(L\)</span>. But we just proved,
-in ZFC, that a certain string has complexity greater than <span
-class="math inline">\(L\)</span>. This contradicts the choice of <span
-class="math inline">\(L\)</span>.</p>
-<p>Now let us prove that <span class="math inline">\(k \geq 3\)</span>.
-Suppose not. Then <span class="math inline">\(k = 2\)</span>. Let <span
-class="math inline">\(\sigma_0, \sigma_1\)</span> be the only elements
-of <span class="math inline">\(\mathcal{K}\)</span>. Using the fact that
-the theorems of ZFC are enumerable, look for proofs of statements of the
-form <span class="math inline">\(K(\sigma) \leq L\)</span> for <span
-class="math inline">\(\ell(\sigma) \leq \ell\)</span>. By assumption,
-for all <span class="math inline">\(\sigma\not=\sigma_0,
-\sigma_1\)</span> we have such a proof. So when we have <span
-class="math inline">\(\ell - 2\)</span> proofs, the remaining two
-strings should be <span class="math inline">\(\sigma_0\)</span> and $_1
-$ which have to have complexity greater than <span
-class="math inline">\(L\)</span>. But we just proved, in ZFC, that a
-certain string has complexity greater than <span
-class="math inline">\(L\)</span>. This contradicts the choice of <span
-class="math inline">\(L\)</span>.</p>
-<p>Now let us prove that <span class="math inline">\(m \geq
-4\)</span>Well, you see the pattern. Using this method we can exhaust
-all possible values for <span class="math inline">\(k\)</span> and
-obtain a contradiction. So assuming that ZFC can prove its consistency
-leads to a contradiction.</p>
+\]</span> The number <span class="math inline">\(k\)</span> will roughly correspond to the day on which the exam will take place counted from the end of the week. Clearly <span class="math inline">\(k\geq 1\)</span> as there are less than <span class="math inline">\(\ell\)</span> many programs of size <span class="math inline">\(L\)</span>. Moreover, this observation is also a theorem of ZFC as it is simple counting.</p>
+<p>Now let us prove that <span class="math inline">\(k \geq 2\)</span>. Suppose not. Then <span class="math inline">\(k=1\)</span>. Let <span class="math inline">\(\sigma_0\)</span> be the unique element of <span class="math inline">\(\mathcal{K}\)</span>. Using the fact that the theorems of ZFC are enumerable, look for proofs of statements of the form <span class="math inline">\(K(\sigma) \leq L\)</span> for <span class="math inline">\(\ell(\sigma) \leq \ell\)</span>. By assumption, for all <span class="math inline">\(\sigma\not=\sigma_0\)</span> we have such a proof. So when we have <span class="math inline">\(\ell - 1\)</span> proofs, the remaining string should be <span class="math inline">\(\sigma_0\)</span> which has to have complexity greater than <span class="math inline">\(L\)</span>. But we just proved, in ZFC, that a certain string has complexity greater than <span class="math inline">\(L\)</span>. This contradicts the choice of <span class="math inline">\(L\)</span>.</p>
+<p>Now let us prove that <span class="math inline">\(k \geq 3\)</span>. Suppose not. Then <span class="math inline">\(k = 2\)</span>. Let <span class="math inline">\(\sigma_0, \sigma_1\)</span> be the only elements of <span class="math inline">\(\mathcal{K}\)</span>. Using the fact that the theorems of ZFC are enumerable, look for proofs of statements of the form <span class="math inline">\(K(\sigma) \leq L\)</span> for <span class="math inline">\(\ell(\sigma) \leq \ell\)</span>. By assumption, for all <span class="math inline">\(\sigma\not=\sigma_0, \sigma_1\)</span> we have such a proof. So when we have <span class="math inline">\(\ell - 2\)</span> proofs, the remaining two strings should be <span class="math inline">\(\sigma_0\)</span> and $_1 $ which have to have complexity greater than <span class="math inline">\(L\)</span>. But we just proved, in ZFC, that a certain string has complexity greater than <span class="math inline">\(L\)</span>. This contradicts the choice of <span class="math inline">\(L\)</span>.</p>
+<p>Now let us prove that <span class="math inline">\(m \geq 4\)</span>Well, you see the pattern. Using this method we can exhaust all possible values for <span class="math inline">\(k\)</span> and obtain a contradiction. So assuming that ZFC can prove its consistency leads to a contradiction.</p>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
