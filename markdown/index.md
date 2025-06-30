@@ -11,8 +11,8 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
-- [Coproducts of semigrouos and monoids](coproduct.html)
-  (May 13, 2025)
+- [Coproducts of magmas, semigrouos and monoids](coproduct.html)
+  (June 30, 2025)
 
 - [Making prisms out of predicates with Liquid Haskell](predicate-to-prism.html)
   (November 12, 2023)

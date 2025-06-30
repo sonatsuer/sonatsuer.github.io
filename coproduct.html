@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Blog of S.Süer – Coproducts of Semigrouos and Monoids</title>
+  <title>Blog of S.Süer – Coproducts of Magmas, Semigroups and Monoids</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -12,18 +12,387 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="./assets/format.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <link rel="icon" href="assets/logo.png">
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Coproducts of Semigrouos and Monoids</h1>
+<h1 class="title">Coproducts of Magmas, Semigroups and Monoids</h1>
 </header>
+<p><span class="math inline">\(\newcommand{\CC}{\mathcal{C}}\)</span></p>
+<h2 id="tldr">TL;DR</h2>
+<p>While working on a personal project I needed to combine two writer monads whose monoids were completely unrelated. A natural way of solving this problem is to construct the coproduct of the monoids. Long story short, I ended up pushing a small <a href="https://github.com/diagrams/monoid-extras/pull/61">fix</a> to the <a href="https://hackage.haskell.org/package/monoid-extras">monoid-extras</a> package. This is a post explaining a few points about specification and implementation of coproducts in varieties of algebras in general and monoids/semigroups in particular. Turned out to be my biggest <a href="https://fr.wikipedia.org/wiki/D%C3%A9formation_professionnelle">déformation professionnelle</a> so far. You can skip to <a href="#implementing-coproducts">Implementing Coproducts</a> if you are not interested in the theory. All the code is in this <a href="https://gist.github.com/sonatsuer/8165e7d32e8a1a91779da92fe4cd205a">gist</a>.</p>
 <h2 id="specifying-coproducts">Specifying Coproducts</h2>
+<p>We will start with the definition of coproducts. A coproduct is like smashing two burritos into each other. Just kidding. Let <span class="math inline">\(\CC\)</span> be a category and let <span class="math inline">\(O_1\)</span> and <span class="math inline">\(O_2\)</span> be two objects in <span class="math inline">\(\CC\)</span>. The coproduct of of <span class="math inline">\(O_1\)</span> and <span class="math inline">\(O_2\)</span> consists of the following:</p>
+<ul>
+<li>A carrier object in <span class="math inline">\(\CC\)</span> denoted by <span class="math inline">\(O_1\coprod O_2\)</span>,</li>
+<li>two morphisms in <span class="math inline">\(\CC\)</span> denoted by <span class="math inline">\(\iota_i\colon O_i\to O_1\coprod O_2\)</span> for <span class="math inline">\(i=1,2\)</span>,</li>
+<li>for each object <span class="math inline">\(T\)</span> in <span class="math inline">\(\CC\)</span> a function <span class="math inline">\([\cdot,\cdot]\colon \CC(O_1,T)\times\CC(O_2,T)\to \CC(O_1\coprod O_2,T)\)</span> such that the following poorly drawn diagrams commute for <span class="math inline">\(i=1,2\)</span>:</li>
+</ul>
+<p><span class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span class="math inline">\(\newcommand{\ua}[1]{\bigg\uparrow\raise.5ex\rlap{\scriptstyle#1}}\)</span> <span class="math inline">\(\newcommand{\da}[1]{{\LARGE\nearrow}\rlap{\scriptstyle#1}}\)</span></p>
+<p><span class="math display">\[
+\begin{array}{c}
+    &amp;                       &amp; T              \newline
+    &amp;       \da{f_i}        &amp; \ua{[f_1,f_2]} \newline
+O_i &amp; \ras{\;\;\iota_i\;\;} &amp; O_1\coprod O_2 \newline
+\end{array}
+\]</span></p>
+<p>Moreover, <span class="math inline">\([f_1,f_2]\)</span> is the unique morphism making both of the above diagrams commute. Actually, copdruct is an initial object in the category whose objects are triples <span class="math inline">\((f_1,O,f_2)\)</span> where <span class="math inline">\(f_i\colon O_i\to O\)</span> and morphisms are morphisms of the ambient category which commute with the morphisms in the triple. By the usual drill coproducts are unique if they exist, etc.</p>
+<p>Also, note the emphasis on the ambient category. It will be important later.</p>
+<h2 id="interlude-varieties-of-algebras">Interlude: Varieties of Algebras</h2>
+<p>The basic ideas we will use are valid for all varieties of algebras. So let us start from there. Roughly speaking, a variety of algebras (or an equational class) is a class that can be axiomatized by universal equations –sometimes called identities– only. Typical examples include magmas, semigroups, monoids, groups, rings, etc. A typical non-example is the class of fields. Note that this is an easy but nontrivial fact since having a non-equational standard axiomatization does not automatically mean that there is no equational axiomatization.</p>
+<p>To make the notion of axiomatization precise we need to define the notion of a language. These can be done in a more fancy way using <span class="math inline">\(F\)</span>-algebras where <span class="math inline">\(F\)</span> is an endofunctor (or even better, a monad) but I will stick to old school universal algebra to keep things more accessible.</p>
+<p><strong>Definition.</strong> A language is a set of symbols <span class="math inline">\(L\)</span> together with a function <span class="math inline">\({\rm arity}\colon L\to\mathbb{N}\)</span>. We usually omit <span class="math inline">\({\rm arity}\)</span> and assume it is clear from the context. Languages are purely syntactic objects. The semantic counterpart of a language <span class="math inline">\(L\)</span> is called an <span class="math inline">\(L\)</span>-algebra and it consists of a carrier set <span class="math inline">\(A\)</span> and an interpretation function <span class="math display">\[
+I_s\colon A^{{\rm arity}(s)} \to A
+\]</span> for each symbol <span class="math inline">\(s\)</span> in <span class="math inline">\(L\)</span>. If the underlying <span class="math inline">\(I\)</span> is clear usually denote <span class="math inline">\(I_s\)</span> by <span class="math inline">\(s\)</span>. Note that we allow <span class="math inline">\(0\)</span> as an arity here. They correspond to functions from <span class="math inline">\(A^0\)</span> (the set with a unique element) to <span class="math inline">\(A\)</span>, so they represent constants.</p>
+<p>A few examples are in order. Let <span class="math inline">\(L=\emptyset\)</span>. Then the <span class="math inline">\(L\)</span>-algebras are just sets. If <span class="math inline">\(L=\{c\}\)</span> where <span class="math inline">\(c\)</span> is a constant symbol then <span class="math inline">\(L\)</span>-algebras are sets with a distinguished element. If <span class="math inline">\(L=\{*\}\)</span> where <span class="math inline">\(*\)</span> has arity <span class="math inline">\(2\)</span> then the <span class="math inline">\(L\)</span>-algebras are magmas.</p>
+<p>Note that the class of <span class="math inline">\(L\)</span>-algebras for a fixed <span class="math inline">\(L\)</span> comes equipped with a notion of a homomorphism which turns it into category. A morphism <span class="math inline">\(\varphi\)</span> between <span class="math inline">\(L\)</span>-algebras is, by definition, a function that preserves the interpretation of symbols: <span class="math display">\[
+\varphi (f(a_1,\ldots,a_r)) = f(\varphi(a_1),\ldots,\varphi(a_r))
+\]</span> for any <span class="math inline">\(f\)</span> in <span class="math inline">\(L\)</span> with <span class="math inline">\(r={\rm arity}(f)\)</span>.</p>
+<p>Once we have a language <span class="math inline">\(L\)</span>, we can talk about terms of <span class="math inline">\(L\)</span>. A term of <span class="math inline">\(L\)</span> is a finite tree of symbols from <span class="math inline">\(L\)</span> such that if a node has symbol <span class="math inline">\(s\)</span> then it has an ordered list of child nodes of size <span class="math inline">\({\rm arity}(s)\)</span>. In practice we do not draw the actual tree but refer to it as the parsing tree of a string with respect to an unambiguous grammar.</p>
+<p>Note that without constant symbols we do not have any terms because finite trees have leaves and leaves can only have constant symbols as they have no children. Also, every constant symbol is a tree consisting of a single leaf. For a more interesting example consider <span class="math inline">\(L=\{*, a, b\}\)</span> where <span class="math inline">\(*\)</span> is binary and <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> are nullary symbols. Then these are all terms of <span class="math inline">\(L\)</span>: <span class="math display">\[
+a,\, b,\, a* b,\, b* a,\, a*(a* b) ,\, (a* a)* b ,\, (a* b)*(a* b) ,\,
+a*(a*(a*(a*(a*(a* a))))) ,\,
+((((((a* a)* a)* a)* a)* a)* a)
+\]</span></p>
+<p>Term algebras are interesting for us because, first, they are <span class="math inline">\(L\)</span>-algebras where we interpret a symbols as one of the constructors of a tree. Actually, the term algebra of a language <span class="math inline">\(L\)</span> is the initial algebra of the category of <span class="math inline">\(L\)</span>-algebras. Second, they correspond to certain well behaved data types, namely trees. Note also that any interpretation <span class="math inline">\(I\)</span> of <span class="math inline">\(L\)</span> can be extended uniquely to a function <span class="math inline">\(\tilde{I}\)</span> on terms of <span class="math inline">\(L\)</span> by induction.</p>
+<p><strong>Definition.</strong> Let <span class="math inline">\(L\)</span> be a language. Expand <span class="math inline">\(L\)</span> to <span class="math inline">\(L[X]\)</span> by adding a new set of constant symbols <span class="math inline">\(X=\{x_0,x_1,\ldots\}\)</span>. An equation in <span class="math inline">\(L\)</span> is a pair of <span class="math inline">\(L[X]\)</span>-terms. Let <span class="math inline">\(A\)</span> be an <span class="math inline">\(L\)</span> algebra with interpretation <span class="math inline">\(I\)</span>. We say that an equation <span class="math inline">\((t_1,t_2)\)</span> holds in <span class="math inline">\(A\)</span> if for <strong>any</strong> interpretation <span class="math inline">\(\tilde{I}\)</span> of <span class="math inline">\(L[X]\)</span> in <span class="math inline">\(A\)</span> which is an extension of <span class="math inline">\(I\)</span>, we have <span class="math inline">\(\tilde{I}(t_1) = \tilde{I}(t_2)\)</span>. Given a set of equations <span class="math inline">\(E\)</span> in <span class="math inline">\(L\)</span>, an <span class="math inline">\((L,E)\)</span>-algebra is an <span class="math inline">\(L\)</span>-algebra in which all equations in <span class="math inline">\(E\)</span> hold. A set of equations in a fixed language is called an equational theory. A class consisting of <span class="math inline">\(L\)</span>-algebras satisfying equations in a fixed equational theory is called an equational class or a variety of algebras. Phew…</p>
+<p>Again, a few examples are in order. We will use a more suggestive notation for equations: <span class="math inline">\(t_1=t_2\)</span> as opposed to <span class="math inline">\((t_1,t_2)\)</span>. Let <span class="math inline">\(L=\{*\}\)</span> where <span class="math inline">\(*\)</span> is binary. Let <span class="math inline">\(S=\{ x_0*(x_1* x_2) = (x_0* x_1)* x_2\}\)</span>. Since this equation must hold under all interpretations what we are doing is essentially universal quantification. So <span class="math inline">\((L,S)\)</span>-algebras are precisely the semigroups where the underlying operation is the interpretation of <span class="math inline">\(*\)</span>. We can add more axioms. For instance we can have <span class="math inline">\(CS=S\cup\{x_0* x_1 = x_1* x_0\}\)</span>. Then the <span class="math inline">\((L,CS)\)</span>-algebras are precisely the commutative semigroups.</p>
+<p>Just like <span class="math inline">\(L\)</span>-algebras, <span class="math inline">\((L,E)\)</span>-algebras form a category. Moreover, that category also have an initial object. The construction is somewhat straightforward but it does not lend itself to an implementation in a straightforward way. Actually, in some cases, there is simply no implementation due to decidability issues. We will come to that later.</p>
+<p>Given a language <span class="math inline">\(L\)</span> and an <span class="math inline">\(L\)</span>-algebra <span class="math inline">\(A\)</span>, call a binary relation <span class="math inline">\(\equiv\)</span> on <span class="math inline">\(A\)</span> compatible if for any <span class="math inline">\(f\)</span> in <span class="math inline">\(L\)</span> of arity <span class="math inline">\(r\)</span> <span class="math display">\[
+a_1\equiv a_1&#39;,\ldots, a_r\equiv a_r&#39; \;\text{ implies }\; f(a_1,\ldots,a_r)\equiv f(a_1&#39;,\ldots,a_r&#39;)
+\]</span> for all <span class="math inline">\(a_1,\ldots,a_r,a_1&#39;,\ldots,a_r&#39;\)</span> in <span class="math inline">\(A\)</span>. A compatible equivalence relation is called a congruence. Here are a few important observations about congruence relations. If <span class="math inline">\(A\)</span> is an <span class="math inline">\(L\)</span>-algebra and <span class="math inline">\(\equiv\)</span> is a congruence on <span class="math inline">\(A\)</span> the the quotient set <span class="math inline">\(A/\equiv\)</span> is also an <span class="math inline">\(L\)</span>-algebra in a canonical way. To interpret a symbol <span class="math inline">\(f\)</span> in <span class="math inline">\(A/\equiv\)</span>, pick representatives from the equivalence classes of the arguments of <span class="math inline">\(f\)</span>, use the interpretation of <span class="math inline">\(f\)</span> in <span class="math inline">\(A\)</span> to get an element in <span class="math inline">\(A\)</span> and finally take the equivalence class of that element. This is a well defined operation. The canonical map from <span class="math inline">\(A\)</span> to <span class="math inline">\(A/\equiv\)</span> sending an element to its equivalence class is an <span class="math inline">\(L\)</span>-algebra morphism. Actually, this gives a quotient in the category theoretic sense but we will not need that fact.</p>
+<p>Now we can construct initial algebras of equational theories. Given a language <span class="math inline">\(L\)</span> and a set of equations <span class="math inline">\(E\)</span> in <span class="math inline">\(L\)</span> let us first construct the term algebra <span class="math inline">\(T\)</span> of <span class="math inline">\(L\)</span>. Let <span class="math inline">\(I\)</span> be the interpretation of <span class="math inline">\(L\)</span> in <span class="math inline">\(T\)</span>. On <span class="math inline">\(T\)</span>, consider the following relation: <span class="math display">\[
+R = \{(\tilde{I}(t_1), \tilde{I}(t_2))\, |\, t_1=t_2\in E,\,\tilde{I}\text{ any interpretation extending }I\}.
+\]</span> Let <span class="math inline">\(\mathbb{C}_R\)</span> be the set of congruence relations on <span class="math inline">\(T\)</span> extending <span class="math inline">\(R\)</span>. First of all <span class="math inline">\(\mathbb{C}_R\)</span> is not empty because the relation in which everything is related to everything is in <span class="math inline">\(\mathbb{C}_R\)</span>. Moreover <span class="math inline">\(\mathbb{C}_R\)</span> is closed under arbitrary intersections. This is tedious to prove but otherwise easy. Therefore <span class="math inline">\(\mathbb{C}_R\)</span> has a minimum element <span class="math inline">\(\bigcap\mathbb{C}_R\)</span> which is the smallest congruence extending R. Let us denote this congruence by <span class="math inline">\(\equiv_E\)</span>. One can show that <span class="math inline">\(T/\equiv_E\)</span> is the initial object of the category of <span class="math inline">\((L,E)\)</span>-algebras.</p>
+<p>These ideas, even though very abstract, give us a strategy to actually implement an <span class="math inline">\((L,E)\)</span>-algebra. We can start with an initial object in the category of <span class="math inline">\(L\)</span>-algebras which we know to be possible because they are just term algebras. Then we divide by the congruence generated by <span class="math inline">\(E\)</span> as described before. At this stage, if <span class="math inline">\(\equiv_E\)</span> is decidable then we have an implementation in the form of a <a href="https://ncatlab.org/nlab/show/setoid">setoid</a>. In principle equivalence can be undecidable. However in certain practical cases one can use tools like the Knuth-Bendix algorithm or invent an ad-hoc normal form for terms to decide equality.</p>
+<p>Here is a trivial example. Let <span class="math inline">\(L=\{a,b\}\)</span> where both <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are nullary. First let <span class="math inline">\(E\)</span> be empty. The term algebra <span class="math inline">\(T\)</span> for <span class="math inline">\(L\)</span> is simply <span class="math inline">\(\{a,b\}\)</span> as there is no way to combine constants. Also eqaulity extends <span class="math inline">\(E\)</span> and is trivially a congruence. Thus <span class="math inline">\(\equiv_E\)</span> is equality and <span class="math inline">\(T/\equiv_E\)</span> is <span class="math inline">\(T\)</span>. There is nothing to force <span class="math inline">\(a\)</span> to be equal to <span class="math inline">\(b\)</span> and hence <span class="math inline">\(a\)</span> is not equal to <span class="math inline">\(b\)</span> in the initial object. On the contrary if we had <span class="math inline">\(E=\{a=b\}\)</span> then <span class="math inline">\(T\)</span> would have a single element. Examples with actual function symbols are usually difficult.</p>
+<h2 id="constructing-coproducts-for-varieties-of-algebras">Constructing Coproducts for Varieties of Algebras</h2>
+<p>It is not difficult to prove that every variety of algebras is cocomplete. <a href="https://ncatlab.org/nlab/show/cocompleteness+of+varieties+of+algebras">Here</a> is a proof. In particular every variety has coproducts. But instead of citing a theorem we will sketch a self contained construction which is suitable for extracting an implementation.</p>
+<p>We will start with a model theoretic idea due to Abraham robinson which has applications beyond equational theories. Given an <span class="math inline">\((L,E)\)</span>-algebra <span class="math inline">\(A\)</span>, construct the language <span class="math inline">\(L[A]\)</span> where each element of <span class="math inline">\(A\)</span> corresponds to a new constant symbol. Now also extend <span class="math inline">\(E\)</span> to <span class="math inline">\(E[A]\)</span> by adjoining all the equalities that hold in <span class="math inline">\(A\)</span>. So, for instance, if <span class="math inline">\(E\)</span> is the theory of semigroups, then <span class="math inline">\(E[A]\)</span> encodes the entire multiplication table for <span class="math inline">\(A\)</span>. Sometimes <span class="math inline">\(E[A]\)</span> is called the (equational) diagram of <span class="math inline">\(A\)</span>. Here comes the interesting part. Let <span class="math inline">\(B\)</span> be an <span class="math inline">\((L[A], E[A])\)</span>-algebra. Then we can define a map from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span> by sending <span class="math inline">\(a\)</span> to the interpretation of the constant symbol <span class="math inline">\(a\)</span>. This is a morphism of <span class="math inline">\(L\)</span>-algebras. Conversely, if <span class="math inline">\(B\)</span> is any <span class="math inline">\(L\)</span>-algebra with a morphism <span class="math inline">\(\varphi\colon A\to B\)</span>, then we can turn <span class="math inline">\(B\)</span> into an <span class="math inline">\((L[A], E[A])\)</span>-algebra by interpreting the symbol corresponding to <span class="math inline">\(a\)</span> as <span class="math inline">\(\varphi(a)\)</span>. Since <span class="math inline">\(L[A]\)</span>-morhisms preserve the interpretations of constants in <span class="math inline">\(A\)</span>, this gives us a characterization of the category <span class="math inline">\(L\)</span>-algebras with a morphism from <span class="math inline">\(A\)</span> (the co-slice category over <span class="math inline">\(A\)</span> if you will) as the category of <span class="math inline">\((L[A], E[A])\)</span>-algebras. This is the novelty of Robinson’s idea: algebras enriched with constants can encode morphisms.</p>
+<p>Back to the original problem. Let <span class="math inline">\(L\)</span> be a signature and let <span class="math inline">\(E\)</span> be set of equations in <span class="math inline">\(L\)</span>. Consider two <span class="math inline">\((L,E)\)</span>-algebras <span class="math inline">\(O_1\)</span> and <span class="math inline">\(O_2\)</span>. We want to construct <span class="math inline">\(O_1\coprod O_2\)</span>. For simplicity we will assume that <span class="math inline">\(O_1\)</span> and <span class="math inline">\(O_2\)</span> have disjoint domains –if not, we can replace one of them by an isomorphic copy. Let <span class="math inline">\(L[O_1,O_2]\)</span> be <span class="math inline">\((L[O_1])[O_2]\)</span> and let <span class="math inline">\(E[O_1,O_2]\)</span> be <span class="math inline">\((E[O_1])[O_2]\)</span>. Then the initial object of the category of <span class="math inline">\((L[O_1,O_2], E[O_1,O_2])\)</span>-algebras is the coproduct of <span class="math inline">\(O_1\)</span> and <span class="math inline">\(O_2\)</span>. Tadaa! I will leave the details to the reader.</p>
 <h2 id="implementing-coproducts">Implementing Coproducts</h2>
-<h2 id="case-of-semigroups-and-monoids">Case of Semigroups and Monoids</h2>
-<h2 id="bonus-commuting-coproducts">Bonus: Commuting Coproducts</h2>
+<p>Finally, enter Haskell. Let us implement coproducts for a few concrete varieties of algebras.</p>
+<h3 id="magmas">Magmas</h3>
+<p>Recall that a magma is just a set with a binary operation. Let <span class="math inline">\(L=\{*\}\)</span> where <span class="math inline">\(*\)</span> is binary operation symbol. Let <span class="math inline">\(A\)</span> be a magma. Since magmas do not have any properties <span class="math inline">\(E[A]=\emptyset\)</span>. This means that <span class="math inline">\(\equiv_{E[A]}\)</span> is equality and the term algebra for the language <span class="math inline">\(L[A]\)</span> consists of binary trees with elements from <span class="math inline">\(A\)</span> at its leaves. To summarize, free magmas are precisely the binary trees. There is even a Haskell <a href="https://hackage.haskell.org/package/magma">package</a> for this.</p>
+<p>Now let <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> be magmas. To construct <span class="math inline">\(A\coprod B\)</span>, we start with the term algebra of <span class="math inline">\(L[A,B]\)</span>. Now the term algebra for <span class="math inline">\(L[A, B]\)</span> is easy as it is just a tree. The implementation is straightforward.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Magma</span> <span class="kw">as</span> <span class="dt">M</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">MagmaTermAlgebra</span> a <span class="ot">=</span> <span class="dt">MagmaTermAlgebra</span> (<span class="dt">M.BinaryTree</span> a)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="kw">newtype</span> (<span class="dt">M.Magma</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">MagmaCoproduct</span> a b <span class="ot">=</span> <span class="dt">MagmaCoproduct</span> (<span class="dt">MagmaTermAlgebra</span> (<span class="dt">Either</span> a b))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="kw">newtype</span> (<span class="dt">M.Magma</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a><span class="ot">magmaL ::</span> a <span class="ot">-&gt;</span> <span class="dt">MagmaCoproduct</span> a b</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>magmaL <span class="ot">=</span> <span class="dt">MagmaCoproduct</span> <span class="op">.</span> <span class="dt">MagmaTermAlgebra</span> <span class="op">.</span> <span class="dt">M.Leaf</span> <span class="op">.</span> <span class="dt">Left</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="ot">magmaR ::</span> b <span class="ot">-&gt;</span> <span class="dt">MagmaCoproduct</span> a b</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>magmaR <span class="ot">=</span> <span class="dt">MagmaCoproduct</span> <span class="op">.</span> <span class="dt">MagmaTermAlgebra</span> <span class="op">.</span> <span class="dt">M.Leaf</span> <span class="op">.</span> <span class="dt">Right</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="co">-- Assuming f and g are magma morphisms</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a><span class="ot">magmaCopairing ::</span> (<span class="dt">M.Magma</span> c) <span class="ot">=&gt;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>  (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (<span class="dt">MagmaCoproduct</span> a b <span class="ot">-&gt;</span> c)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>magmaCopairing f g (<span class="dt">MagmaCoproduct</span> (<span class="dt">MagmaTermAlgebra</span> t)) <span class="ot">=</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>  M.foldMap (<span class="fu">either</span> f g) t</span></code></pre></div>
+<p>Things become interesting when we want to talk about equality. We need to take the quotient by the smallest congruence which contains all equations coming from <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, namely the diagrams of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. Since magmas do not have defining identities, there are no other equations. This means that the following equalities hold in the coproduct disregarding the newtype noise:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="dt">M.Node</span> (<span class="dt">Left</span> a1) (<span class="dt">Left</span> a1) <span class="op">==</span> <span class="dt">M.Leaf</span> (a1 <span class="op">M.&lt;&gt;</span> a2)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="dt">M.Node</span> (<span class="dt">Right</span> b1) (<span class="dt">Right</span> b2) <span class="op">==</span> <span class="dt">M.Leaf</span> (b1 <span class="op">M.&lt;&gt;</span> b2)</span></code></pre></div>
+<p>These equations determine the equivalence relation we are looking for. They also gives us a rewriting system: we can replace terms like the ones on the left hand side with their counterparts on the right hand side which are called reduced. Note that we can do it iteratively until all subterms are reduced. Here I mean this algorithm halts because each iteration produces a simpler tree. The advantage of this form is that two terms are equal if and only if they are equal in the sense of the carrier tree.</p>
+<p>So let’s implement this. We need an auxiliary function since the tree catamorphism is not strong enough here. We need to be able to do recursion on the branching shape, too.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ot">levelTwoCatamorphism ::</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>  (b <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>  (b <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>  <span class="dt">M.BinaryTree</span> a <span class="ot">-&gt;</span> b</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>levelTwoCatamorphism leaf leaf_leaf left_node node_leaf node_node <span class="ot">=</span> go</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>    go <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>      <span class="dt">M.Leaf</span> a <span class="ot">-&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>        leaf a</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>      <span class="dt">M.Node</span> (<span class="dt">M.Leaf</span> l) (<span class="dt">M.Leaf</span> r) <span class="ot">-&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>        leaf_leaf l r</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>      <span class="dt">M.Node</span> (<span class="dt">M.Leaf</span> l) nr<span class="op">@</span>(<span class="dt">M.Node</span> _ _) <span class="ot">-&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>        left_node l (go nr)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>      <span class="dt">M.Node</span> nl<span class="op">@</span>(<span class="dt">M.Node</span> _ _) (<span class="dt">M.Leaf</span> r) <span class="ot">-&gt;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>        node_leaf (go nl) r</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>      <span class="dt">M.Node</span> nl<span class="op">@</span>(<span class="dt">M.Node</span> _ _) nr<span class="op">@</span>(<span class="dt">M.Node</span> _ _) <span class="ot">-&gt;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>        node_node (go nl) (go nr)</span></code></pre></div>
+<p>With the help of this function we can define the equality on a coproduct of magmas. Here is the implementation. Obviously there is room for optimization here but I will not go into that here.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ot">magmaCoproductNormalize ::</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>  (<span class="dt">M.Magma</span> a, <span class="dt">M.Magma</span> b) <span class="ot">=&gt;</span>  <span class="dt">MagmaCoproduct</span> a b <span class="ot">-&gt;</span> <span class="dt">MagmaCoproduct</span> a b</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>magmaCoproductNormalize (<span class="dt">MagmaCoproduct</span> (<span class="dt">MagmaTermAlgebra</span> t)) <span class="ot">=</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>  <span class="dt">MagmaCoproduct</span> <span class="op">.</span> <span class="dt">MagmaTermAlgebra</span> <span class="op">.</span> normalize <span class="op">$</span> t</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>    normalize <span class="ot">=</span> <span class="fu">until</span> normalized stepNormalize</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>    stepNormalizeInner l r <span class="ot">=</span> <span class="kw">case</span> (l, r) <span class="kw">of</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>      (<span class="dt">Left</span> ll, <span class="dt">Left</span> rl) <span class="ot">-&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>        <span class="dt">M.Leaf</span> <span class="op">.</span> <span class="dt">Left</span> <span class="op">$</span> ll <span class="op">M.&lt;&gt;</span> rl</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>      (<span class="dt">Right</span> lr, <span class="dt">Right</span> rr) <span class="ot">-&gt;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>        <span class="dt">M.Leaf</span> <span class="op">.</span> <span class="dt">Right</span> <span class="op">$</span> lr <span class="op">M.&lt;&gt;</span> rr</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>      (<span class="dt">Left</span> ll, <span class="dt">Right</span> rr) <span class="ot">-&gt;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>        <span class="dt">M.Node</span> (<span class="dt">M.Leaf</span> (<span class="dt">Left</span> ll)) (<span class="dt">M.Leaf</span> (<span class="dt">Right</span> rr))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a>      (<span class="dt">Right</span> lr, <span class="dt">Left</span> ll) <span class="ot">-&gt;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a>        <span class="dt">M.Node</span> (<span class="dt">M.Leaf</span> (<span class="dt">Right</span> lr)) (<span class="dt">M.Leaf</span> (<span class="dt">Left</span> ll))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>    stepNormalize <span class="ot">=</span> levelTwoCatamorphism <span class="dt">M.Leaf</span> stepNormalizeInner (<span class="fu">const</span> <span class="fu">id</span>) <span class="fu">const</span> <span class="dt">M.Node</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a>    innerNormalized l r <span class="ot">=</span> <span class="kw">case</span> (l, r) <span class="kw">of</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a>      (<span class="dt">Left</span> _, <span class="dt">Left</span> _) <span class="ot">-&gt;</span> <span class="dt">False</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true"></a>      (<span class="dt">Right</span> _, <span class="dt">Right</span> _) <span class="ot">-&gt;</span> <span class="dt">False</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true"></a>      _ <span class="ot">-&gt;</span> <span class="dt">True</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true"></a>    normalized <span class="ot">=</span> levelTwoCatamorphism (<span class="fu">const</span> <span class="dt">True</span>) innerNormalized (<span class="fu">const</span> <span class="fu">id</span>) <span class="fu">const</span> (<span class="op">&amp;&amp;</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true"></a><span class="kw">instance</span> (<span class="dt">Eq</span> a, <span class="dt">Eq</span> b, <span class="dt">M.Magma</span> a, <span class="dt">M.Magma</span> b) <span class="ot">=&gt;</span> <span class="dt">Eq</span> (<span class="dt">MagmaCoproduct</span> a b) <span class="kw">where</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true"></a>  t1 <span class="op">==</span> t2 <span class="ot">=</span> magmaCoproductNormalize t1 <span class="op">==</span> magmaCoproductNormalize t2</span></code></pre></div>
+<p>This is one way of implementing coproducts. Equality is computed through normalization. The magma instance on the coproduct is free.</p>
+<p>A different approach is to define a different carrier data structure which does not have a trivial magma instance but equality works automatically because only the terms in normal form are constructible.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Symm</span> t1 t2 <span class="ot">=</span> <span class="dt">SymmLR</span> t1 t2 <span class="op">|</span> <span class="dt">SymmRL</span> t2 t1</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">SizeOne</span> a b <span class="ot">=</span> <span class="dt">OneL</span> a <span class="op">|</span> <span class="dt">OneR</span> b</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">SizeAtLeastTwo</span> a b</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>  <span class="ot">=</span> <span class="dt">ExactlyTwo</span> (<span class="dt">Symm</span> a b)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>  <span class="op">|</span> <span class="dt">OnePlus</span> (<span class="dt">Symm</span> (<span class="dt">SizeOne</span> a b) (<span class="dt">SizeAtLeastTwo</span> a b))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>  <span class="op">|</span> <span class="dt">AtLeastTwosCombined</span> (<span class="dt">SizeAtLeastTwo</span> a b) (<span class="dt">SizeAtLeastTwo</span> a b)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">ExactCoproductCarrier</span> a b</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a>  <span class="ot">=</span> <span class="dt">One</span> (<span class="dt">SizeOne</span> a b)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a>  <span class="op">|</span> <span class="dt">AtLeastTwo</span> (<span class="dt">SizeAtLeastTwo</span> a b)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a><span class="kw">instance</span> (<span class="dt">M.Magma</span> a, <span class="dt">M.Magma</span> b) <span class="ot">=&gt;</span> <span class="dt">M.Magma</span> (<span class="dt">ExactCoproductCarrier</span> a b) <span class="kw">where</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a>  x <span class="op">&lt;&gt;</span> y <span class="ot">=</span> <span class="kw">case</span> (x, y) <span class="kw">of</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a>    (<span class="dt">One</span> t1, <span class="dt">One</span> t2) <span class="ot">-&gt;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a>      <span class="kw">case</span> (t1, t2) <span class="kw">of</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a>        (<span class="dt">OneL</span> a1, <span class="dt">OneL</span> a2) <span class="ot">-&gt;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a>          <span class="dt">One</span> <span class="op">$</span> <span class="dt">OneL</span> <span class="op">$</span> a1 <span class="op">M.&lt;&gt;</span> a2</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a>        (<span class="dt">OneL</span> a1, <span class="dt">OneR</span> b2) <span class="ot">-&gt;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a>          <span class="dt">AtLeastTwo</span> <span class="op">$</span> <span class="dt">ExactlyTwo</span> <span class="op">$</span> <span class="dt">SymmLR</span> a1 b2</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true"></a>        (<span class="dt">OneR</span> b1, <span class="dt">OneL</span> a2) <span class="ot">-&gt;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true"></a>          <span class="dt">AtLeastTwo</span> <span class="op">$</span> <span class="dt">ExactlyTwo</span> <span class="op">$</span> <span class="dt">SymmRL</span> b1 a2</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true"></a>        (<span class="dt">OneR</span> b1, <span class="dt">OneR</span> b2) <span class="ot">-&gt;</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true"></a>          <span class="dt">One</span> <span class="op">$</span> <span class="dt">OneR</span> <span class="op">$</span> b1 <span class="op">M.&lt;&gt;</span> b2</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true"></a>    (<span class="dt">One</span> t1, <span class="dt">AtLeastTwo</span> t2) <span class="ot">-&gt;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> <span class="op">$</span> <span class="dt">OnePlus</span> <span class="op">$</span> <span class="dt">SymmLR</span> t1 t2</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true"></a>    (<span class="dt">AtLeastTwo</span> t1, <span class="dt">One</span> t2) <span class="ot">-&gt;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> <span class="op">$</span> <span class="dt">OnePlus</span> <span class="op">$</span> <span class="dt">SymmRL</span> t1 t2</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true"></a>    (<span class="dt">AtLeastTwo</span> t1, <span class="dt">AtLeastTwo</span> t2) <span class="ot">-&gt;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> <span class="op">$</span> <span class="dt">AtLeastTwosCombined</span> t1 t2</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true"></a><span class="ot">magmaLExact ::</span> a <span class="ot">-&gt;</span> <span class="dt">ExactCoproductCarrier</span> a b</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true"></a>magmaLExact <span class="ot">=</span> <span class="dt">One</span> <span class="op">.</span> <span class="dt">OneL</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true"></a><span class="ot">magmaRExact ::</span> b <span class="ot">-&gt;</span> <span class="dt">ExactCoproductCarrier</span> a b</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true"></a>magmaRExact <span class="ot">=</span> <span class="dt">One</span> <span class="op">.</span> <span class="dt">OneR</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true"></a><span class="ot">copairingExact ::</span> <span class="dt">M.Magma</span> c <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> <span class="dt">ExactCoproductCarrier</span> a b <span class="ot">-&gt;</span> c</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true"></a>copairingExact f g <span class="ot">=</span> go</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true"></a>    go <span class="ot">=</span> \ <span class="kw">case</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true"></a>      <span class="dt">One</span> (<span class="dt">OneL</span> a) <span class="ot">-&gt;</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true"></a>        f a</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true"></a>      <span class="dt">One</span> (<span class="dt">OneR</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true"></a>        g b</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> (<span class="dt">ExactlyTwo</span> (<span class="dt">SymmLR</span> a b)) <span class="ot">-&gt;</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true"></a>        f a <span class="op">M.&lt;&gt;</span> g b</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> (<span class="dt">ExactlyTwo</span> (<span class="dt">SymmRL</span> b a)) <span class="ot">-&gt;</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true"></a>        g b <span class="op">M.&lt;&gt;</span> f a</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> (<span class="dt">OnePlus</span> (<span class="dt">SymmLR</span> t1 t2)) <span class="ot">-&gt;</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true"></a>        go (<span class="dt">One</span> t1) <span class="op">M.&lt;&gt;</span> go (<span class="dt">AtLeastTwo</span> t2)</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> (<span class="dt">OnePlus</span> (<span class="dt">SymmRL</span> t1 t2)) <span class="ot">-&gt;</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true"></a>        go (<span class="dt">AtLeastTwo</span> t1) <span class="op">M.&lt;&gt;</span> go (<span class="dt">One</span> t2)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true"></a>      <span class="dt">AtLeastTwo</span> (<span class="dt">AtLeastTwosCombined</span> t1 t2) <span class="ot">-&gt;</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true"></a>        go (<span class="dt">AtLeastTwo</span> t1) <span class="op">M.&lt;&gt;</span> go (<span class="dt">AtLeastTwo</span> t2)</span></code></pre></div>
+<h3 id="semigroups">Semigroups</h3>
+<p>Let us move to semigroups. The associativity axiom essentially says that there is no need for brackets when forming terms. This means that we can use nonempty lists to represent terms instead of binary trees. Actually, nonempty lists act as a normal form for free monoids. When we form the coproduct of two semigroups we can simplify two consecutive elements coming from the same semigroup. Again, lets start with the term algebra and define equality through normalization.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">SemigroupTermalgebra</span> a <span class="ot">=</span> <span class="dt">SemigroupTermalgebra</span> (<span class="dt">NonEmpty</span> a)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="kw">newtype</span> <span class="dt">Semigroup</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">SemigroupCoproduct</span> a b <span class="ot">=</span> <span class="dt">SemigroupCoproduct</span> (<span class="dt">SemigroupTermalgebra</span> (<span class="dt">Either</span> a b))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="kw">newtype</span> <span class="dt">Semigroup</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="ot">semigroupL ::</span> a <span class="ot">-&gt;</span> <span class="dt">SemigroupCoproduct</span> a b</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a>semigroupL <span class="ot">=</span>  <span class="dt">SemigroupCoproduct</span> <span class="op">.</span> <span class="dt">SemigroupTermalgebra</span> <span class="op">.</span> singleton <span class="op">.</span> <span class="dt">Left</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a><span class="ot">semigroupR ::</span> b <span class="ot">-&gt;</span> <span class="dt">SemigroupCoproduct</span> a b</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>semigroupR <span class="ot">=</span> <span class="dt">SemigroupCoproduct</span> <span class="op">.</span> <span class="dt">SemigroupTermalgebra</span> <span class="op">.</span> singleton <span class="op">.</span> <span class="dt">Right</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a><span class="ot">semigroupCopairing ::</span> <span class="dt">Semigroup</span> c <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> <span class="dt">SemigroupCoproduct</span> a b <span class="ot">-&gt;</span> c</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a>semigroupCopairing f g (<span class="dt">SemigroupCoproduct</span> (<span class="dt">SemigroupTermalgebra</span> t)) <span class="ot">=</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a>  foldMap1 (<span class="fu">either</span> f g) t</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a><span class="ot">semigroupCoproductNormalize ::</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true"></a>  (<span class="dt">Semigroup</span> a, <span class="dt">Semigroup</span> b) <span class="ot">=&gt;</span> <span class="dt">SemigroupCoproduct</span> a b <span class="ot">-&gt;</span> <span class="dt">SemigroupCoproduct</span> a b</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true"></a>semigroupCoproductNormalize (<span class="dt">SemigroupCoproduct</span> (<span class="dt">SemigroupTermalgebra</span> t)) <span class="ot">=</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true"></a>  <span class="dt">SemigroupCoproduct</span> <span class="op">.</span> <span class="dt">SemigroupTermalgebra</span> <span class="op">.</span> normalize <span class="op">$</span> t</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true"></a>    <span class="co">-- note that we can normalize a term in a single pass</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true"></a>    normalize <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true"></a>      <span class="dt">Left</span> e1 <span class="op">:|</span> <span class="dt">Left</span> e2 <span class="op">:</span> es <span class="ot">-&gt;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true"></a>        normalize (<span class="dt">Left</span> (e1 <span class="op">&lt;&gt;</span> e2) <span class="op">:|</span> es)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true"></a>      <span class="dt">Right</span> e1 <span class="op">:|</span> <span class="dt">Right</span> e2 <span class="op">:</span> es <span class="ot">-&gt;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true"></a>        normalize (<span class="dt">Right</span> (e1 <span class="op">&lt;&gt;</span> e2) <span class="op">:|</span> es)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true"></a>      e1 <span class="op">:|</span> es1 <span class="ot">-&gt;</span> <span class="kw">case</span> es1 <span class="kw">of</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true"></a>        e2 <span class="op">:</span> es2 <span class="ot">-&gt;</span> (e1 <span class="op">:|</span> []) <span class="op">&lt;&gt;</span> normalize (e2 <span class="op">:|</span> es2)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true"></a>        [] <span class="ot">-&gt;</span> e1 <span class="op">:|</span> []</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true"></a><span class="kw">instance</span> (<span class="dt">Eq</span> a, <span class="dt">Eq</span> b, <span class="dt">Semigroup</span> a, <span class="dt">Semigroup</span> b) <span class="ot">=&gt;</span> <span class="dt">Eq</span> (<span class="dt">SemigroupCoproduct</span> a b) <span class="kw">where</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true"></a>  t1 <span class="op">==</span> t2 <span class="ot">=</span> semigroupCoproductNormalize t1 <span class="op">==</span> semigroupCoproductNormalize t2</span></code></pre></div>
+<p>And again it is possible to define a data type which allows only normalized terms to be constructed. So we need to define an algebraic data type which represents nonempty alternating lists.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">LeftHead</span> a b <span class="ot">=</span> <span class="dt">SingleLeft</span> a <span class="op">|</span> <span class="dt">LeftHeadCons</span> a (<span class="dt">RightHead</span> a b)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">RightHead</span> a b <span class="ot">=</span> <span class="dt">SingleRight</span> b <span class="op">|</span> <span class="dt">RightHeadCons</span> b (<span class="dt">LeftHead</span> a b)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Alternating</span> a b</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>  <span class="ot">=</span> <span class="dt">HeadOnLeft</span> (<span class="dt">LeftHead</span> a b)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>  <span class="op">|</span> <span class="dt">HeadOnRight</span> (<span class="dt">RightHead</span> a b)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a><span class="kw">instance</span> (<span class="dt">Semigroup</span> a, <span class="dt">Semigroup</span> b) <span class="ot">=&gt;</span> <span class="dt">Semigroup</span> (<span class="dt">Alternating</span> a b) <span class="kw">where</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>  x <span class="op">&lt;&gt;</span> y <span class="ot">=</span> <span class="kw">case</span> (x, y) <span class="kw">of</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a>    (<span class="dt">HeadOnLeft</span> (<span class="dt">SingleLeft</span> a1), <span class="dt">HeadOnLeft</span> (<span class="dt">SingleLeft</span> a2)) <span class="ot">-&gt;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a>      <span class="dt">HeadOnLeft</span> <span class="op">$</span> <span class="dt">SingleLeft</span> <span class="op">$</span> a1 <span class="op">&lt;&gt;</span> a2</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a>    (<span class="dt">HeadOnLeft</span> (<span class="dt">SingleLeft</span> a1), <span class="dt">HeadOnLeft</span> (<span class="dt">LeftHeadCons</span> a2 rest)) <span class="ot">-&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a>      <span class="dt">HeadOnLeft</span> <span class="op">$</span> <span class="dt">LeftHeadCons</span> (a1 <span class="op">&lt;&gt;</span> a2) rest</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a>    (<span class="dt">HeadOnLeft</span> (<span class="dt">SingleLeft</span> a1), <span class="dt">HeadOnRight</span> r) <span class="ot">-&gt;</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a>      <span class="dt">HeadOnLeft</span> <span class="op">$</span> <span class="dt">LeftHeadCons</span> a1 r</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a>    (<span class="dt">HeadOnRight</span> (<span class="dt">SingleRight</span> b1), <span class="dt">HeadOnRight</span> (<span class="dt">SingleRight</span> b2)) <span class="ot">-&gt;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a>      <span class="dt">HeadOnRight</span> <span class="op">$</span> <span class="dt">SingleRight</span> <span class="op">$</span> b1 <span class="op">&lt;&gt;</span> b2</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a>    (<span class="dt">HeadOnRight</span> (<span class="dt">SingleRight</span> b1), <span class="dt">HeadOnRight</span> (<span class="dt">RightHeadCons</span> b2 rest)) <span class="ot">-&gt;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a>      <span class="dt">HeadOnRight</span> <span class="op">$</span> <span class="dt">RightHeadCons</span> (b1 <span class="op">&lt;&gt;</span> b2) rest</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a>    (<span class="dt">HeadOnRight</span> (<span class="dt">SingleRight</span> b1), <span class="dt">HeadOnLeft</span> l) <span class="ot">-&gt;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a>      <span class="dt">HeadOnRight</span> <span class="op">$</span> <span class="dt">RightHeadCons</span> b1 l</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a>    (<span class="dt">HeadOnLeft</span> (<span class="dt">LeftHeadCons</span> a rest), other) <span class="ot">-&gt;</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a>      <span class="dt">HeadOnLeft</span> (<span class="dt">SingleLeft</span> a) <span class="op">&lt;&gt;</span> (<span class="dt">HeadOnRight</span> rest <span class="op">&lt;&gt;</span> other)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true"></a>    (<span class="dt">HeadOnRight</span> (<span class="dt">RightHeadCons</span> b rest), other) <span class="ot">-&gt;</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true"></a>      <span class="dt">HeadOnRight</span> (<span class="dt">SingleRight</span> b) <span class="op">&lt;&gt;</span> (<span class="dt">HeadOnLeft</span> rest <span class="op">&lt;&gt;</span> other)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true"></a><span class="ot">alternatingL ::</span> a <span class="ot">-&gt;</span> <span class="dt">Alternating</span> a b</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true"></a>alternatingL <span class="ot">=</span> <span class="dt">HeadOnLeft</span> <span class="op">.</span> <span class="dt">SingleLeft</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true"></a><span class="ot">alternatingR ::</span> b <span class="ot">-&gt;</span> <span class="dt">Alternating</span> a b</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true"></a>alternatingR <span class="ot">=</span> <span class="dt">HeadOnRight</span> <span class="op">.</span> <span class="dt">SingleRight</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true"></a><span class="ot">alternatingCopairing ::</span> <span class="dt">Semigroup</span> c <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> <span class="dt">Alternating</span> a b <span class="ot">-&gt;</span> c</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true"></a>alternatingCopairing f g <span class="ot">=</span> go</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true"></a>    go <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true"></a>      <span class="dt">HeadOnLeft</span> (<span class="dt">SingleLeft</span> a) <span class="ot">-&gt;</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true"></a>        f a</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true"></a>      <span class="dt">HeadOnLeft</span> (<span class="dt">LeftHeadCons</span> a rest) <span class="ot">-&gt;</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true"></a>        f a <span class="op">&lt;&gt;</span> go (<span class="dt">HeadOnRight</span> rest)</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true"></a>      <span class="dt">HeadOnRight</span> (<span class="dt">SingleRight</span> b) <span class="ot">-&gt;</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true"></a>        g b</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true"></a>      <span class="dt">HeadOnRight</span> (<span class="dt">RightHeadCons</span> b rest) <span class="ot">-&gt;</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true"></a>        g b <span class="op">&lt;&gt;</span> go (<span class="dt">HeadOnLeft</span> rest)</span></code></pre></div>
+<h3 id="monoids">Monoids</h3>
+<p>The case of monoids turns out to be slightly tricky due to the constant symbol. Again, by associativity, we can use lists to represent term algebras for monoids. The empty list serves as the identity element. So far, so good. However, when we form the coproduct of two monoids we hit a small detail. The normal form is <em>not</em> just an alternating (possibly empty) list because we need to remove the occurrences of the identity element. This also affects the normalization algorithm. Since simplifying consecutive elements coming from the same monoid, we may create new occurrences of the identity element. Thus, normalization cannot be done in a single pass. Also, we cannot easily define a data type which allows only normalized terms to be constructed because we would need refinement types to talk about non-identity elements.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">MonoidTermAlgebra</span> a <span class="ot">=</span> <span class="dt">MonoidTermAlgebra</span> [a]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="dt">Eq</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="kw">newtype</span> (<span class="dt">Semigroup</span>, <span class="dt">Monoid</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a><span class="kw">newtype</span> <span class="dt">MonoidCoproduct</span> a b <span class="ot">=</span> <span class="dt">MonoidCoproduct</span> (<span class="dt">MonoidTermAlgebra</span> (<span class="dt">Either</span> a b))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a>  <span class="kw">deriving</span> <span class="kw">newtype</span> (<span class="dt">Semigroup</span>, <span class="dt">Monoid</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a><span class="ot">monoidL ::</span> a <span class="ot">-&gt;</span> <span class="dt">MonoidCoproduct</span> a b</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a>monoidL <span class="ot">=</span> <span class="dt">MonoidCoproduct</span> <span class="op">.</span> <span class="dt">MonoidTermAlgebra</span> <span class="op">.</span> (<span class="op">:</span>[]) <span class="op">.</span> <span class="dt">Left</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true"></a><span class="ot">monoidR ::</span> b <span class="ot">-&gt;</span> <span class="dt">MonoidCoproduct</span> a b</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true"></a>monoidR <span class="ot">=</span> <span class="dt">MonoidCoproduct</span> <span class="op">.</span> <span class="dt">MonoidTermAlgebra</span> <span class="op">.</span> (<span class="op">:</span>[]) <span class="op">.</span> <span class="dt">Right</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true"></a><span class="ot">monoidCopairing ::</span> (<span class="dt">Monoid</span> c) <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> <span class="dt">MonoidCoproduct</span> a b <span class="ot">-&gt;</span> c</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true"></a>monoidCopairing f g (<span class="dt">MonoidCoproduct</span> (<span class="dt">MonoidTermAlgebra</span> t)) <span class="ot">=</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true"></a>  <span class="fu">foldMap</span> (<span class="fu">either</span> f g) t</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true"></a><span class="co">-- Note the extra Eq contrained which were not needed for semigroups</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true"></a><span class="ot">monoidCoproductNormalize ::</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true"></a>  (<span class="dt">Eq</span> a, <span class="dt">Monoid</span> a, <span class="dt">Eq</span> b, <span class="dt">Monoid</span> b) <span class="ot">=&gt;</span> <span class="dt">MonoidCoproduct</span> a b <span class="ot">-&gt;</span> <span class="dt">MonoidCoproduct</span> a b</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true"></a>monoidCoproductNormalize (<span class="dt">MonoidCoproduct</span> (<span class="dt">MonoidTermAlgebra</span> t)) <span class="ot">=</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true"></a>  <span class="dt">MonoidCoproduct</span> <span class="op">.</span> <span class="dt">MonoidTermAlgebra</span> <span class="op">.</span> normalize <span class="op">$</span> t</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true"></a>  <span class="kw">where</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true"></a>    normalize <span class="ot">=</span> <span class="fu">until</span> (<span class="fu">all</span> nonIdentity) normalizeStep <span class="op">.</span> combineNeighbors</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true"></a>    combineNeighbors <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true"></a>      (<span class="dt">Left</span> e1<span class="op">:</span><span class="dt">Left</span> e2 <span class="op">:</span> es) <span class="ot">-&gt;</span> combineNeighbors (<span class="dt">Left</span> (e1 <span class="op">&lt;&gt;</span> e2) <span class="op">:</span> es)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true"></a>      (<span class="dt">Right</span> e1<span class="op">:</span><span class="dt">Right</span> e2<span class="op">:</span>es) <span class="ot">-&gt;</span> combineNeighbors (<span class="dt">Right</span> (e1 <span class="op">&lt;&gt;</span> e2) <span class="op">:</span> es)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true"></a>      []  <span class="ot">-&gt;</span> []</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true"></a>      (e<span class="op">:</span>es) <span class="ot">-&gt;</span> e <span class="op">:</span> combineNeighbors es</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true"></a>    normalizeStep <span class="ot">=</span> combineNeighbors <span class="op">.</span> <span class="fu">filter</span> nonIdentity</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true"></a>    nonIdentity e <span class="ot">=</span> e <span class="op">/=</span> <span class="dt">Left</span> <span class="fu">mempty</span> <span class="op">&amp;&amp;</span> e <span class="op">/=</span> <span class="dt">Right</span> <span class="fu">mempty</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true"></a><span class="kw">instance</span> (<span class="dt">Eq</span> a, <span class="dt">Monoid</span> a, <span class="dt">Eq</span> b, <span class="dt">Monoid</span> b) <span class="ot">=&gt;</span> <span class="dt">Eq</span> (<span class="dt">MonoidCoproduct</span> a b) <span class="kw">where</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true"></a>  t1 <span class="op">==</span> t2 <span class="ot">=</span> monoidCoproductNormalize t1 <span class="op">==</span> monoidCoproductNormalize t2</span></code></pre></div>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
