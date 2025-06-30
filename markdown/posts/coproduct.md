@@ -5,7 +5,7 @@ title: Coproducts of Magmas, Semigroups and Monoids
 $\newcommand{\CC}{\mathcal{C}}$
 $\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}$
 $\newcommand{\ua}[1]{\bigg\uparrow\raise.5ex\rlap{\scriptstyle#1}}$
-$\newcommand{\da}[1]{{\LARGE\nearrow}\rlap{\scriptstyle#1}}$
+$\newcommand{\da}[1]{\LARGE\nearrow\rlap{\scriptstyle#1}}$
 
 ## TL;DR
 
