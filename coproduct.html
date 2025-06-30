@@ -83,7 +83,7 @@
 <header id="title-block-header">
 <h1 class="title">Coproducts of Magmas, Semigroups and Monoids</h1>
 </header>
-<p><span class="math inline">\(\newcommand{\CC}{\mathcal{C}}\)</span></p>
+<p><span class="math inline">\(\newcommand{\CC}{\mathcal{C}}\)</span> <span class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span class="math inline">\(\newcommand{\ua}[1]{\bigg\uparrow\raise.5ex\rlap{\scriptstyle#1}}\)</span> <span class="math inline">\(\newcommand{\da}[1]{{\LARGE\nearrow}\rlap{\scriptstyle#1}}\)</span></p>
 <h2 id="tldr">TL;DR</h2>
 <p>While working on a personal project I needed to combine two writer monads whose monoids were completely unrelated. A natural way of solving this problem is to construct the coproduct of the monoids. Long story short, I ended up pushing a small <a href="https://github.com/diagrams/monoid-extras/pull/61">fix</a> to the <a href="https://hackage.haskell.org/package/monoid-extras">monoid-extras</a> package. This is a post explaining a few points about specification and implementation of coproducts in varieties of algebras in general and monoids/semigroups in particular. Turned out to be my biggest <a href="https://fr.wikipedia.org/wiki/D%C3%A9formation_professionnelle">déformation professionnelle</a> so far. You can skip to <a href="#implementing-coproducts">Implementing Coproducts</a> if you are not interested in the theory. All the code is in this <a href="https://gist.github.com/sonatsuer/8165e7d32e8a1a91779da92fe4cd205a">gist</a>.</p>
 <h2 id="specifying-coproducts">Specifying Coproducts</h2>
@@ -93,7 +93,6 @@
 <li>two morphisms in <span class="math inline">\(\CC\)</span> denoted by <span class="math inline">\(\iota_i\colon O_i\to O_1\coprod O_2\)</span> for <span class="math inline">\(i=1,2\)</span>,</li>
 <li>for each object <span class="math inline">\(T\)</span> in <span class="math inline">\(\CC\)</span> a function <span class="math inline">\([\cdot,\cdot]\colon \CC(O_1,T)\times\CC(O_2,T)\to \CC(O_1\coprod O_2,T)\)</span> such that the following poorly drawn diagrams commute for <span class="math inline">\(i=1,2\)</span>:</li>
 </ul>
-<p><span class="math inline">\(\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}\)</span> <span class="math inline">\(\newcommand{\ua}[1]{\bigg\uparrow\raise.5ex\rlap{\scriptstyle#1}}\)</span> <span class="math inline">\(\newcommand{\da}[1]{{\LARGE\nearrow}\rlap{\scriptstyle#1}}\)</span></p>
 <p><span class="math display">\[
 \begin{array}{c}
     &amp;                       &amp; T              \newline

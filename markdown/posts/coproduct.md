@@ -3,6 +3,9 @@ title: Coproducts of Magmas, Semigroups and Monoids
 ---
 
 $\newcommand{\CC}{\mathcal{C}}$
+$\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}$
+$\newcommand{\ua}[1]{\bigg\uparrow\raise.5ex\rlap{\scriptstyle#1}}$
+$\newcommand{\da}[1]{{\LARGE\nearrow}\rlap{\scriptstyle#1}}$
 
 ## TL;DR
 
@@ -24,10 +27,6 @@ two objects in $\CC$. The coproduct of of $O_1$ and $O_2$ consists of the follow
 - A carrier object in $\CC$ denoted by $O_1\coprod O_2$,
 - two morphisms in $\CC$ denoted by $\iota_i\colon O_i\to O_1\coprod O_2$ for $i=1,2$,
 - for each object $T$ in $\CC$ a function $[\cdot,\cdot]\colon \CC(O_1,T)\times\CC(O_2,T)\to \CC(O_1\coprod O_2,T)$ such that the following poorly drawn diagrams commute for $i=1,2$:
-
-$\newcommand{\ras}[1]{\kern-1.5ex\xrightarrow{\ \ \smash{#1}\ \ }\phantom{}\kern-1.5ex}$
-$\newcommand{\ua}[1]{\bigg\uparrow\raise.5ex\rlap{\scriptstyle#1}}$
-$\newcommand{\da}[1]{{\LARGE\nearrow}\rlap{\scriptstyle#1}}$
 
 $$
 \begin{array}{c}
