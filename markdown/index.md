@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [A Motto for AI-Assisted Programming](aiandprogramming.html)
+  (May 25, 2026)
+  
 - [Coproducts of magmas, semigrouos and monoids](coproduct.html)
   (June 30, 2025)
 
