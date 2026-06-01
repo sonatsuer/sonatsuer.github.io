@@ -2,6 +2,7 @@
 
 pandoc --mathjax=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js\
        --standalone \
+       --template ./assets/template.html \
        --highlight-style pygments \
        -c ./assets/format.css \
        -H ./assets/extra-header.html \
