@@ -64,3 +64,11 @@ This is my blog:
 
 - [Curry-Howard correspondence from scratch (1/2)](curry-howard-1.html)
   (May 5, 2018)
+
+<div style="margin-top: 3em"></div>
+
+And these are slides of some talks I gave in the past:
+
+- [_An Introduction to Optics_](assets/optics-talk.pdf): A toy implementation of existential optics in Kotlin.
+
+- [_Table Goes in, Picture Comes Out_](assets/fca-talk.pdf): An introduction to formal concept analysis and some advertisement for a [tool](https://sonatsuer.github.io/homemade-fca/) I implemented.
