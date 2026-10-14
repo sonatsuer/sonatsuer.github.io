@@ -72,3 +72,6 @@ And these are slides of some talks I gave in the past:
 - [_An Introduction to Optics_](assets/optics-talk.pdf): A toy implementation of existential optics in Kotlin.
 
 - [_Table Goes in, Picture Comes Out_](assets/fca-talk.pdf): An introduction to formal concept analysis and some advertisement for a [tool](https://sonatsuer.github.io/homemade-fca/) I implemented.
+
+- [_On AI-Assisted Mathematical Research_](assets/ai-math-talk.pdf): An introductory talk
+on using AI in mathematical research beyond prompting.
