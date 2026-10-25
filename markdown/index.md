@@ -11,6 +11,9 @@ I am Sonat Süer. An ex-mathematician and a neophyte coder. You can reach me via
 
 This is my blog:
 
+- [Free theorems for umbral calculus](umbral-calculus.html)
+  (October 25, 2026)
+
 - [A Motto for AI-Assisted Programming](aiandprogramming.html)
   (May 25, 2026)
   
